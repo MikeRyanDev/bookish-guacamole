@@ -33,6 +33,8 @@ A clean copy of this browser revision, without `.env`, `.data`, `.copilotkit`, `
 
 `pnpm format:check` passes with explicit exclusions for vendored skills, generated guidance, user-owned requirements, and private/generated outputs. Browser fixtures and E2E tests are included in TypeScript checks. The deprecated tsdown option was replaced; large frontend chunks remain a build warning.
 
+`PORT=4175 pnpm start` also served the built HTML and JavaScript bundle with HTTP 200 and the correct JavaScript content type. That production check was stopped afterward; the development browser remains available at port 4173.
+
 ## Installed Luna Learning and automatic refresh
 
 The installed CLI stack ran native `openai/gpt-6-luna` using Intelligence branch
