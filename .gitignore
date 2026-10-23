@@ -7,3 +7,4 @@ dist/
 .data/
 workspace/
 coverage/
+.copilotkit/local.json

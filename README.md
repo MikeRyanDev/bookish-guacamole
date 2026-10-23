@@ -2,7 +2,9 @@
 
 Run a TanStack coding agent with the CLI-installed local Intelligence backend.
 
-**Status: in development.** Protocol, tool, approval, cancellation, and restart tests pass with a deterministic model. Real model execution and the full Learning cycle still need verification. See [the evidence record](docs/VERIFICATION.md).
+**Verified locally:** real GPT-4.1 coding, saved Intelligence events, app restart/replay, tool approvals, cancellation, a completed Learning run, and a later task loading the published Skill. See [the evidence record](docs/VERIFICATION.md).
+
+This checkout is already connected. Run `pnpm dev` to start. The [local Learning dashboard](http://cpk.localhost:61995/o/local-evaluation/local-app/learning/coding-lessons) shows its Insight and Skill. For a fresh checkout, follow the setup below.
 
 ## What runs where
 
@@ -26,7 +28,7 @@ The starter uses TanStack AI `1.0.0` and the experimental harness `0.1.0`. All d
 
 ## Prepare the app
 
-You need Node.js 22.13 or later, pnpm 10.9, Docker, and an OpenAI key. The CLI also requires CopilotKit sign-in and local evaluation terms acceptance.
+You need Node.js 22.13 or later, pnpm 10.9, Git, Docker, and an OpenAI key. The CLI also requires CopilotKit sign-in and local evaluation terms acceptance.
 
 1. Open this repository.
 2. Install the pinned dependencies:
@@ -48,7 +50,7 @@ You need Node.js 22.13 or later, pnpm 10.9, Docker, and an OpenAI key. The CLI a
    pnpm workspace:create
    ```
 
-The workspace command refuses to replace an existing folder. This checkout already has the sample workspace.
+The workspace command creates a separate Git repository so the coding tools can discover its files. It refuses to replace an existing folder. This checkout already has the sample workspace.
 
 ## Install local Intelligence
 
@@ -102,7 +104,7 @@ pnpm intelligence learning containers create --id coding-lessons --name "Coding 
 
 `LEARNING_CONTAINER_ID` defaults to `coding-lessons`. Use one stable container for this project. Each new Intelligence thread receives that assignment through `getLearningContainerId`.
 
-The command above is the published CLI interface. Its use against the local stack remains part of the pending acceptance test.
+This command was verified against the CLI-installed local stack.
 
 ## Run a coding task
 
@@ -141,15 +143,15 @@ Enter `/exit` to close the app. The CLI-installed backend remains running. Use `
 
 ## Complete the Learning cycle
 
-A configured Learning model is not proof of Learning. The current backend needs at least 15 distinct conversations for the first Learning run. One conversation with 15 messages does not satisfy that requirement.
+A configured Learning model is not proof of Learning. Automatic scheduling uses a 15-thread threshold for the first run. A manual Learning run can use one completed thread; this was verified on local release 0.15.0.
 
 1. Run real coding tasks in separate threads. Give specific feedback about incorrect code, test gaps, and useful conventions.
-2. Open the local dashboard URL from `pnpm intelligence local status`. Inspect the saved tool calls and results.
-3. Open the container's Learning view. Start the available Learning action after its eligibility gate passes.
-4. Inspect the resulting Insights and proposed Skills. Approve only a Skill supported by the recorded work.
-5. Start a new coding task. Check that `list_learned_skills` and `load_learned_skill` return and use the published Skill.
+2. Run `pnpm intelligence local login` to open the dashboard signed in. Select **Local app**, then **Threads**, to inspect saved tool calls and results.
+3. Open **Automatic Learning → Coding lessons → Start manual run now**. Wait for the analysis to finish. Automatic scheduling has a separate eligibility gate.
+4. Inspect **Insights**, **Analysis results**, and **Skills**. Review a proposed Skill and its supporting evidence before approval.
+5. Start a new coding task. Check that `list_learned_skills` and `copilotkit_load_skill` return and use the published Skill.
 
-The starter reads published Skills through the pinned Intelligence Skill registry. It checks archive integrity and exposes two TanStack tools. The model receives a catalog first, then loads a specific Skill.
+The starter reads published Skills through the pinned Intelligence Skill registry. It checks archive integrity and exposes three TanStack tools: list the catalog, load a Skill, and read its supporting text files. The model receives a catalog first, then loads a specific Skill.
 
 Useful CLI reads:
 
@@ -159,7 +161,22 @@ pnpm intelligence learning candidates list coding-lessons
 pnpm intelligence learning skills list coding-lessons --full
 ```
 
-The complete real Learning run, candidate review, and later Skill use are still pending. Do not treat this walkthrough as a recorded successful run.
+The verified run produced `greet-blank-trim-validation`. A later task explicitly requested this Skill, loaded it through `copilotkit_load_skill`, added whitespace regression tests, and passed all 12 workspace tests. The model may decide a Skill is irrelevant; listing a catalog alone does not prove use.
+
+To review and approve a candidate from the terminal:
+
+```sh
+pnpm intelligence learning candidates get coding-lessons <candidate-id> --json
+pnpm intelligence learning candidates approve coding-lessons <candidate-id> --yes --json
+```
+
+After publication, try:
+
+```text
+Review greet.js using the published greet-blank-trim-validation Skill.
+Load it first. Add missing regression tests for tab and newline padded names
+and tab/newline-only names. Run the tests and report the result.
+```
 
 ## Change the starter
 
@@ -178,6 +195,14 @@ Change the model in `src/harness.ts`, or pass a TanStack text adapter to `create
 The runtime binds only to loopback and uses a random bearer token for each app process. The terminal sends that token. The local user ID is `local-developer`; this starter is for one developer.
 
 The Skill registry uses the SDK's `internal/learned-skills` export. This is an explicit version-sensitive boundary. Run the tests before upgrading CopilotKit.
+
+## Known limits
+
+The harness is experimental and this starter is for one local developer. Keep the pinned versions until you rerun the checks. The published SDK currently prints repeated AG-UI warnings about extra organization/project envelope fields; persisted events, replay, and tool results were verified despite that noise. Node 22 also marks SQLite experimental.
+
+A model can stop before finishing a task. The first real run stopped after the failing-test step; reopening its thread with a clear continuation completed the implementation. Check the files and test results, not only the model's summary.
+
+The local dashboard calls Containers **Learning Spaces**. Its model-configuration banner is not a success signal: inspect the completed analysis and its output. Automatic analysis was off in the tested local install; the successful proof used a manual run.
 
 ## Check changes
 

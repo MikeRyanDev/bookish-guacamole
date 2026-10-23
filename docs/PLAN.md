@@ -53,3 +53,26 @@ The prior turn made progress: it created and checked the starter. The installer 
 Two additional tests exercise the official file-edit and permission plugins with SQLite. Both approvals survive a host restart. An approval writes the requested file; a rejection leaves it absent. The harness now accepts a typed adapter override for other providers and deterministic tests.
 
 The next acceptance gate remains real local installation and Learning. Sign-in, personal terms acceptance, and a model key are still required.
+
+## Setup checkpoint
+
+Sign-in and direct GPT-4.1 access are verified. Private model configuration is ready. The latest local setup attempt stopped at personal evaluation terms acceptance; no installer remains running. After acceptance, resume CLI installation with that model configuration, then complete Plan 2 against the real backend.
+
+## Review 4: real backend and Learning
+
+Local release 0.15.0 installed through the published CLI. Real coding, replay after restart, approval, rejection, and cancellation crossed Intelligence. A manual Learning run succeeded, produced a cited Insight and a reviewed Skill, and a later task loaded that Skill before adding tests. See VERIFICATION.md for IDs and results.
+
+Real execution exposed two gaps missed by the original deterministic suite: catalog tool names did not match the registered tools, and the parent ignore rule hid the sample files from official discovery. Both now have red-green regression evidence and passing fixes. The automatic 15-thread threshold is separate from manual analysis; the guide now reflects the verified behavior.
+
+## Plan 3: final delivery review
+
+1. Validate a fresh copy with the frozen lockfile, complete checks, and sample creation.
+2. Review the guide against the installed dashboard and actual commands.
+3. Review the final diff for credentials, scope, and stale claims. Commit the focused changes.
+4. Audit the original requirements against recorded evidence before declaring completion.
+
+## Final review
+
+The fresh copy passed frozen installation, lint, typecheck, 68 tests, build, sample creation, and the sample test. The original objective is covered by real evidence: a separate local repository, official TanStack coding plugins, the CLI-installed Intelligence backend, persisted runs, Learning output, reviewed publication, later Skill loading and use, and the setup/extension guide.
+
+Known limits are explicit: experimental harness/SQLite, noisy SDK envelope warnings, model follow-through needing supervision, and manual Learning rather than an automatic-scheduler proof. Credentials and raw local state stay ignored. No remote repository or deployment was requested.

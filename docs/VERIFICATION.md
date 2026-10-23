@@ -34,18 +34,54 @@ pnpm intelligence local setup --defer-model --json
 
 The temporary directory contains only `config.json` with `{"auths":{}}`. This path and socket are specific to this machine. The diagnostic deliberately deferred Learning configuration; final setup must configure its model.
 
-A CLI device login is waiting for the developer. The CLI also requires personal evaluation terms acceptance. Agents cannot submit that acceptance.
+CLI sign-in is complete. The OpenAI key was copied from the developer-authorized local source into ignored configuration without printing it. A real OpenAI chat completion returned HTTP 200, model `gpt-4.1-2025-04-14`, and the requested `MODEL_OK` response. This verifies model access only; it does not verify the coding harness or Learning.
 
-## Still required
+Before personal acceptance, local setup with `--model-config .data/learning-model.json` exited with `eula_acceptance_required` for agreement `developer-edition-2026-10-01-web`. No license was requested. The CLI required the developer to run `pnpm intelligence local accept-terms` personally; agents cannot submit that acceptance.
 
-1. Finish account sign-in and terms acceptance. Install and connect the local backend with a Learning model.
-2. Run the real coding task. Inspect persisted Intelligence events and reconnect after an app restart.
-3. Test approvals and cancellation through the real Intelligence gateway.
-4. Supply enough real conversations for Learning. Record the completed Learning run, Insight, and approved Skill.
-5. Use that Skill in a later coding task. Review setup from a clean checkout and finish the guide with actual evidence.
+## Real end-to-end evidence
 
-No real-model, local-backend, or Learning success is claimed yet.
+Verified on 2026-10-22 (America/Los_Angeles), using local release **0.15.0** and real OpenAI GPT-4.1 for both coding and Learning.
+
+| Check | Recorded evidence |
+| --- | --- |
+| CLI installation | `local setup --model-config .data/learning-model.json --json` completed; app-api, gateway, frontend, Learning agent and reconciler pods ready |
+| Connection | `local connect --json` preview followed by `local connect --approve-connection --json`; local project 1 |
+| Container | `learning containers create --id coding-lessons --name "Coding lessons" --json` succeeded |
+| Coding + restart | Thread `f68e6556-41b2-491b-b82a-197d0bc5edbf`: real file/shell approvals, failing regression tests, process restart, replay, continuation, and 4 passing tests |
+| Persisted events | SDK `getThreadEvents` returned 151 events for that thread, no decode errors, no truncation |
+| Learning | Manual run `01a166d9-4246-7c61-9092-d69265abc900` succeeded with one evidence thread, one Insight, and one Skill candidate |
+| Insight | `01a166d9-9c49-7c85-936f-ade8947e6fca`; cites the actual coding thread and eight transcript message references |
+| Published Skill | Reviewed candidate `01a166d9-9c49-71f1-b211-9e7a50b2f48a`; approved Skill `01a166d9-f59a-77c1-857b-5fa252a69237`, registry revision 1 |
+| Later Skill use | Thread `e00fdd3d-81af-480d-804d-23e448760c2b`: `copilotkit_load_skill` returned the full published `greet-blank-trim-validation` instructions, followed by real file edits and test execution; 86 events, no decode errors or truncation |
+| Workspace result | Independent `npm test --prefix workspace`: all 12 tests passed, including four new tab/newline cases |
+| Cancellation | Thread `3deba503-4657-4657-b43e-a0e422e553a4`, run `ce678445-fc6d-4a25-810a-56a777f009fe`: client aborted after text began; backend persisted `RUN_FINISHED` with `outcome.type: cancelled` |
+| Rejection | Thread `36435dfa-3ece-4712-a667-85c8c7631277`: refused write returned `The user denied this tool call`; no farewell file was written by that call |
+| Dashboard | Browser sign-in completed; Coding lessons showed 1 Insight, 1 Skill, and the finished manual analysis |
+
+The manual run used the local API's `POST /api/learning/projects/1/containers/coding-lessons/runs`, with the CLI-owned local service credential read privately. Users can invoke the same operation through **Start manual run now** in the dashboard. No credential or raw private configuration is tracked.
+
+Automatic scheduling reported a 15-thread threshold and was disabled. That threshold does not prevent a manual run with one thread. Automatic scheduling itself was not tested.
+
+Raw event snapshots and run details remain in ignored `.data/`. These are local test conversations, not evidence of production reliability or long-term Learning quality.
+
+## Regressions found and fixed
+
+1. The SDK catalog names `copilotkit_load_skill` and `copilotkit_read_skill_file`. The original custom name did not match. A failing real-harness regression test now verifies both advertised tools execute against a snapshot.
+2. The parent Git repository ignores `workspace/`, so official file discovery returned no files. The workspace creation script now initializes a separate Git repository. A regression test first reproduced empty discovery, then passed with the fix. Existing-folder replacement remains refused.
 
 ## Latest local checks
 
-`pnpm check` passed with 66 tests and 49 declared skips, plus lint, TypeScript, and build. `node --test example/greet.test.js` passed. The two new cases run the actual coding plugins with a scripted provider; they do not prove real model access.
+`pnpm check` passed: lint, TypeScript, 68 tests, 49 declared persistence-store skips, and build. `node --test example/greet.test.js` passed. `npm test --prefix workspace` passed all 12 model-created tests. `git diff --check` passed.
+
+A fresh copy with no `.env`, `.data`, `.copilotkit`, workspace, or node_modules passed:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm check
+pnpm workspace:create
+node --test workspace/greet.test.js
+```
+
+The fresh install reused the local pnpm package store. pnpm reported skipped dependency build scripts; checks and sample creation still passed. This was a clean app setup check, not a second backend installation.
+
+The guide's dashboard controls were checked in the installed 0.15.0 browser UI. Relative Markdown links and `git diff --check` passed. This standalone repository has no `docs:check` script or Nx targets. No hosted deployment, automatic-scheduler run, multi-user concurrency test, or long-term Learning-quality benchmark was performed.
