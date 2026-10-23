@@ -107,7 +107,7 @@ This uses the configured OpenAI account and requires a published relevant Skill.
 
 ## Evidence and limits
 
-[Verification](docs/VERIFICATION.md) records commands, historical backend runs, and known gaps. Credentials, raw model logs, traces, workspace edits, and runtime databases stay ignored. The server binds to loopback, checks Host/Origin, and gives the same-origin browser a temporary bearer token; provider keys stay on the server.
+[Acceptance audit](docs/IMPROVEMENTS-ACCEPTANCE.md) maps every requested improvement to evidence. [Verification](docs/VERIFICATION.md) records commands, screenshots, backend runs, and limits. Credentials, raw model logs, traces, workspace edits, and runtime databases stay ignored. The server binds to loopback, checks Host/Origin, and gives the same-origin browser a temporary bearer token; provider keys stay on the server.
 
 The starter is not a multi-user service. A model can stop early: check its actual file changes and test results. Large frontend chunks remain a build warning. The CopilotKit Inspector follows the SDK's local-development restrictions.
 

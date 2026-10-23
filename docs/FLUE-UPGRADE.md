@@ -8,7 +8,7 @@ installed Luna Learning, Skill publication, browser ingestion without restart,
 and restore/reapply checks. See [the verification record](VERIFICATION.md#installed-luna-learning-and-automatic-refresh).
 The final Learning suite passed 324 tests; two opt-in live tests were also run.
 The subsequent smoke-fixture-only commit adapts the pinned SDK harness and adds
-a system-prompt regression; ten fixture tests pass. CI for that commit is pending.
+a system-prompt regression; ten fixture tests pass. The shared end-to-end smoke for that commit passed.
 
 ## Investigation log (historical)
 

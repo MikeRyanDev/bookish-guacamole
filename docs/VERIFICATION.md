@@ -63,8 +63,8 @@ then reapplied for continued starter use. Recovery remains
 
 Intelligence changes are staged in [draft PR #2041](https://github.com/CopilotKit/Intelligence/pull/2041).
 The app-api image smoke passes. A pinned shared smoke fixture needed a Flue 2
-result-tool/prompt-role update; its ten tests pass locally and the updated CI run
-is pending. This is a temporary branch image, not a released Intelligence version.
+result-tool/prompt-role update; its ten tests and all five actual runtime phases pass locally. The updated
+shared end-to-end smoke passed on PR head `1f8e6dc28`. This is a temporary branch image, not a released Intelligence version.
 
 ## Verified on 2026-10-22
 

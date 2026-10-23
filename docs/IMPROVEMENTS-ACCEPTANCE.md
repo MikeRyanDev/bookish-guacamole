@@ -27,5 +27,4 @@ with `LIVE_MODEL=1 LIVE_LEARNING=1`.
 [Verification record](VERIFICATION.md) contains IDs, commands, screenshots, and
 limits. [Temporary image procedure](TEMPORARY-INTELLIGENCE.md) covers restoring
 CLI images and removing the workaround. [Intelligence draft PR #2041](https://github.com/CopilotKit/Intelligence/pull/2041)
-remains staged for review and release; shared CI status is reported separately
-from the completed local starter checks.
+remains staged for review and release; the shared end-to-end smoke passed on head `1f8e6dc28`. Broader shared CI remains separate from the completed starter checks.
