@@ -1,0 +1,16 @@
+{
+  "before": {
+    "sampledFrames": 121,
+    "maxDisabledSessionRows": 19,
+    "minimumSessionRowOpacity": 0.48,
+    "sidebarReplacements": 0,
+    "unrelatedFileAndSkillRequests": 6
+  },
+  "after": {
+    "sampledFrames": 121,
+    "maxDisabledSessionRows": 0,
+    "minimumSessionRowOpacity": 1.0,
+    "sidebarReplacements": 0,
+    "unrelatedFileAndSkillRequests": 0
+  }
+}

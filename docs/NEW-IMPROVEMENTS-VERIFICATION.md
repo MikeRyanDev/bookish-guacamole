@@ -1,5 +1,7 @@
 # NEW improvements proof
 
+Follow-up: [thread flicker trace and fix](THREAD-FLICKER-VERIFICATION.md) covers the remaining replay-induced dimming and brief progress labels.
+
 Verified locally on 2026-10-23 with GPT-6 Luna and the CLI-installed Intelligence stack using the temporary branch image documented in [the recovery guide](TEMPORARY-INTELLIGENCE.md). This record covers the NEW section of the user-owned `IMPROVEMENTS.md`, including its added React guidance replacement.
 
 ## What changed

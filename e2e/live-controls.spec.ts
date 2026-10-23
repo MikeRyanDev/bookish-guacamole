@@ -66,7 +66,11 @@ test("stopping a streaming Luna run records cancellation in Intelligence", async
   await expect(page.locator(".message.assistant .markdown").last()).not.toBeEmpty({
     timeout: 45000,
   });
+  await expect(page.getByRole("button", { name: "Change workspace" })).toBeDisabled();
+  await expect(page.locator('.session-row[aria-disabled="true"]').first()).toBeVisible();
   await page.getByRole("button", { name: "Stop run" }).click();
+  await expect(page.getByRole("button", { name: "Change workspace" })).toBeEnabled();
+  await expect(page.locator('.session-row[aria-disabled="true"]')).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Stop run" })).toHaveCount(0);
   const threadId = new URL(page.url()).searchParams.get("thread")!;
   const intelligence = backend();

@@ -14,6 +14,7 @@ import remarkGfm from "remark-gfm";
 import { IconButton } from "./icon-button";
 import { ToolCall } from "./tool-call";
 import { Permission } from "./tool-approval";
+import { PendingStatus } from "./pending-status";
 import { VirtualTranscript } from "./virtual-transcript";
 
 type ConversationProps = {
@@ -30,7 +31,7 @@ export function Conversation(props: ConversationProps) {
     runtimeAgentId: props.runtimeAgentId,
     threadId: props.threadId,
   });
-  return isReady ? <ActiveConversation {...props} /> : <p role="status">Connecting…</p>;
+  return isReady ? <ActiveConversation {...props} /> : <PendingStatus>Connecting…</PendingStatus>;
 }
 /** Renders the SDK transcript without a second message store. */
 function ActiveConversation({
@@ -46,7 +47,10 @@ function ActiveConversation({
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState("");
   const [error, setError] = useState("");
-  const [connecting, setConnecting] = useState(false);
+  // Replay uses the SDK's running flag too; it must not lock or dim the workspace.
+  const [connecting, setConnecting] = useState(existing);
+  const running = agent.isRunning && !connecting;
+  const wasRunning = useRef(false);
   const input = useRef<HTMLTextAreaElement>(null);
   const connected = useRef(false);
   const renderToolCall = useRenderToolCall();
@@ -80,14 +84,15 @@ function ActiveConversation({
         setError("Could not restore this session. Reload to retry.");
       })
       .finally(() => setConnecting(false));
-  }, [agent, copilotkit, existing, isReady]);
+  }, [agent, agent.isRunning, copilotkit, existing, isReady]);
   useEffect(() => {
-    onBusyChange(agent.isRunning);
-    if (!agent.isRunning) {
+    onBusyChange(running);
+    if (wasRunning.current && !running) {
       queryClient.invalidateQueries({ queryKey: ["files"] });
       queryClient.invalidateQueries({ queryKey: ["skills"] });
     }
-  }, [agent.isRunning, onBusyChange, queryClient]);
+    wasRunning.current = running;
+  }, [running, onBusyChange, queryClient]);
   async function send() {
     if (!draft.trim() || !isReady || agent.isRunning || agent.pendingInterrupts.length) return;
     const content = draft.trim();
@@ -137,11 +142,7 @@ function ActiveConversation({
         }
         footer={
           <>
-            {connecting && (
-              <p role="status" className="muted">
-                Restoring session…
-              </p>
-            )}
+            {connecting && <PendingStatus>Restoring session…</PendingStatus>}
             {permission}
             {error && (
               <div role="alert" className="error-banner">
@@ -216,13 +217,15 @@ function ActiveConversation({
           <span className="muted">
             {agent.pendingInterrupts.length
               ? "Approval required"
-              : agent.isRunning
-                ? "Working…"
-                : !isReady
-                  ? "Connecting…"
-                  : "⌘ Enter"}
+              : connecting
+                ? ""
+                : running
+                  ? "Working…"
+                  : !isReady
+                    ? "Connecting…"
+                    : "⌘ Enter"}
           </span>
-          {agent.isRunning ? (
+          {running ? (
             <IconButton label="Stop run" onClick={() => agent.abortRun()}>
               <Square size={15} />
             </IconButton>
