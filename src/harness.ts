@@ -1,6 +1,7 @@
 import {
   formatSkillCatalog,
   loadSkill,
+  readSkillFile,
   SkillRegistry,
 } from '@copilotkit/runtime/internal/learned-skills';
 import type { CopilotKitIntelligence } from '@copilotkit/runtime/v2';
@@ -39,11 +40,18 @@ export function createCodingHarness(options: {
         inputSchema: z.object({}),
       }).server(async () => formatSkillCatalog(await skills.acquireSnapshot())),
       toolDefinition({
-        name: 'load_learned_skill',
+        name: 'copilotkit_load_skill',
         description: 'Read a published skill before applying its instructions.',
         inputSchema: z.object({ name: z.string() }),
       }).server(async ({ name }) =>
         loadSkill(await skills.acquireSnapshot(), name),
+      ),
+      toolDefinition({
+        name: 'copilotkit_read_skill_file',
+        description: 'Read a supporting text file listed by a loaded Skill.',
+        inputSchema: z.object({ name: z.string(), path: z.string() }),
+      }).server(async ({ name, path }) =>
+        readSkillFile(await skills.acquireSnapshot(), name, path),
       ),
     ],
     plugins: () => [
