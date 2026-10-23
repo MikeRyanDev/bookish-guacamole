@@ -39,8 +39,8 @@ test("named workspaces isolate real files and conversations and retain identity 
       }),
     ).toHaveCount(0);
     await expect(
-      page.getByRole("navigation", { name: "Conversation history" }).getByRole("button"),
-    ).toHaveCount(1);
+      page.getByRole("navigation", { name: "Conversation history" }).getByRole("link"),
+    ).toHaveCount(0);
     await page
       .getByRole("textbox", { name: "Message your coding agent" })
       .fill(
@@ -68,8 +68,8 @@ test("named workspaces isolate real files and conversations and retain identity 
   await page.getByRole("button", { name: `Open ${first.name}`, exact: true }).click();
   await expect(page.getByRole("button", { name: "alpha.txt", exact: true })).toBeVisible();
   await expect(
-    page.getByRole("navigation", { name: "Conversation history" }).getByRole("button"),
-  ).toHaveCount(2);
+    page.getByRole("navigation", { name: "Conversation history" }).getByRole("link"),
+  ).toHaveCount(1);
   await page.goto(first.url);
   await expect(page.locator(".message.assistant .markdown").last()).toContainText(
     "ALPHA_WORKSPACE_ONLY",

@@ -4,9 +4,12 @@ import { VirtualTranscript } from "../../web/src/components/virtual-transcript";
 import "../../web/src/styles.css";
 import "@fontsource-variable/plus-jakarta-sans";
 import "@fontsource-variable/spline-sans-mono";
+import { Permission } from "../../web/src/components/tool-approval";
 import { ToolCall } from "../../web/src/components/tool-call";
 
 function Fixture() {
+  const [decision, setDecision] = useState("");
+  const [attempts, setAttempts] = useState(0);
   const [items, setItems] = useState(() =>
     Array.from({ length: 1000 }, (_, i) => ({
       id: `message-${i}`,
@@ -14,6 +17,50 @@ function Fixture() {
       lines: (i % 5) + 1,
     })),
   );
+  const approval = new URLSearchParams(location.search).get("approval");
+  if (approval) {
+    const name = approval === "patch" ? "patch" : "bash";
+    const args =
+      name === "patch"
+        ? {
+            patch:
+              "*** Begin Patch\n*** Update File: src/greet.ts\n@@\n-return name;\n+return name.trim();\n*** End Patch",
+          }
+        : { command: "npm test -- --runInBand" };
+    return (
+      <main style={{ maxWidth: 760, margin: "24px auto", padding: 20 }}>
+        <Permission
+          interrupt={{
+            id: "approval-test",
+            reason: "approval",
+            metadata: { "tanstack:interruptPayload": { toolCallId: "call-test" } },
+          }}
+          messages={[
+            {
+              id: "proposal",
+              role: "assistant",
+              toolCalls: [
+                {
+                  id: "call-test",
+                  type: "function",
+                  function: { name, arguments: JSON.stringify(args) },
+                },
+              ],
+            },
+          ]}
+          resolve={async (answer) => {
+            await new Promise((resolve) => setTimeout(resolve, 150));
+            if (new URLSearchParams(location.search).has("fail") && attempts === 0) {
+              setAttempts(1);
+              throw new Error("Fixture network failure");
+            }
+            setDecision(String(answer));
+          }}
+        />
+        <output aria-label="Decision">{decision}</output>
+      </main>
+    );
+  }
   if (new URLSearchParams(location.search).has("tools"))
     return (
       <main style={{ maxWidth: 760, margin: "24px auto", padding: 20 }}>

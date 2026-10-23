@@ -39,3 +39,19 @@ test("long transcripts render a bounded window, follow streaming, and preserve r
   await expect.poll(() => distanceFromEnd(transcript)).toBeLessThan(5);
   await expect(transcript.locator("article").last()).toContainText("Message 1001");
 });
+
+test("jump control stays circular while hovered and keyboard focused", async ({ page }) => {
+  await page.goto("http://127.0.0.1:4174");
+  const transcript = page.getByLabel("Conversation transcript");
+  await expect(transcript.locator("article").last()).toContainText("Message 999");
+  await transcript.hover();
+  await page.mouse.wheel(0, -900);
+  const jump = page.getByRole("button", { name: "Jump to latest" });
+  await expect(jump).toBeVisible();
+  await jump.hover();
+  await expect(jump).toHaveCSS("border-radius", "50%");
+  await jump.focus();
+  await expect(jump).toHaveCSS("border-radius", "50%");
+  await page.keyboard.press("Enter");
+  await expect.poll(() => distanceFromEnd(transcript)).toBeLessThan(5);
+});

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   CopilotKit,
@@ -28,8 +29,12 @@ import { WorkspaceSwitcher } from "./components/workspace-switcher";
 
 /** Bootstraps a single local v2 provider after loading the ephemeral runtime session. */
 export function Workspace() {
-  const selection = workspaceRoute.useSearch();
-  const config = useQuery(configQuery(selection.workspace));
+  const workspace = workspaceRoute.useSearch({ select: (search) => search.workspace });
+  const config = useQuery(configQuery(workspace));
+  const headers = useMemo(
+    () => ({ authorization: `Bearer ${config.data?.token ?? ""}` }),
+    [config.data?.token],
+  );
   if (config.isPending)
     return (
       <main className="boot" role="status">
@@ -56,7 +61,7 @@ export function Workspace() {
       key={config.data.workspaceId}
       enableInspector={true}
       runtimeUrl={config.data.runtimeUrl}
-      headers={{ authorization: `Bearer ${config.data.token}` }}
+      headers={headers}
       agentId={config.data.agentId}
     >
       <Shell key={config.data.workspaceId} config={config.data} />
@@ -208,30 +213,30 @@ function Shell({ config }: { config: AppConfig }) {
               <button onClick={threads.refetchThreads}>Retry</button>
             </div>
           )}
-          {!search.thread && (
-            <button className="session-row selected">
-              <MessageSquare size={15} />
-              <span>New session</span>
-            </button>
-          )}
           {threads.threads
             .filter((thread) =>
               (thread.name ?? thread.id).toLowerCase().includes(filter.toLowerCase()),
             )
             .map((thread) => (
-              <button
+              <Link
+                from="/"
+                to="/"
+                search={(previous) => ({ ...previous, thread: thread.id })}
                 key={thread.id}
                 className={`session-row ${thread.id === threadId ? "selected" : ""}`}
-                disabled={busy && thread.id !== threadId}
+                aria-disabled={busy && thread.id !== threadId}
                 aria-current={thread.id === threadId ? "page" : undefined}
-                onClick={() => {
+                onClick={(event) => {
+                  if (busy && thread.id !== threadId) {
+                    event.preventDefault();
+                    return;
+                  }
                   if (compact) setSidebar(false);
-                  return navigate({ search: (previous) => ({ ...previous, thread: thread.id }) });
                 }}
               >
                 <MessageSquare size={15} />
                 <span>{thread.name ?? "Untitled session"}</span>
-              </button>
+              </Link>
             ))}
           {threads.hasMoreThreads && (
             <button disabled={threads.isFetchingMoreThreads} onClick={threads.fetchMoreThreads}>

@@ -15,7 +15,7 @@
     "start": "NODE_ENV=production node --env-file=.env dist/server/server.mjs",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
-    "skills:sync": "intent install --map",
+    "skills:sync": "node scripts/sync-skills.mjs",
     "skills:list": "intent list",
     "test:e2e": "playwright test",
     "learning:config": "node --env-file=.env scripts/write-learning-config.mjs",

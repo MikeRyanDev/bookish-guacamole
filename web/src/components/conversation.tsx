@@ -6,73 +6,16 @@ import {
   useDefaultRenderTool,
   useRenderToolCall,
   contentToText,
-  type Message,
-  type InterruptRenderProps,
 } from "@copilotkit/react-core/v2";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowUp, Square, Terminal, ShieldCheck, Copy, ChevronRight } from "lucide-react";
+import { ArrowUp, Square, Terminal, Copy, ChevronRight } from "lucide-react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { IconButton } from "./icon-button";
 import { ToolCall } from "./tool-call";
+import { Permission } from "./tool-approval";
 import { VirtualTranscript } from "./virtual-transcript";
 
-/** Displays exactly the tool arguments the user is being asked to approve. */
-function Permission({
-  interrupt,
-  resolve,
-  messages,
-}: InterruptRenderProps & { messages: Message[] }) {
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-  const payload = interrupt?.metadata?.["tanstack:interruptPayload"];
-  const id =
-    typeof payload === "object" && payload !== null && "toolCallId" in payload
-      ? payload.toolCallId
-      : undefined;
-  const call = messages
-    .flatMap((message) => (message.role === "assistant" ? (message.toolCalls ?? []) : []))
-    .find((tool) => tool.id === id);
-  async function decide(answer: "once" | "reject") {
-    setBusy(true);
-    setError("");
-    try {
-      await resolve(answer, interrupt?.id);
-    } catch {
-      setError("Could not submit this decision. Try again.");
-      setBusy(false);
-    }
-  }
-  return (
-    <section className="permission" aria-label="Permission request">
-      <header>
-        <ShieldCheck size={16} />
-        <strong>{call?.function.name ?? "Permission required"}</strong>
-      </header>
-      <pre>{call?.function.arguments ?? interrupt?.message}</pre>
-      {error && <p role="alert">{error}</p>}
-      <footer>
-        <button
-          disabled={busy}
-          onClick={() => {
-            decide("reject");
-          }}
-        >
-          Reject
-        </button>
-        <button
-          className="primary"
-          disabled={busy}
-          onClick={() => {
-            decide("once");
-          }}
-        >
-          Allow once
-        </button>
-      </footer>
-    </section>
-  );
-}
 type ConversationProps = {
   threadId: string;
   runtimeAgentId: string;

@@ -1,4 +1,12 @@
-import { Terminal, Check, ChevronRight, FileCode, FileDiff, CircleAlert } from "lucide-react";
+import {
+  Terminal,
+  Check,
+  ChevronRight,
+  FileCode,
+  FileDiff,
+  CircleAlert,
+  ShieldCheck,
+} from "lucide-react";
 
 /** Reads complete tool arguments; partial streaming JSON stays available in the raw view. */
 function argumentsOf(value: string): Record<string, unknown> {
@@ -104,11 +112,13 @@ export function ToolCall({
   args,
   result,
   running,
+  awaitingApproval = false,
 }: {
   name: string;
   args: string;
   result?: string;
   running: boolean;
+  awaitingApproval?: boolean;
 }) {
   const parameters = argumentsOf(args);
   const output = outputText(result);
@@ -129,17 +139,19 @@ export function ToolCall({
   const failed =
     (exitCode !== undefined && Number(exitCode) !== 0) ||
     Boolean(output && /^\s*(?:Error:|\{"error":)/.test(output));
-  const status = failed
-    ? exitCode
-      ? `Exit ${exitCode}`
-      : "Error"
-    : output !== undefined
+  const status = awaitingApproval
+    ? "Approval required"
+    : failed
       ? exitCode
         ? `Exit ${exitCode}`
-        : "Result received"
-      : running
-        ? "Running"
-        : "No result";
+        : "Error"
+      : output !== undefined
+        ? exitCode
+          ? `Exit ${exitCode}`
+          : "Result received"
+        : running
+          ? "Running"
+          : "No result";
   const Icon =
     name === "read_file" ? FileCode : patch || name === "write_file" ? FileDiff : Terminal;
   const detailed = Boolean(command || patch || name === "read_file");
@@ -172,7 +184,9 @@ export function ToolCall({
           </span>
         )}
         <span className="tool-status" title={status}>
-          {failed ? (
+          {awaitingApproval ? (
+            <ShieldCheck size={14} />
+          ) : failed ? (
             <CircleAlert size={14} />
           ) : running && output === undefined ? (
             <span className="spinner" />
@@ -192,6 +206,9 @@ export function ToolCall({
       )}
       {patch && <Patch patch={patch} />}
       {name === "read_file" && output !== undefined && <FileContents content={output} />}
+      {awaitingApproval && name === "write_file" && typeof parameters.content === "string" && (
+        <FileContents content={parameters.content} />
+      )}
       {name !== "read_file" && output !== undefined && (
         <details className="tool-result" open={failed || undefined}>
           <summary>{failed ? "Error output" : "Output"}</summary>

@@ -1130,3 +1130,110 @@ summary {
     gap: 0;
   }
 }
+
+/* Keep the hit area and its hover/focus surface circular, including the inner button. */
+.jump-latest .icon-button {
+  border-radius: 50%;
+}
+.session-row {
+  text-decoration: none;
+  color: var(--text);
+}
+.session-row[aria-disabled="true"] {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.permission {
+  border-color: var(--control);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg);
+  box-shadow: 0 2px 12px #00000008;
+}
+.permission .approval-heading {
+  padding: 10px 12px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  font-size: 11px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--line);
+}
+.permission .tool-call {
+  border: 0;
+  margin: 0;
+  border-radius: 0;
+}
+.permission .tool-header {
+  padding: 10px 12px;
+}
+.permission .tool-status {
+  color: var(--accent);
+}
+.permission footer {
+  border-top: 1px solid var(--line);
+  align-items: center;
+  padding: 10px 12px;
+}
+.approval-scope {
+  margin-right: auto;
+  color: var(--muted);
+  font-size: 11px;
+}
+.permission > [role="alert"] {
+  margin: 10px 12px;
+}
+
+/* Motion explains local state changes; transcript rows never animate on virtual remount. */
+@keyframes surface-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes jump-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 4px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+.permission,
+dialog[open] {
+  animation: surface-enter 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.jump-latest {
+  animation: jump-enter 140ms ease-out;
+}
+.workspace:not(.hide-inspector) > .inspector,
+.workspace:not(.hide-sidebar) > .sessions {
+  animation: surface-enter 160ms ease-out;
+}
+.icon-button {
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    transform 120ms ease;
+}
+.icon-button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.composer {
+  transition: border-color 140ms ease;
+}
+.session-row {
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+.session-row:hover:not(.selected):not([aria-disabled="true"]) {
+  background: var(--accent-bg);
+}

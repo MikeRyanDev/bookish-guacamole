@@ -19,9 +19,12 @@ test("Luna loads a learned Skill, executes approved tests, and restores without 
   for (let attempt = 0; attempt < 150; attempt++) {
     const permission = page.getByRole("region", { name: "Permission request" });
     if (await permission.isVisible()) {
-      const args = await permission.locator("pre").innerText();
-      const parsed = JSON.parse(args);
-      expect(parsed.command).toMatch(/^npm test$/);
+      await expect(permission.locator(".shell-command code")).toHaveText("npm test");
+      if (approvals === 0)
+        await page.screenshot({
+          path: "docs/proof/live-bash-approval.png",
+          animations: "disabled",
+        });
       await permission.getByRole("button", { name: "Allow once" }).click();
       approvals++;
     }

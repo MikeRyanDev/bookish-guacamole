@@ -1,17 +1,17 @@
 # Agent guidance sources
 
-Read root `AGENTS.md` first. Run `pnpm skills:sync` after a dependency update and review its diff. `pnpm skills:list` shows the package-shipped skills actually available; a dependency name alone does not mean it ships guidance.
+Read root [AGENTS.md](../AGENTS.md) first. Run `pnpm skills:sync` after a dependency update and review its diff. `pnpm skills:list` shows package-shipped skills actually available.
 
-| Guidance                              | Source                                                                                          | How it is loaded                                                              |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| TanStack AI, persistence, Router      | Exact npm packages in `pnpm-lock.yaml`                                                          | TanStack Intent mappings in root AGENTS.md                                    |
-| React performance                     | Vercel's official `vercel-labs/agent-skills`, commit `063bee94c3f4df8453406c830b0a7df0f2860278` | `.agents/skills/vercel-react-best-practices/SKILL.md` and relevant rule files |
-| Starter React state and accessibility | Repository-specific guidance                                                                    | `.agents/skills/starter-react/SKILL.md`                                       |
-| Runtime, event bridge, Learning       | Repository-specific guidance                                                                    | `.agents/skills/starter-runtime/SKILL.md`                                     |
-| Tests and delivery evidence           | Repository-specific guidance                                                                    | `.agents/skills/starter-verification/SKILL.md`                                |
+| Guidance                                    | Source                                              | How it is loaded                                                        |
+| ------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------- |
+| TanStack AI, persistence, Router            | Exact npm packages in `pnpm-lock.yaml`              | TanStack Intent mappings in root AGENTS.md                              |
+| React state, effects, identity, performance | React's official documentation, reviewed 2026-10-23 | [React practices](../.agents/skills/react-practices/SKILL.md)           |
+| Starter React ownership and accessibility   | Repository-specific guidance                        | [Starter React](../.agents/skills/starter-react/SKILL.md)               |
+| Runtime, event bridge, Learning             | Repository-specific guidance                        | [Starter runtime](../.agents/skills/starter-runtime/SKILL.md)           |
+| Tests and delivery evidence                 | Repository-specific guidance                        | [Starter verification](../.agents/skills/starter-verification/SKILL.md) |
 
-Vercel's skill is vendored with its MIT license declaration and source metadata; trailing whitespace is normalized. Its Next.js and SWR examples are conditional guidance, not dependencies to add here. This SPA uses Vite, TanStack Router/Query, and CopilotKit v2. Do not let generic chat examples replace the required CopilotKit transcript path.
+The React practices skill is authored for this repository; it is not an official React-distributed skill. It uses [Thinking in React](https://react.dev/learn/thinking-in-react), [effect guidance](https://react.dev/learn/you-might-not-need-an-effect), and [Rules of React](https://react.dev/reference/rules), with links for deeper performance and identity work. The concise rules fit this SPA without adding framework or hosting assumptions.
 
-[Why Vercel publishes React skills](https://vercel.com/blog/introducing-react-best-practices) and [TanStack Intent's package-based model](https://tanstack.com/intent/latest/docs/overview) explain the source choices. No deployment, account-management, or unrelated skill collections are installed.
+[Intent](https://tanstack.com/intent/latest/docs/overview) loads package-specific guidance from pinned dependencies. `scripts/sync-skills.mjs` runs Intent and keeps the first sentence of each generated description; commands and skill IDs remain intact. Full package guidance stays available through the mapped load command. Local instructions outside the generated block remain unchanged.
 
-These development skills guide the coding assistant modifying the starter. They are distinct from runtime learned Skills stored and published by Intelligence.
+These development skills guide assistants editing the starter. They are distinct from runtime learned Skills stored and published by Intelligence. CopilotKit v2 owns the transcript; generic chat examples do not replace it.

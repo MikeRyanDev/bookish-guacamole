@@ -1,5 +1,7 @@
 # Verification record
 
+For the latest approval, routing, motion, README, and React guidance checks, see [NEW improvements proof](NEW-IMPROVEMENTS-VERIFICATION.md). The records below describe earlier runtime validation.
+
 ## Current browser delivery checks
 
 The older terminal/GPT-4.1 evidence below is historical. It does not prove the new browser or Luna Learning path.
