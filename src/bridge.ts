@@ -1,23 +1,21 @@
-import { randomBytes } from 'node:crypto';
-import {
-  type BaseEvent,
-  EventType,
-  HttpAgent,
-  type RunAgentInput,
-} from '@ag-ui/client';
-import type { AnyHarness, HarnessHost } from '@tanstack/ai-harness';
-import { createHarnessHandler } from '@tanstack/ai-harness/server';
-import { Observable } from 'rxjs';
+import { randomBytes } from "node:crypto";
+import { type BaseEvent, EventType, HttpAgent, type RunAgentInput } from "@ag-ui/client";
+import type { AnyHarness, HarnessHost } from "@tanstack/ai-harness";
+import { createHarnessHandler } from "@tanstack/ai-harness/server";
+import { Observable } from "rxjs";
 
 type Handler = (request: Request) => Promise<Response>;
 
 /** Bridges the private TanStack transport into the Intelligence agent contract. */
 class HarnessAgent extends HttpAgent {
-  constructor(private readonly handler: Handler) {
+  constructor(
+    private readonly handler: Handler,
+    agentId = "coder",
+  ) {
     super({
-      agentId: 'coder',
-      description: 'TanStack coding harness backed by CopilotKit Intelligence',
-      url: 'http://harness.internal/run',
+      agentId,
+      description: "TanStack coding harness backed by CopilotKit Intelligence",
+      url: "http://harness.internal/run",
       fetch: (url, init) => handler(new Request(url, init)),
     });
   }
@@ -34,16 +32,20 @@ class HarnessAgent extends HttpAgent {
       });
       const subscription = super.run(input).subscribe({
         next: (event) => {
-          if (event.type === 'RUN_STARTED') return;
-          if (event.type === 'RUN_FINISHED') {
+          if (event.type === "RUN_STARTED") return;
+          // Harness pause snapshots use private user/result IDs. Intelligence
+          // owns the outer transcript and already has every streamed message.
+          // Merging these snapshots would duplicate tool rows on each resume.
+          if (event.type === "MESSAGES_SNAPSHOT") return;
+          if (event.type === "RUN_FINISHED") {
             finish = { ...event, threadId: input.threadId, runId: input.runId };
             return;
           }
-          if (event.type === 'RUN_ERROR') {
+          if (event.type === "RUN_ERROR") {
             terminal = true;
             finish = undefined;
           }
-          if (event.type === 'RUN_ERROR') {
+          if (event.type === "RUN_ERROR") {
             subscriber.next({
               ...event,
               threadId: input.threadId,
@@ -58,9 +60,7 @@ class HarnessAgent extends HttpAgent {
             subscriber.next(finish);
           }
           if (!terminal)
-            subscriber.error(
-              new Error('Harness stream ended without a terminal event'),
-            );
+            subscriber.error(new Error("Harness stream ended without a terminal event"));
           else subscriber.complete();
         },
       });
@@ -70,24 +70,20 @@ class HarnessAgent extends HttpAgent {
           // A dropped SSE reader does not stop a TanStack operation by itself.
           // Intelligence's stop tears down this subscription, so cancel that run.
           this.handler(
-            new Request('http://harness.internal/control', {
-              method: 'POST',
-              headers: { 'content-type': 'application/json' },
+            new Request("http://harness.internal/control", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
               body: JSON.stringify({
                 threadId: input.threadId,
-                input: { op: 'cancel', operationId: input.runId },
+                input: { op: "cancel", operationId: input.runId },
               }),
             }),
           )
             .then((response) => {
               if (!response.ok)
-                console.error(
-                  `Harness cancellation failed: HTTP ${response.status}`,
-                );
+                console.error(`Harness cancellation failed: HTTP ${response.status}`);
             })
-            .catch((error) =>
-              console.error('Harness cancellation failed', error),
-            );
+            .catch((error) => console.error("Harness cancellation failed", error));
         }
       };
     });
@@ -95,7 +91,7 @@ class HarnessAgent extends HttpAgent {
 
   /** Runtime clones retain the bridge and share the harness host's sessions. */
   override clone(): HarnessAgent {
-    const clone = new HarnessAgent(this.handler);
+    const clone = new HarnessAgent(this.handler, this.agentId);
     clone.threadId = this.threadId;
     clone.messages = structuredClone(this.messages);
     clone.state = structuredClone(this.state);
@@ -110,11 +106,12 @@ class HarnessAgent extends HttpAgent {
 export function createHarnessAgent(options: {
   host: HarnessHost;
   harness: AnyHarness;
+  agentId?: string;
 }): HttpAgent {
   const handler = createHarnessHandler({
     ...options,
     openAccess: true,
-    media: { secret: randomBytes(32).toString('hex') },
+    media: { secret: randomBytes(32).toString("hex") },
   });
-  return new HarnessAgent(handler);
+  return new HarnessAgent(handler, options.agentId);
 }

@@ -1,4 +1,4 @@
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync } from "node:sqlite";
 import {
   LogConflictError,
   type LogEntry,
@@ -8,7 +8,7 @@ import {
   type OfferedInput,
   type OrphanedLog,
   OwnershipLostError,
-} from '@tanstack/ai-persistence';
+} from "@tanstack/ai-persistence";
 
 interface StoredLog {
   epoch: number;
@@ -35,7 +35,7 @@ function empty(epoch = 0): StoredLog {
     expires: 0,
     released: false,
     deleted: false,
-    harness: '',
+    harness: "",
     affinity: null,
     wake: null,
     head: 0,
@@ -54,22 +54,12 @@ function copy<T>(value: T): T {
 
 /** Refuses invalid lease durations before changing ownership. */
 function positive(value: number): void {
-  if (!(value > 0)) throw new RangeError('Lease duration must be positive');
+  if (!(value > 0)) throw new RangeError("Lease duration must be positive");
 }
 
 /** Checks the writer fence before inspecting append positions or payloads. */
-function fence(
-  row: StoredLog,
-  logId: string,
-  epoch: number,
-  owned = false,
-): void {
-  if (
-    row.deleted ||
-    row.epoch !== epoch ||
-    row.released ||
-    (owned && !row.ownerId)
-  ) {
+function fence(row: StoredLog, logId: string, epoch: number, owned = false): void {
+  if (row.deleted || row.epoch !== epoch || row.released || (owned && !row.ownerId)) {
     throw new OwnershipLostError(logId, epoch);
   }
 }
@@ -92,17 +82,13 @@ export function openLogStore(path: string): {
 
   /** Reads a detached record; callers never receive mutable database state. */
   function read(logId: string): StoredLog {
-    const row = db
-      .prepare('SELECT value FROM harness_logs WHERE id = ?')
-      .get(logId);
+    const row = db.prepare("SELECT value FROM harness_logs WHERE id = ?").get(logId);
     return row ? (JSON.parse(String(row.value)) as StoredLog) : empty();
   }
   /** A stale host affinity does not prevent recovery by another host. */
   function pinned(row: StoredLog, affinity?: string): boolean {
     if (!row.affinity || row.affinity === affinity) return false;
-    const host = db
-      .prepare('SELECT expires FROM harness_hosts WHERE id = ?')
-      .get(row.affinity);
+    const host = db.prepare("SELECT expires FROM harness_hosts WHERE id = ?").get(row.affinity);
     return host !== undefined && Number(host.expires) > Date.now();
   }
   /** Listener failures must never turn a committed write into a failed append. */
@@ -111,7 +97,7 @@ export function openLogStore(path: string): {
       try {
         listener();
       } catch (error) {
-        console.error('Harness log listener failed', error);
+        console.error("Harness log listener failed", error);
       }
     }
   }
@@ -121,20 +107,20 @@ export function openLogStore(path: string): {
     update: (row: StoredLog) => T,
     announce: boolean | ((result: T) => boolean) = false,
   ): T {
-    db.exec('BEGIN IMMEDIATE');
+    db.exec("BEGIN IMMEDIATE");
     let result: T;
     let changed = false;
     try {
       const row = read(logId);
       result = update(row);
-      changed = typeof announce === 'function' ? announce(result) : announce;
+      changed = typeof announce === "function" ? announce(result) : announce;
       if (changed) row.revision += 1;
       db.prepare(
-        'INSERT INTO harness_logs VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET value=excluded.value',
+        "INSERT INTO harness_logs VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET value=excluded.value",
       ).run(logId, JSON.stringify(row));
-      db.exec('COMMIT');
+      db.exec("COMMIT");
     } catch (error) {
-      db.exec('ROLLBACK');
+      db.exec("ROLLBACK");
       throw error;
     }
     if (changed) notify(logId);
@@ -150,12 +136,8 @@ export function openLogStore(path: string): {
           fence(row, logId, epoch);
           if (seq !== row.head + 1) throw new LogConflictError(logId, seq);
           for (const id of consumes) {
-            if (
-              !row.offers.some(
-                (offer) => offer.inputId === id && !offer.consumed,
-              )
-            ) {
-              throw new TypeError('Input is not pending');
+            if (!row.offers.some((offer) => offer.inputId === id && !offer.consumed)) {
+              throw new TypeError("Input is not pending");
             }
           }
           const entries = records.map((record, index) => ({
@@ -191,7 +173,7 @@ export function openLogStore(path: string): {
         try {
           watch();
         } catch (error) {
-          console.error('Harness log listener failed', error);
+          console.error("Harness log listener failed", error);
         }
       }, 10);
       timer.unref();
@@ -206,19 +188,13 @@ export function openLogStore(path: string): {
       positive(ttlMs);
       return change(logId, (row) => {
         if (pinned(row, affinity)) return null;
-        if (
-          row.ownerId &&
-          !row.released &&
-          row.expires > Date.now() &&
-          row.ownerId !== ownerId
-        )
+        if (row.ownerId && !row.released && row.expires > Date.now() && row.ownerId !== ownerId)
           return null;
         if (row.ownerId === ownerId && !row.released && !row.deleted) {
           row.expires = Date.now() + ttlMs;
           return { epoch: row.epoch };
         }
-        const expired =
-          !!row.ownerId && !row.released && row.expires <= Date.now();
+        const expired = !!row.ownerId && !row.released && row.expires <= Date.now();
         row.epoch += 1;
         row.ownerId = ownerId;
         row.expires = Date.now() + ttlMs;
@@ -232,12 +208,7 @@ export function openLogStore(path: string): {
     renewOwnership: async ({ logId, ownerId, epoch, ttlMs }) => {
       positive(ttlMs);
       return change(logId, (row) => {
-        if (
-          row.deleted ||
-          row.released ||
-          row.ownerId !== ownerId ||
-          row.epoch !== epoch
-        )
+        if (row.deleted || row.released || row.ownerId !== ownerId || row.epoch !== epoch)
           return false;
         row.expires = Date.now() + ttlMs;
         return true;
@@ -245,10 +216,9 @@ export function openLogStore(path: string): {
     },
     releaseOwnership: async ({ logId, ownerId, epoch, wakeInMs }) => {
       if (wakeInMs !== undefined && wakeInMs < 0)
-        throw new RangeError('Wake delay must not be negative');
+        throw new RangeError("Wake delay must not be negative");
       change(logId, (row) => {
-        if (row.deleted || row.ownerId !== ownerId || row.epoch !== epoch)
-          return;
+        if (row.deleted || row.ownerId !== ownerId || row.epoch !== epoch) return;
         row.released = true;
         row.wake = wakeInMs === undefined ? null : Date.now() + wakeInMs;
       });
@@ -262,38 +232,28 @@ export function openLogStore(path: string): {
     markHostAlive: async ({ hostId, ttlMs }) => {
       positive(ttlMs);
       db.prepare(
-        'INSERT INTO harness_hosts VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET expires=excluded.expires',
+        "INSERT INTO harness_hosts VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET expires=excluded.expires",
       ).run(hostId, Date.now() + ttlMs);
     },
     listLogsWithoutOwner: async ({ limit, harnesses, affinity }) => {
       const found: (OrphanedLog & { due: number })[] = [];
-      for (const entry of db
-        .prepare('SELECT id, value FROM harness_logs')
-        .all()) {
+      for (const entry of db.prepare("SELECT id, value FROM harness_logs").all()) {
         const row = JSON.parse(String(entry.value)) as StoredLog;
-        if (
-          row.deleted ||
-          (harnesses && !harnesses.includes(row.harness)) ||
-          pinned(row, affinity)
-        )
+        if (row.deleted || (harnesses && !harnesses.includes(row.harness)) || pinned(row, affinity))
           continue;
         const live = row.ownerId && !row.released && row.expires > Date.now();
         if (live) continue;
         const pending = row.offers.find((offer) => !offer.consumed);
-        let reason: OrphanedLog['reason'];
+        let reason: OrphanedLog["reason"];
         let due: number;
         if (row.ownerId && !row.released && row.expires <= Date.now()) {
-          reason = 'expired';
+          reason = "expired";
           due = row.expires;
         } else if (pending) {
-          reason = 'offered';
+          reason = "offered";
           due = pending.offeredAt;
-        } else if (
-          row.released &&
-          row.wake !== null &&
-          row.wake <= Date.now()
-        ) {
-          reason = 'wake';
+        } else if (row.released && row.wake !== null && row.wake <= Date.now()) {
+          reason = "wake";
           due = row.wake;
         } else continue;
         found.push({
@@ -312,15 +272,13 @@ export function openLogStore(path: string): {
       change(
         logId,
         (row) => {
-          if (row.deleted) return 'deleted';
+          if (row.deleted) return "deleted";
           const value = copy(record);
-          const previous = row.offers.find(
-            (offer) => offer.inputId === inputId,
-          );
+          const previous = row.offers.find((offer) => offer.inputId === inputId);
           if (previous)
             return JSON.stringify(previous.record) === JSON.stringify(value)
-              ? 'duplicate'
-              : 'conflict';
+              ? "duplicate"
+              : "conflict";
           if (!row.ownerId && !row.offers.length) row.harness = harness;
           row.offers.push({
             inputId,
@@ -328,9 +286,9 @@ export function openLogStore(path: string): {
             offeredAt: Date.now(),
             consumed: false,
           });
-          return 'offered';
+          return "offered";
         },
-        (result) => result === 'offered',
+        (result) => result === "offered",
       ),
     listOfferedInputs: async ({ logId }) =>
       read(logId)
@@ -341,7 +299,7 @@ export function openLogStore(path: string): {
       change(logId, (row) => {
         fence(row, logId, epoch, true);
         if (seq < row.first - 1 || seq > row.head)
-          throw new RangeError('Snapshot position is outside the log');
+          throw new RangeError("Snapshot position is outside the log");
         row.snapshot = copy({ seq, version, state });
       });
     },
@@ -349,7 +307,7 @@ export function openLogStore(path: string): {
       change(logId, (row) => {
         fence(row, logId, epoch, true);
         if (!row.snapshot || row.snapshot.seq < beforeSeq - 1)
-          throw new RangeError('Snapshot does not cover truncation');
+          throw new RangeError("Snapshot does not cover truncation");
         row.entries = row.entries.filter((entry) => entry.seq >= beforeSeq);
         row.first = Math.max(row.first, beforeSeq);
       });
