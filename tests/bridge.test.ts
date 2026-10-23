@@ -3,12 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import {
-  type AnyTextAdapter,
-  EventType,
-  type StreamChunk,
-  toolDefinition,
-} from '@tanstack/ai';
+import { type AnyTextAdapter, EventType, toolDefinition } from '@tanstack/ai';
 import {
   createHarnessHost,
   defineHarness,
@@ -23,6 +18,7 @@ import { afterEach, expect, test, vi } from 'vitest';
 import { z } from 'zod';
 import { createHarnessAgent } from '../src/bridge.js';
 import { openLogStore } from '../src/log-store.js';
+import { answer, scriptedAdapter } from './provider.js';
 
 const hosts: ReturnType<typeof createHarnessHost>[] = [];
 afterEach(async () => {
@@ -35,61 +31,11 @@ function fixture(
   tools: Parameters<typeof defineHarness>[0]['tools'] = [],
   persistence: HarnessPersistence = memoryPersistence(),
 ) {
-  const adapter: AnyTextAdapter = {
-    kind: 'text',
-    name: 'test',
-    model: 'test',
-    '~types': {
-      providerOptions: {},
-      inputModalities: ['text'],
-      messageMetadataByModality: {
-        text: undefined,
-        image: undefined,
-        audio: undefined,
-        video: undefined,
-        document: undefined,
-      },
-      toolCapabilities: [],
-      toolCallMetadata: undefined,
-      systemPromptMetadata: undefined as never,
-    },
-    chatStream: reply,
-    structuredOutput: async () => ({ data: {}, rawText: '{}' }),
-  };
+  const adapter = scriptedAdapter(reply);
   const host = createHarnessHost({ persistence });
   hosts.push(host);
   const harness = defineHarness({ name: 'test/bridge', adapter, tools });
   return createHarnessAgent({ host, harness });
-}
-
-/** Makes a complete model response with IDs different from the caller's IDs. */
-async function* answer(): AsyncIterable<StreamChunk> {
-  const messageId = randomUUID();
-  yield {
-    type: EventType.RUN_STARTED,
-    threadId: 'provider-thread',
-    runId: 'provider-run',
-    timestamp: Date.now(),
-  };
-  yield {
-    type: EventType.TEXT_MESSAGE_START,
-    messageId,
-    role: 'assistant',
-    timestamp: Date.now(),
-  };
-  yield {
-    type: EventType.TEXT_MESSAGE_CONTENT,
-    messageId,
-    delta: 'Ready to code.',
-    timestamp: Date.now(),
-  };
-  yield { type: EventType.TEXT_MESSAGE_END, messageId, timestamp: Date.now() };
-  yield {
-    type: EventType.RUN_FINISHED,
-    threadId: 'provider-thread',
-    runId: 'provider-run',
-    timestamp: Date.now(),
-  };
 }
 
 /** An outer Intelligence run, passed unchanged into the bridge. */

@@ -173,7 +173,7 @@ The complete real Learning run, candidate review, and later Skill use are still 
 
 Set `CODING_WORKSPACE` to a trusted project folder. The default is `workspace/`. Keep `.data/` with this starter: it holds the harness execution log.
 
-Change the model in `src/harness.ts`. The initial model is `gpt-4.1`. The Learning model has separate configuration in the CLI-installed stack.
+Change the model in `src/harness.ts`, or pass a TanStack text adapter to `createCodingHarness`. The initial model is `gpt-4.1`. The Learning model has separate configuration in the CLI-installed stack.
 
 The runtime binds only to loopback and uses a random bearer token for each app process. The terminal sends that token. The local user ID is `local-developer`; this starter is for one developer.
 

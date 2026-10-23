@@ -12,6 +12,7 @@
 | Approval | The public agent API pauses before execution and resumes the tool exactly once |
 | Cancellation | Unsubscription cancels the underlying model through the harness control API |
 | Restart | A new SQLite connection and new host restore the previous model context |
+| Coding permissions | Official write_file plugin resumes across a host restart; once writes the file, reject leaves it absent |
 | SQLite contract | 56 applicable official persistence checks pass; 49 checks for absent stores skip |
 | Sample workspace | Node's built-in test runner passes the greeting test |
 
@@ -44,3 +45,7 @@ A CLI device login is waiting for the developer. The CLI also requires personal 
 5. Use that Skill in a later coding task. Review setup from a clean checkout and finish the guide with actual evidence.
 
 No real-model, local-backend, or Learning success is claimed yet.
+
+## Latest local checks
+
+`pnpm check` passed with 66 tests and 49 declared skips, plus lint, TypeScript, and build. `node --test example/greet.test.js` passed. The two new cases run the actual coding plugins with a scripted provider; they do not prove real model access.

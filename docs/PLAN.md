@@ -45,3 +45,11 @@ Build a local coding agent on the published TanStack AI harness, backed by the C
 3. Run the Learning proof with enough distinct conversations and a later Skill-assisted task.
 4. Review error paths, credential handling, clean installation, and the guide against the final behavior.
 5. Record evidence at each checkpoint. Declare the starter complete only after the full acceptance audit passes.
+
+## Review 3: coding permissions and restart
+
+The prior turn made progress: it created and checked the starter. The installer still reports no stacks, and the existing device-login process remains live. No new installer or login was started.
+
+Two additional tests exercise the official file-edit and permission plugins with SQLite. Both approvals survive a host restart. An approval writes the requested file; a rejection leaves it absent. The harness now accepts a typed adapter override for other providers and deterministic tests.
+
+The next acceptance gate remains real local installation and Learning. Sign-in, personal terms acceptance, and a model key are still required.

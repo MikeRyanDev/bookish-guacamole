@@ -4,7 +4,7 @@ import {
   SkillRegistry,
 } from '@copilotkit/runtime/internal/learned-skills';
 import type { CopilotKitIntelligence } from '@copilotkit/runtime/v2';
-import { toolDefinition } from '@tanstack/ai';
+import { type AnyTextAdapter, toolDefinition } from '@tanstack/ai';
 import { defineHarness } from '@tanstack/ai-harness';
 import { permissions, todos } from '@tanstack/ai-harness/plugins';
 import { workspaceTools } from '@tanstack/ai-harness/plugins/coding';
@@ -17,6 +17,7 @@ export function createCodingHarness(options: {
   root: string;
   intelligence: CopilotKitIntelligence;
   containerId: string;
+  adapter?: AnyTextAdapter;
 }) {
   const skills = new SkillRegistry({
     client: options.intelligence,
@@ -24,7 +25,7 @@ export function createCodingHarness(options: {
   });
   return defineHarness({
     name: 'starter/coder',
-    adapter: openaiText('gpt-4.1'),
+    adapter: options.adapter ?? openaiText('gpt-4.1'),
     systemPrompts: [
       'You are a coding agent. Read the project instructions and inspect relevant files before editing.',
       'List learned skills at the start of each task. Load and apply relevant skills, citing their names. If no skills are available, say so and continue with the task.',
