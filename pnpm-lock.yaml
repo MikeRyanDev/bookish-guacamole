@@ -38,6 +38,9 @@ importers:
       '@tanstack/ai-persistence':
         specifier: 1.0.0
         version: 1.0.0(@tanstack/ai@1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7))(vitest@4.1.10(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)))
+      '@tanstack/ai-skills':
+        specifier: 1.0.0
+        version: 1.0.0(@tanstack/ai-harness@0.1.0(@opentelemetry/api@1.10.0)(@tanstack/ai-persistence@1.0.0(@tanstack/ai@1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7))(vitest@4.1.10(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))))(@tanstack/ai@1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7)))(@tanstack/ai@1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7))(vitest@4.1.10(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)))(zod@4.6.7)
       '@tanstack/react-query':
         specifier: 5.104.5
         version: 5.104.5(@types/react@19.3.0)(react@19.3.1)
@@ -1705,6 +1708,20 @@ packages:
       '@tanstack/ai': ^1.0.0
       vitest: ^4.1.10
     peerDependenciesMeta:
+      vitest:
+        optional: true
+
+  '@tanstack/ai-skills@1.0.0':
+    resolution: {integrity: sha512-DPId6O55a7KgOBW0kPfCndV5l8NHA2Dg2iLjT7XZT+L+OXoX4JiZSH6jn8FcyljVyIcoSHPbaqoY40IsQ8OdvQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@tanstack/ai': ^1.0.0
+      '@tanstack/ai-harness': ^0.1.0
+      vitest: ^4.1.10
+      zod: ^3.0.0 || ^4.0.0
+    peerDependenciesMeta:
+      '@tanstack/ai-harness':
+        optional: true
       vitest:
         optional: true
 
@@ -6679,6 +6696,14 @@ snapshots:
       '@tanstack/ai': 1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7)
       '@tanstack/ai-utils': 1.0.0
     optionalDependencies:
+      vitest: 4.1.10(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+
+  '@tanstack/ai-skills@1.0.0(@tanstack/ai-harness@0.1.0(@opentelemetry/api@1.10.0)(@tanstack/ai-persistence@1.0.0(@tanstack/ai@1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7))(vitest@4.1.10(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))))(@tanstack/ai@1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7)))(@tanstack/ai@1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7))(vitest@4.1.10(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)))(zod@4.6.7)':
+    dependencies:
+      '@tanstack/ai': 1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7)
+      zod: 4.6.7
+    optionalDependencies:
+      '@tanstack/ai-harness': 0.1.0(@opentelemetry/api@1.10.0)(@tanstack/ai-persistence@1.0.0(@tanstack/ai@1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7))(vitest@4.1.10(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))))(@tanstack/ai@1.0.0(@opentelemetry/api@1.10.0)(zod@4.6.7))
       vitest: 4.1.10(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   '@tanstack/ai-utils@1.0.0': {}

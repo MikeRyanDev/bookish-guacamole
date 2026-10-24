@@ -2,13 +2,13 @@
 
 Read root [AGENTS.md](../AGENTS.md) first. Run `pnpm skills:sync` after a dependency update and review its diff. `pnpm skills:list` shows package-shipped skills actually available.
 
-| Guidance                                    | Source                                              | How it is loaded                                                        |
-| ------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------- |
-| TanStack AI, persistence, Router            | Exact npm packages in `pnpm-lock.yaml`              | TanStack Intent mappings in root AGENTS.md                              |
-| React state, effects, identity, performance | React's official documentation, reviewed 2026-10-23 | [React practices](../.agents/skills/react-practices/SKILL.md)           |
-| Starter React ownership and accessibility   | Repository-specific guidance                        | [Starter React](../.agents/skills/starter-react/SKILL.md)               |
-| Runtime, event bridge, Learning             | Repository-specific guidance                        | [Starter runtime](../.agents/skills/starter-runtime/SKILL.md)           |
-| Tests and delivery evidence                 | Repository-specific guidance                        | [Starter verification](../.agents/skills/starter-verification/SKILL.md) |
+| Guidance                                          | Source                                              | How it is loaded                                                        |
+| ------------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------- |
+| TanStack AI, portable skills, persistence, Router | Exact npm packages in `pnpm-lock.yaml`              | TanStack Intent mappings in root AGENTS.md                              |
+| React state, effects, identity, performance       | React's official documentation, reviewed 2026-10-23 | [React practices](../.agents/skills/react-practices/SKILL.md)           |
+| Starter React ownership and accessibility         | Repository-specific guidance                        | [Starter React](../.agents/skills/starter-react/SKILL.md)               |
+| Runtime, event bridge, Learning                   | Repository-specific guidance                        | [Starter runtime](../.agents/skills/starter-runtime/SKILL.md)           |
+| Tests and delivery evidence                       | Repository-specific guidance                        | [Starter verification](../.agents/skills/starter-verification/SKILL.md) |
 
 The React practices skill is authored for this repository; it is not an official React-distributed skill. It uses [Thinking in React](https://react.dev/learn/thinking-in-react), [effect guidance](https://react.dev/learn/you-might-not-need-an-effect), and [Rules of React](https://react.dev/reference/rules), with links for deeper performance and identity work. The concise rules fit this SPA without adding framework or hosting assumptions.
 
