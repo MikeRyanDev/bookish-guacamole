@@ -120,3 +120,23 @@ test("plain-folder search crosses 10,000 entries without a silent traversal cuto
     await rm(root, { recursive: true, force: true });
   }
 }, 30_000);
+
+test("Git discovery treats unusual directory and file names as literal paths", async () => {
+  const root = await mkdtemp(join(tmpdir(), "browse-literal-"));
+  try {
+    await promisify(execFile)("git", ["init", "-q", root]);
+    await mkdir(join(root, ":(glob)dir"));
+    await writeFile(join(root, ":(glob)dir/a[1]\nfile.ts"), "literal");
+    expect((await browseWorkspace(root, {})).entries).toEqual([
+      { path: ":(glob)dir", kind: "directory" },
+    ]);
+    expect((await browseWorkspace(root, { directory: ":(glob)dir" })).entries).toEqual([
+      { path: ":(glob)dir/a[1]\nfile.ts", kind: "file" },
+    ]);
+    expect((await searchWorkspace(root, { query: "a[1]" })).files).toEqual([
+      ":(glob)dir/a[1]\nfile.ts",
+    ]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});

@@ -114,7 +114,11 @@ export function WorkspaceFileBrowser({
         }));
       });
     else if (request.cursor === undefined && data?.entries.length === 0)
-      control = action(request.path, "empty", "No files in this folder.");
+      control = action(
+        request.path,
+        "empty",
+        request.path ? "No files in this folder." : "No files yet.",
+      );
     if (control) nodes.set(control.path, control);
   });
   for (const node of nodes.values()) {

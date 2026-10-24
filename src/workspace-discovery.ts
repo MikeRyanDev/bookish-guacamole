@@ -234,13 +234,9 @@ export async function browseWorkspace(
       throw error;
   }
   if (context && entries.size) {
-    const input = [...entries.keys()].join("\0") + "\0";
-    for await (const ignored of gitRecords(
-      root,
-      ["check-ignore", "--stdin", "-z"],
-      signal,
-      input,
-    )) {
+    const input = [...entries.keys()].map((path) => `./${path}`).join("\0") + "\0";
+    for await (const record of gitRecords(root, ["check-ignore", "--stdin", "-z"], signal, input)) {
+      const ignored = record.startsWith("./") ? record.slice(2) : record;
       const entry = entries.get(ignored);
       if (entry?.kind === "directory") {
         // Forced tracked files can exist below an otherwise ignored directory.

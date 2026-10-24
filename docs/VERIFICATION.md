@@ -1,5 +1,36 @@
 # Verification record
 
+## Lazy file discovery — 2026-10-23
+
+Implemented in `feat/lazy-files`, based on main `9bdbe42`. [API contract and performance limits](FILE-DISCOVERY.md).
+Directory pages contain at most 100 immediate children. Whole-workspace path search has no total file or traversal cutoff.
+The browser no longer requests a flat workspace listing. The compatibility endpoint also no longer truncates its response.
+
+| Command                                                                                                                                                                                                            | Result                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm check`                                                                                                                                                                                                       | Passed lint, design source checks, types, 134 tests, and builds; 49 declared unsupported-store skips. The existing large-chunk warning remains.                            |
+| `node --test example/greet.test.js`                                                                                                                                                                                | One passed.                                                                                                                                                                |
+| `CI=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4195 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4216 pnpm test:e2e`                                                                                                       | 65 passed, eight opt-in checks skipped, two failed. One failure came from missing sample files in the isolated checkout. The other caught changed empty-workspace wording. |
+| `CI=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4195 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4216 pnpm test:e2e e2e/lazy-files.spec.ts e2e/html-tree-integration.spec.ts e2e/workspace.spec.ts e2e/workspaces.spec.ts` | Seven passed after restoring the empty-state wording and preparing the ignored sample workspace. Includes both previous failures and the final API implementation.         |
+| `.agents/skills/impeccable/scripts/impeccable detect --json web/src/components/workspace-file-browser.tsx web/src/components/file-tree.tsx web/src/components/inspector.tsx`                                       | No findings. The full browser run also passed the rendered design matrix.                                                                                                  |
+| `git diff --check`                                                                                                                                                                                                 | Passed.                                                                                                                                                                    |
+
+The new API tests first failed because the requested discovery contract was absent. A later literal-path regression failed before the Git argument fix.
+Current tests page through all 1,105 files in Git and plain folders. Plain-folder search also crosses more than 10,000 entries.
+They cover private paths, symlinks, ignores, forced tracked files, deleted files, aggregate Git status, cursor scope, cancellation, and unusual filenames.
+HTTP tests cover authentication, origin checks, workspace isolation, and invalid input.
+
+The real browser test uses a disposable local workspace. It verifies lazy expansion, every directory and search page, unopened-folder matches, preview reload, and refresh after insertion.
+Fixture tests cover keyboard navigation, local retries, obsolete searches, restored expansion, and bounded mounted rows.
+The final captures load the actual fonts and show the visible inspector at both widths. The isolated test browser dismisses its SDK promotion before capture.
+Axe passes in both themes at 1440px and 390px. Earlier capture attempts raced responsive visibility and animation; the final test opens the pane explicitly and uses reduced motion.
+
+[Light desktop](proof/lazy-files-light-1440.png), [dark desktop](proof/lazy-files-dark-1440.png), [light mobile](proof/lazy-files-light-390.png), [dark mobile](proof/lazy-files-dark-390.png).
+
+No new model or Learning run was started. Browser tests used the existing CLI-installed backend through the isolated app.
+The full suite emitted existing ResizeObserver warnings in tool virtualization tests while their assertions passed.
+Impeccable reported existing sidecar and build-path metadata drift; this delivery did not modify that metadata.
+
 ## Tool presentation polish — 2026-10-23
 
 Implemented in `design/tool-polish`, based on main `2f37bcc`. [Study, rejected concept, and final captures](design/tool-polish/STUDY.md).

@@ -93,6 +93,12 @@ test("real directory pages and workspace search reach files beyond 1,000 without
     await expect(
       page.getByRole("button", { name: "Open many/file-1104.ts", exact: true }),
     ).toBeVisible();
+    const dismissInspector = page.getByRole("button", {
+      name: "Hide Inspector for a day",
+      exact: true,
+    });
+    if (await dismissInspector.isVisible()) await dismissInspector.click();
+    await page.evaluate(() => document.fonts.ready);
     for (const theme of ["light", "dark"]) {
       if ((await page.locator("html").getAttribute("data-theme")) !== theme)
         await page
@@ -125,7 +131,7 @@ test("real directory pages and workspace search reach files beyond 1,000 without
           true,
         );
         await page.screenshot({
-          path: `.data/lazy-files-${theme}-${width}.png`,
+          path: `docs/proof/lazy-files-${theme}-${width}.png`,
           animations: "disabled",
         });
       }
