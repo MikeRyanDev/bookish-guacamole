@@ -514,3 +514,27 @@ Removed the automatic resume note and the repeated status/round line from the go
 `pnpm check` passed (155 tests, 47 declared skips). `node --test example/greet.test.js` passed.
 With `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274`, `pnpm exec playwright test e2e/composer.spec.ts e2e/goals.spec.ts --output .data/goal-copy-results` passed nine tests with one opt-in skip, and `pnpm design:browser --output .data/goal-copy-design-results` passed.
 A direct mobile preview check confirmed that the removed text is absent and pending-approval buttons remain disabled. `git diff --check` passed.
+
+## Composer model labels and popover anchors
+
+Model choices show the configured label followed by a muted parenthesized provider on the same line.
+The toolbar omits the Model prefix. Goal, permission, and model disclosures open eight pixels above
+their own controls, with viewport edge clamping. Existing selection and dismissal behavior remains.
+
+The model-label regression failed before the fix. Browser geometry assertions cover all three
+disclosures at 1440px and 390px. Keyboard selection, Escape focus return, outside dismissal,
+transcript position, and axe checks pass. Light desktop and dark mobile captures were visually
+reviewed; this is a small presentation fix, not an independently reviewed workflow redesign.
+
+Validation in the isolated worktree:
+- `pnpm check`: passed lint, design check, TypeScript, 171 tests, and build; 47 declared skips.
+- `node --test example/greet.test.js`: one passed.
+- `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4374 pnpm exec playwright test e2e/models.spec.ts e2e/composer.spec.ts e2e/composer-discovery.spec.ts e2e/permissions.spec.ts --output .data/composer-final`: 27 passed.
+- `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4474 pnpm design:browser`: passed all 28 rendered scans.
+- `git diff --check`: passed.
+
+The initial concurrent browser runs shared an output directory and lost a trace artifact; the
+isolated rerun passed. The outside-dismissal test now clicks the gutter because the corrected
+popover overlaps the textarea. Fixture runs emitted ResizeObserver loop warnings.
+No backend, model execution, dependency preview, or shared deployment changed; live-model and
+backend persistence tests were not rerun for this presentation change.

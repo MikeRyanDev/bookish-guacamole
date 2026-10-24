@@ -28,23 +28,25 @@ test("model choices persist per thread and failed saves retain the previous choi
   const select = async (index: number) => {
     await page.getByRole("link", { name: names[index]!, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`thread=${ids[index]}`));
-    await expect(page.getByRole("button", { name: /^Model: / })).toBeEnabled();
+    await expect(
+      page.locator("button").filter({ has: page.locator(".model-selector-label") }),
+    ).toBeEnabled();
   };
   await select(0);
-  await page.getByRole("button", { name: `Model: ${first.label}` }).click();
+  await page.getByRole("button", { name: `${first.label}` }).click();
   await page.getByRole("radio", { name: new RegExp(second.label) }).click();
   await expect(page.getByRole("radio", { name: new RegExp(second.label) })).toBeChecked();
   await page.keyboard.press("Escape");
   await page.reload();
-  await expect(page.getByRole("button", { name: `Model: ${second.label}` })).toBeVisible();
+  await expect(page.getByRole("button", { name: `${second.label}` })).toBeVisible();
   await select(1);
-  await expect(page.getByRole("button", { name: `Model: ${first.label}` })).toBeVisible();
+  await expect(page.getByRole("button", { name: `${first.label}` })).toBeVisible();
   await page.route("**/api/model?**", async (route) => {
     if (route.request().method() !== "PUT") return route.continue();
     await route.fulfill({ status: 409, json: { error: "Model save failed. Try again." } });
   });
   await page.getByRole("textbox", { name: "Message your coding agent" }).fill("Keep my draft");
-  await page.getByRole("button", { name: `Model: ${first.label}` }).click();
+  await page.getByRole("button", { name: `${first.label}` }).click();
   await page.getByRole("radio", { name: new RegExp(second.label) }).click();
   await expect(page.getByRole("alert")).toHaveText("Model save failed. Try again.");
   await expect(page.getByRole("radio", { name: new RegExp(first.label) })).toBeChecked();
@@ -54,5 +56,5 @@ test("model choices persist per thread and failed saves retain the previous choi
   );
   await page.unroute("**/api/model?**");
   await select(0);
-  await expect(page.getByRole("button", { name: `Model: ${second.label}` })).toBeVisible();
+  await expect(page.getByRole("button", { name: `${second.label}` })).toBeVisible();
 });

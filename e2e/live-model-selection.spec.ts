@@ -12,7 +12,10 @@ test("two configured models execute tools in the same persisted conversation", a
   expect(config.models.length).toBeGreaterThanOrEqual(2);
   await page.goto("/");
   for (const [index, model] of config.models.slice(0, 2).entries()) {
-    await page.getByRole("button", { name: /^Model: / }).click();
+    await page
+      .locator("button")
+      .filter({ has: page.locator(".model-selector-label") })
+      .click();
     await page.getByRole("radio", { name: new RegExp(model.label) }).click();
     await expect(page.getByRole("radio", { name: new RegExp(model.label) })).toBeChecked();
     await page.keyboard.press("Escape");
@@ -27,13 +30,13 @@ test("two configured models execute tools in the same persisted conversation", a
     const approval = page.getByRole("region", { name: "Permission request" });
     await expect(approval).toBeVisible({ timeout: 60000 });
     await expect(approval.locator(".shell-command code")).toHaveText("npm test");
-    await expect(page.getByRole("button", { name: `Model: ${model.label}` })).toBeDisabled();
+    await expect(page.getByRole("button", { name: `${model.label}` })).toBeDisabled();
     await approval.getByRole("button", { name: "Approve Once" }).click();
     await expect(approval).toBeHidden({ timeout: 60000 });
     await expect(page.getByRole("button", { name: "Stop run" })).toBeHidden({ timeout: 60000 });
     await expect(page.locator(".message.assistant .markdown").last()).toContainText(/pass/i);
     await page.reload();
-    await expect(page.getByRole("button", { name: `Model: ${model.label}` })).toBeEnabled();
+    await expect(page.getByRole("button", { name: `${model.label}` })).toBeEnabled();
   }
   const threadId = new URL(page.url()).searchParams.get("thread")!;
   process.loadEnvFile(".env");

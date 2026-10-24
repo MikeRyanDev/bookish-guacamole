@@ -31,9 +31,7 @@ export function ModelSelector({
       <ComposerPopover
         title="Choose model"
         disabled={disabled}
-        label={
-          <span className="model-selector-label">Model: {choice?.label ?? "Choose model"}</span>
-        }
+        label={<span className="model-selector-label">{choice?.label ?? "Choose model"}</span>}
       >
         <fieldset className="approval-mode-list" disabled={disabled}>
           <legend className="sr-only">Model for this conversation</legend>
@@ -46,10 +44,7 @@ export function ModelSelector({
                 onChange={() => onSelect(model.id)}
               />
               <span>
-                <strong>{model.label}</strong>
-                <span>
-                  {model.provider} · {model.model}
-                </span>
+                <strong>{model.label}</strong> <span className="muted">({model.provider})</span>
               </span>
             </label>
           ))}

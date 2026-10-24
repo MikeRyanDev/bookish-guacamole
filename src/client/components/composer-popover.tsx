@@ -21,7 +21,7 @@ export function ComposerPopover({
   const position = useCallback(() => {
     if (!trigger.current || !panel.current) return;
     const rect = trigger.current.getBoundingClientRect();
-    const anchorTop = trigger.current.closest("form")?.getBoundingClientRect().top ?? rect.top;
+    const anchorTop = rect.top;
     const viewport = window.visualViewport;
     const width = viewport?.width ?? innerWidth;
     const top = viewport?.offsetTop ?? 0;

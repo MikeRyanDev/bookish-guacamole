@@ -119,7 +119,8 @@ test("long goal details stay within a short mobile viewport and dismiss outside"
   await page.getByRole("button", { name: "Resume goal" }).scrollIntoViewIfNeeded();
   await expect(page.getByRole("button", { name: "Resume goal" })).toBeInViewport();
   await page.screenshot({ path: ".impeccable/review/short-long-goal.png", fullPage: true });
-  await page.getByRole("textbox", { name: "Message your coding agent" }).click();
+  // The control-anchored panel now overlaps the textarea; dismiss from the outer gutter.
+  await page.mouse.click(2, 470);
   await expect(panel).toBeHidden();
 });
 

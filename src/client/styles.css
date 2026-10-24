@@ -2186,6 +2186,8 @@ dialog[open] {
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.model-choice strong {
-  display: block;
+.model-choice strong,
+.model-choice span span {
+  display: inline;
+  margin-top: 0;
 }

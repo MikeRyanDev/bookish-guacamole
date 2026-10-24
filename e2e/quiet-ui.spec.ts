@@ -6,7 +6,9 @@ for (const theme of ["light", "dark"]) {
     await page.goto("/");
     await expect(page.getByRole("textbox", { name: "Message your coding agent" })).toBeVisible();
     await expect(page.locator("body")).not.toContainText("TanStack AI");
-    await expect(page.getByRole("button", { name: /^Model: / })).toBeVisible();
+    await expect(
+      page.locator("button").filter({ has: page.locator(".model-selector-label") }),
+    ).toBeVisible();
     await expect(page.locator("body")).not.toContainText("coding-lessons");
     await expect(page.getByText("Ready", { exact: true })).toHaveCount(0);
     for (const selector of [
