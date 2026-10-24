@@ -3,6 +3,7 @@ import { type BaseEvent, EventType, HttpAgent, type RunAgentInput } from "@ag-ui
 import type { AnyHarness, HarnessHost } from "@tanstack/ai-harness";
 import { createHarnessHandler } from "@tanstack/ai-harness/server";
 import { Observable } from "rxjs";
+import { withGoalCommands } from "./goals.js";
 
 type Handler = (request: Request) => Promise<Response>;
 
@@ -10,6 +11,7 @@ type Handler = (request: Request) => Promise<Response>;
 class HarnessAgent extends HttpAgent {
   constructor(
     private readonly handler: Handler,
+    private readonly readPlugins: (threadId: string) => Promise<Record<string, unknown>>,
     agentId = "coder",
   ) {
     super({
@@ -55,13 +57,26 @@ class HarnessAgent extends HttpAgent {
         },
         error: (error) => subscriber.error(error),
         complete: () => {
-          if (finish && !terminal) {
-            terminal = true;
-            subscriber.next(finish);
+          if (terminal) {
+            subscriber.complete();
+            return;
           }
-          if (!terminal)
-            subscriber.error(new Error("Harness stream ended without a terminal event"));
-          else subscriber.complete();
+          // The stock per-operation stream omits session plugin state. Publish
+          // the authoritative state before the outer terminal, also on follow-ups.
+          this.readPlugins(input.threadId)
+            .then((plugins) => {
+              if (subscriber.closed) return;
+              subscriber.next({
+                type: EventType.STATE_SNAPSHOT,
+                snapshot: { ...input.state, plugins },
+              });
+              if (finish) {
+                terminal = true;
+                subscriber.next(finish);
+                subscriber.complete();
+              } else subscriber.error(new Error("Harness stream ended without a terminal event"));
+            })
+            .catch((error) => subscriber.error(error));
         },
       });
       return () => {
@@ -91,7 +106,7 @@ class HarnessAgent extends HttpAgent {
 
   /** Runtime clones retain the bridge and share the harness host's sessions. */
   override clone(): HarnessAgent {
-    const clone = new HarnessAgent(this.handler, this.agentId);
+    const clone = new HarnessAgent(this.handler, this.readPlugins, this.agentId);
     clone.threadId = this.threadId;
     clone.messages = structuredClone(this.messages);
     clone.state = structuredClone(this.state);
@@ -113,5 +128,16 @@ export function createHarnessAgent(options: {
     openAccess: true,
     media: { secret: randomBytes(32).toString("hex") },
   });
-  return new HarnessAgent(handler, options.agentId);
+  return new HarnessAgent(
+    withGoalCommands(handler, options.host, options.harness),
+    async (threadId) => {
+      const session = await options.host.open(options.harness, { threadId });
+      try {
+        return session.snapshot().plugins;
+      } finally {
+        await session.close();
+      }
+    },
+    options.agentId,
+  );
 }

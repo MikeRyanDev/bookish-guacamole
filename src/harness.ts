@@ -2,7 +2,7 @@ import { SkillRegistry } from "@copilotkit/runtime/internal/learned-skills";
 import type { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 import { type AnyTextAdapter } from "@tanstack/ai";
 import { defineHarness } from "@tanstack/ai-harness";
-import { permissions, todos } from "@tanstack/ai-harness/plugins";
+import { goal, permissions, todos } from "@tanstack/ai-harness/plugins";
 import { workspaceTools } from "@tanstack/ai-harness/plugins/coding";
 import { projectInstructions } from "@tanstack/ai-harness/plugins/node";
 import { learnedSkills } from "./learned-skills.js";
@@ -39,6 +39,7 @@ export function createCodingHarness(options: {
       projectInstructions({ root: options.root, env: false }),
       permissions({ root: options.root }),
       todos(),
+      goal({ judge: options.adapter ?? createCodingAdapter(), maxRounds: 20 }),
     ],
   });
 }

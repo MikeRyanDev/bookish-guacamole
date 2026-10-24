@@ -7,12 +7,13 @@ import {
   useRenderToolCall,
 } from "@copilotkit/react-core/v2";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowUp, Square, ChevronRight } from "lucide-react";
+import { ArrowUp, Square, ChevronRight, Target } from "lucide-react";
 import { IconButton } from "./icon-button";
 import { ToolCall } from "./tool-call";
 import { Permission, approvalToolCallId } from "./tool-approval";
 import { PendingStatus } from "./pending-status";
 import { TranscriptMessages } from "./transcript-messages";
+import { GoalStatus, goalFromState } from "./goal-status";
 
 type ConversationProps = {
   threadId: string;
@@ -43,6 +44,9 @@ function ActiveConversation({
   const { copilotkit } = useCopilotKit();
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState("");
+  const [goalMode, setGoalMode] = useState(false);
+  const goal = goalFromState(agent.state);
+  const unfinishedGoal = goal?.status === "active" || goal?.status === "paused";
   const [error, setError] = useState("");
   // Replay uses the SDK's running flag too; it must not lock or dim the workspace.
   const [connecting, setConnecting] = useState(existing);
@@ -90,16 +94,46 @@ function ActiveConversation({
     }
     wasRunning.current = running;
   }, [running, onBusyChange, queryClient]);
+  async function goalCommand(action: "resume" | "stop") {
+    if (agent.isRunning || connecting || agent.pendingInterrupts.length) return;
+    setError("");
+    try {
+      await copilotkit.runAgent({ agent, forwardedProps: { starterGoal: { action } } });
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Goal action failed. Try again.");
+    }
+  }
   async function send() {
     if (!draft.trim() || !isReady || agent.isRunning || agent.pendingInterrupts.length) return;
     const content = draft.trim();
+    if (
+      goalMode &&
+      (unfinishedGoal || content.length > 4000 || ["stop", "resume"].includes(content))
+    ) {
+      setError(
+        unfinishedGoal
+          ? "Stop the current goal before starting another."
+          : "Use a descriptive objective of up to 4,000 characters.",
+      );
+      return;
+    }
     setDraft("");
     setError("");
     connected.current = true;
-    agent.addMessage({ id: crypto.randomUUID(), role: "user", content });
+    agent.addMessage({
+      id: crypto.randomUUID(),
+      role: "user",
+      content: goalMode ? `Goal: ${content}` : content,
+    });
     onFirstSend();
     try {
-      await copilotkit.runAgent({ agent });
+      await copilotkit.runAgent({
+        agent,
+        ...(goalMode
+          ? { forwardedProps: { starterGoal: { action: "start", objective: content } } }
+          : {}),
+      });
+      setGoalMode(false);
     } catch (error) {
       setError(error instanceof Error ? error.message : "Run failed.");
     }
@@ -142,6 +176,21 @@ function ActiveConversation({
           </>
         }
       />
+      {goal && (
+        <GoalStatus
+          goal={goal}
+          running={running}
+          disabled={!isReady || connecting}
+          pendingApproval={agent.pendingInterrupts.length > 0}
+          onResume={() => {
+            void goalCommand("resume");
+          }}
+          onStop={() => {
+            if (running) agent.abortRun();
+            else void goalCommand("stop");
+          }}
+        />
+      )}
       <form
         className="composer"
         onSubmit={(event) => {
@@ -150,14 +199,16 @@ function ActiveConversation({
         }}
       >
         <label className="sr-only" htmlFor="message">
-          Message your coding agent
+          {goalMode ? "Goal objective" : "Message your coding agent"}
         </label>
         <textarea
           id="message"
           ref={input}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
-          placeholder="Ask your agent to build something…"
+          placeholder={
+            goalMode ? "What should the agent work toward?" : "Ask your agent to build something…"
+          }
           rows={3}
           onKeyDown={(event) => {
             if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
@@ -166,7 +217,24 @@ function ActiveConversation({
             }
           }}
         />
+        {goalMode && (
+          <p className="goal-hint muted">
+            Keeps working for up to 20 rounds. Pauses for approvals. Completion checks use
+            additional model calls.
+          </p>
+        )}
         <div className="composer-toolbar">
+          <IconButton
+            label={goalMode ? "Switch to message" : "Set a goal"}
+            aria-pressed={goalMode}
+            disabled={unfinishedGoal || running || connecting}
+            onClick={() => {
+              setGoalMode(!goalMode);
+              input.current?.focus();
+            }}
+          >
+            <Target size={16} />
+          </IconButton>
           <span className="muted">
             {agent.pendingInterrupts.length
               ? "Approval required"
@@ -184,7 +252,7 @@ function ActiveConversation({
             </IconButton>
           ) : (
             <IconButton
-              label="Send message"
+              label={goalMode ? "Start goal" : "Send message"}
               className="primary"
               disabled={
                 !draft.trim() || !isReady || connecting || agent.pendingInterrupts.length > 0

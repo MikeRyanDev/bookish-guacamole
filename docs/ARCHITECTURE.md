@@ -89,3 +89,14 @@ OOXML previews use fflate and fast-xml-parser in a worker. Parsing refuses docum
 Fixture tests accept `FILE_VIEWER_FIXTURE_URL` (default `http://127.0.0.1:4174`); browser app tests accept `FILE_VIEWER_APP_URL` (default `http://127.0.0.1:4173`). These are test overrides for isolated worktrees, not runtime configuration. The fixture uses a separate Vite cache to avoid development dependency-cache collisions with the app.
 
 When running two development checkouts, set `PORT` for the second app and `STARTER_HMR_PORT` for its Vite reload WebSocket (for example, `PORT=4193 STARTER_HMR_PORT=24993 pnpm dev`). Without the override, Vite keeps its normal HMR default, 24678. This setting affects local development only.
+
+## Goal execution
+
+The native TanStack `goal` plugin owns objectives, judging, round limits, and
+continuation state. `src/goals.ts` adapts explicit composer commands to the native
+session API. It streams the entire sequence of queued turns through one
+Intelligence run, including plugin state snapshots. The ordinary prompt and
+approval transport stays in place. The bridge preserves outer identities and
+excludes private message snapshots. Stop removes queued work and cancels the
+active native turn. CopilotKit replays the persisted state for the composer.
+See [Goal design and limits](GOALS.md) for the lifecycle and verification contract.

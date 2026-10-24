@@ -82,6 +82,12 @@ then run the tests again and report the actual result.
 Review each approval card before choosing **Allow once** or **Reject**. Consecutive completed tools share a compact activity summary. Expand it to see individual calls, then open a call for its exact evidence. Failed, denied, running, and missing-result calls remain visible outside completed groups. Bash previews show the exact command; patch previews show added and removed lines.
 Use the copy controls for exact payloads and **Raw details** for original arguments. Completed calls start collapsed. Your expansion choices last while the conversation stays open, including when you scroll through a long history. Approval applies only to that tool call. If submitting a decision fails, retry it from the same card.
 
+Use **Set a goal** beside the composer to give the agent a persistent objective.
+Goal mode continues for up to 20 rounds, with an additional model check after each round.
+It pauses for approvals or failures. Resolve the approval, then choose **Resume goal**.
+**Stop goal** stops continuation and cancels active work. The objective and its state survive reload.
+Completion is the agent's assessment; inspect its evidence. [Goal behavior and design](docs/GOALS.md).
+
 Use the stop control to cancel a run. Click a session name to reopen its conversation; browser Back and Forward restore your selection. The transcript follows new output while you are at the bottom. Scroll up to read without being pulled down, then use **Jump to latest** when ready.
 
 The workspace picker opens existing folders or creates named workspaces. Switch, rename, or remove entries there. Removing an entry keeps its files and conversations; opening the same folder restores its identity. Files and sessions stay scoped to the selected workspace.

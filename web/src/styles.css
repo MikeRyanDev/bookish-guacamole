@@ -1812,3 +1812,71 @@ dialog[open] {
     padding-left: 6px;
   }
 }
+/* Goal controls extend the composer without an enclosing card or divider. */
+.goal-status {
+  padding: 8px 24px;
+  font-size: 12px;
+  min-width: 0;
+}
+.goal-status summary {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  cursor: pointer;
+}
+.goal-status summary svg {
+  flex-shrink: 0;
+  align-self: center;
+}
+.goal-objective {
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+.goal-status p {
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+.goal-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.goal-actions .muted {
+  margin-right: auto;
+}
+.goal-actions button {
+  font: inherit;
+  padding: 6px 8px;
+}
+.goal-hint {
+  font-size: 11px;
+  margin: 0 0 8px;
+}
+.composer-toolbar > .muted {
+  margin-right: auto;
+}
+@media (max-width: 600px) {
+  .goal-status {
+    padding-inline: 12px;
+  }
+}
+
+.goal-status {
+  max-height: 30vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.goal-status details:not([open]) .goal-objective {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.goal-status details[open] .goal-chevron {
+  transform: rotate(90deg);
+}
+.goal-hint {
+  padding-inline: 14px;
+}
