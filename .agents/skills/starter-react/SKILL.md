@@ -14,3 +14,5 @@ Use IconButton for named, focus-visible actions. Retain text for permission deci
 For visual design work, also read `../impeccable/SKILL.md`, root `PRODUCT.md`, and root `DESIGN.md`. Preserve the incumbent compact workspace and use `pnpm design:check` plus rendered browser verification.
 
 Start without borders, dividers, or card wrappers. Use spacing and alignment first; add a rule only for a concrete usability need that cannot otherwise be met. Keep keyboard focus visible. Avoid persistent framework branding, model/container metadata, redundant status, and repeated headings. Dark neutral surfaces have only a trace of blue and no green cast; accent colors do not tint the neutral palette.
+
+For new or changed workflows, control meaning, or feature discovery, follow [interaction review](references/interaction-review.md) before implementation and delivery. It requires concrete labels and click outcomes, a fresh task-first usability review, and separate usability, visual, and technical evidence. Styling-only edits retain the existing visual checks.

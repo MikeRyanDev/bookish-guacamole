@@ -170,6 +170,7 @@ Write a failing regression test before behavior fixes. Run `pnpm check`, `node -
 ## Impeccable design tooling
 
 For frontend design, critique, polish, or responsive work, read `.agents/skills/impeccable/SKILL.md` alongside the starter React guidance.
+For new or changed interactions, follow `.agents/skills/starter-react/references/interaction-review.md`: show concrete controls and click outcomes before implementation, then run a fresh task-first usability review before visual finish review. Keep usability, visual, and technical verdicts separate. Passing tests cannot override confusing labels or misleading affordances.
 Read `PRODUCT.md` for product constraints and `DESIGN.md` for the incumbent visual system. The user brief takes priority.
 Default to no borders, dividers, or enclosing cards. Use spacing, alignment, and subtle surface changes first. Add a line only when a specific usability need cannot be met without it; document that reason. Focus indicators and necessary table rules are functional exceptions, not permission to outline panels and controls.
 Keep persistent UI text tied to a task or decision. Do not display framework branding, model/container identifiers, idle status, or repeated headings as decoration. Preserve accessible names, errors, and explicit approval/destructive choices.

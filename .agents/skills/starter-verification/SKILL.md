@@ -10,3 +10,5 @@ Write regression tests for observable changes before the fix. Run `pnpm check` a
 Inspect real light/dark and mobile screenshots, keyboard focus, permission UI, cancellation, reload, error states, and Inspector visibility. Record exact commands and distinguish deterministic tests, fixture tests, and real backend/model proof. Do not claim Learning from configuration alone.
 
 Keep .env, .data, .copilotkit, workspace edits, raw model logs, and browser traces out of Git. Check `git diff --check` and the staged file list. Never enable an image override by default; follow the temporary-image runbook and verify restoration before delivery.
+
+For changed UI workflows, require the separate usability result from [interaction review](../starter-react/references/interaction-review.md). Record discovery and predicted-versus-actual behavior separately from visual review and technical checks. A visual ship verdict, axe result, or passing test suite cannot close a usability finding.

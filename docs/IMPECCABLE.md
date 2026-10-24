@@ -76,6 +76,33 @@ Shell-based edits are not guaranteed to emit an edit hook. Always run the explic
 The source detector uses pattern matching for TSX and CSS. A clean scan does not establish accessibility or visual quality.
 Keep the existing axe, interaction, reduced-motion, and screenshot checks.
 
+## Usability gate
+
+The repository's [interaction review](../.agents/skills/starter-react/references/interaction-review.md) supplements Impeccable for new or changed workflows.
+Before implementation, the agent shows actual labels, entry points, and click outcomes.
+Before delivery, a fresh [usability reviewer](../.agents/skills/starter-react/references/usability-reviewer.md) attempts the user task without the builder's explanation.
+The reviewer records predictions before inspecting behavior or source.
+
+Usability, visual quality, and technical verification have separate verdicts.
+Impeccable's screenshot-based finish review does not replace task discovery or interaction testing.
+A clean detector result cannot establish that a control makes sense.
+Misleading labels and affordances block usability acceptance even when layout and accessibility checks pass.
+
+Root AGENTS.md, starter-react, and starter-verification route agents to this gate.
+These are locally owned workflow instructions, not an automated usability score or a new CI claim.
+The vendored Impeccable skill and agents remain unchanged. Preserve these local references during upgrades.
+
+### Workflow validation
+
+A fresh reviewer evaluated the rejected composer without the builder's rationale or known findings.
+Before seeing behavior, it guessed that Message might open mode choices and that 20 rounds would offer an editable limit.
+After receiving click evidence, it returned `usability: fix` for the unclear entry point and misleading limit control.
+The trial did not submit a goal or verify backend continuation. It validates this regression case, not general review accuracy.
+
+Both changed skills passed the skill validator. Local references, formatting, and `git diff --check` passed.
+`pnpm check` passed with 134 tests and 49 declared skips. `node --test example/greet.test.js` passed.
+No app behavior changed in this tooling update, so browser suites were not rerun.
+
 ## Exceptions and live iteration
 
 The initial installation preserved Plus Jakarta Sans through a font exception.
