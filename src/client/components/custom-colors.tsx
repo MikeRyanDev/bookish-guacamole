@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Check, Plus, X } from "lucide-react";
 import { type Accent } from "../appearance";
 import { fromCmyk, fromHsv, parseHex, toCmyk, toHex, toHsv, type Color } from "../colors";
@@ -27,6 +27,12 @@ export function CustomColors({
 }) {
   const [colors, setColors] = useState(savedColors);
   const [editing, setEditing] = useState(false);
+  const addButton = useRef<HTMLButtonElement>(null);
+  const group = useRef<HTMLDivElement>(null);
+  function closeEditor() {
+    setEditing(false);
+    requestAnimationFrame(() => addButton.current?.focus());
+  }
   const [storageError, setStorageError] = useState(false);
   function save(next: string[]) {
     setColors(next);
@@ -38,10 +44,10 @@ export function CustomColors({
     }
   }
   return (
-    <div className="custom-colors">
+    <div className="custom-colors" ref={group}>
       {colors.length > 0 && (
         <div className="custom-swatch-list" aria-label="Custom colors">
-          {colors.map((color) => (
+          {colors.map((color, index) => (
             <div className="custom-swatch-item" key={color}>
               <button
                 className="custom-swatch checkerboard"
@@ -56,6 +62,18 @@ export function CustomColors({
                 onClick={() => {
                   save(colors.filter((c) => c !== color));
                   if (accent === color) onSelect("moss");
+                  requestAnimationFrame(() => {
+                    if (group.current?.closest("[hidden]")) return;
+                    const swatches =
+                      group.current?.querySelectorAll<HTMLButtonElement>(".custom-swatch");
+                    const next = swatches?.[Math.min(index, swatches.length - 1)];
+                    (
+                      next ??
+                      group.current?.querySelector<HTMLButtonElement>(
+                        ".add-color, .color-actions button",
+                      )
+                    )?.focus();
+                  });
                 }}
               >
                 <X size={12} />
@@ -66,6 +84,7 @@ export function CustomColors({
       )}
       {!editing ? (
         <button
+          ref={addButton}
           className="add-color"
           disabled={colors.length >= 24}
           onClick={() => setEditing(true)}
@@ -75,18 +94,21 @@ export function CustomColors({
       ) : (
         <ColorEditor
           initial={parseHex(accent) ?? parseHex("#7e956f")!}
-          onCancel={() => setEditing(false)}
+          onCancel={closeEditor}
           onAdd={(color) => {
             const hex = toHex(color);
             save([...new Set([...colors, hex])]);
             onSelect(hex as Accent);
-            setEditing(false);
+            closeEditor();
           }}
         />
       )}
-      {colors.length >= 24 && <p className="muted">Remove a custom color to add another.</p>}
+      {colors.length >= 24 && <p className="muted">24 colors saved. Remove one to add another.</p>}
       {storageError && (
-        <p role="status">Colors work for this session. Browser storage is unavailable.</p>
+        <div className="settings-inline-error" role="status">
+          <span>Colors are session-only.</span>
+          <button onClick={() => save(colors)}>Retry colors</button>
+        </div>
       )}
     </div>
   );
@@ -101,6 +123,10 @@ function ColorEditor({
   onAdd: (color: Color) => void;
 }) {
   const id = useId();
+  const firstInput = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    firstInput.current?.focus();
+  }, []);
   const [color, setColor] = useState(initial);
   const [format, setFormat] = useState<Format>("HEX");
   const [draft, setDraft] = useState<string[]>([toHex(initial)]);
@@ -242,14 +268,17 @@ function ColorEditor({
         </div>
       </div>
       <div className="color-entry">
-        <div className="color-preview-row">
+        <div
+          className="color-preview-row"
+          title="Saved color. Interface shades adapt for readable contrast."
+        >
           <span className="color-preview checkerboard">
             <span style={{ background: toHex(color) }} />
           </span>
           <span className="color-value">{toHex(color).toUpperCase()}</span>
         </div>
         <label className="color-format">
-          Color format
+          <span className="sr-only">Color format</span>
           <select
             aria-label="Color format"
             value={format}
@@ -269,6 +298,7 @@ function ColorEditor({
             <label key={`${format}-${label}`} htmlFor={`${id}-${i}`}>
               {label}
               <input
+                ref={i === 0 ? firstInput : undefined}
                 id={`${id}-${i}`}
                 value={draft[i] ?? ""}
                 inputMode={format === "HEX" ? "text" : "decimal"}
@@ -297,11 +327,8 @@ function ColorEditor({
             onChange={(e) => update({ ...color, a: Number(e.target.value) / 100 })}
           />
         </label>
-        {format === "CMYK" && <p className="muted">CMYK is an approximate screen conversion.</p>}
+        {format === "CMYK" && <p className="muted">Screen approximation.</p>}
       </div>
-      <p className="color-note muted">
-        Your color is saved exactly. Interface shades adapt for readable contrast.
-      </p>
       <div className="color-actions">
         <button onClick={onCancel}>Cancel</button>
         <button className="primary" disabled={!valid} onClick={() => onAdd(color)}>

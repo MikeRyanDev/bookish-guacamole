@@ -16,7 +16,7 @@ export function AppearanceSettings({
   return (
     <section className="appearance-settings" aria-label="Appearance">
       <fieldset className="appearance-mode">
-        <legend>Appearance</legend>
+        <legend>Theme</legend>
         <div className="mode-options">
           {(["light", "dark", "system"] as const).map((mode) => (
             <label key={mode}>

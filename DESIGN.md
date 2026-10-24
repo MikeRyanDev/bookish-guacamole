@@ -249,7 +249,7 @@ The desktop workspace has session navigation, a central transcript and anchored 
 Its grid is 224px / flexible (minimum 320px) / 290px beneath a 48px header. At 1100px, side panes narrow to 200px and 250px.
 At 850px, panes occupy one shared content area and navigation selects the visible pane; icon hit areas grow from 32px to 40px.
 When the development Inspector is present, the header reserves 72px at its end for the floating badge. Workspace names truncate before app controls overlap it.
-The conversation uses compact grouped spacing and contained scrolling. Tool headers wrap below 600px. Eight preset accent choices form one row, then two four-item rows below 480px. The inline custom-color editor places numeric entry below its color field on narrow screens; Settings scrolls when needed.
+The conversation uses compact grouped spacing and contained scrolling. Tool headers wrap below 600px. Settings keeps its header and left category rail fixed while only the selected pane scrolls. The dialog is at most 740px wide and 580px tall, with a 154px rail. At 600px and below, the rail narrows to 104px while retaining icons and labels; the dialog leaves 8px viewport margins and reaches at most 640px tall. The eight preset accents become two four-item rows and numeric color entry moves below the color plane at that breakpoint.
 
 The virtual transcript follows streaming only while the reader remains near its end. User-triggered disclosure preserves the clicked control's viewport position while row heights settle; streaming then resumes following only at the end. Saved session rows stay mounted during navigation.
 Do not animate virtual rows on remount. User-opened tool and group disclosures reveal in place over 180ms with a decelerating clip; their layout height settles immediately so inspection anchoring stays authoritative. Content remains at full contrast throughout. Restored nested disclosures do not replay the reveal. Reduced motion skips it. Short local motion explains disclosure, focus, press, panel, and dialog state; reduced-motion preferences disable it.
@@ -309,20 +309,24 @@ Order the composer controls Create goal, Plan, then Require permissions / YOLO. 
 Do not insert visible save-status text into this toolbar. Preserve its dimensions during submission.
 The permission selector shows choice labels only. Put short explanations in hover text. Keep timing and persistence rules in documentation.
 The selected permission preference remains visible during planning.
-Saved rules belong in Settings, after appearance and new-conversation defaults. They are not a composer action.
+Saved rules belong in the Permissions category in Settings, below Default permissions. They are not a composer action. Initial reads use a stable skeleton; refresh keeps existing rows visible. Removal keeps its row until confirmed and disables rule actions while pending. Local errors offer Retry for the failed operation; an empty list says No saved rules.
 See the [approval study](docs/design/permissions/STUDY.md) for behavior and review evidence.
+
+### Settings navigation
+
+Appearance, Models, and Permissions form a vertical tab list with functional icons and short labels. Appearance is selected on open. Selected tabs use soft accent fill and neutral text; no divider or enclosing card separates the rail from its content. Up/Down, Home, and End select and focus a tab. Hidden panes remain mounted, retaining color drafts across category changes. Closing discards an unfinished color draft; remote saves continue. Keep task copy local and brief, with no repeated category heading or idle saved message. The [settings navigation study](docs/design/settings-navigation/STUDY.md) records the interaction and state contract.
 
 ### Appearance
 
 Settings has native radio groups for Light, Dark, and System modes and the eight preset accents. Selected accents have a checkmark, outline, and visible name; keyboard selection remains available. System listens for operating-system appearance changes.
-Add color expands an inline editor with HEX selected. RGBA, HSV, CMYK, and HEX edit the same color; opacity remains available in every format. Labeled hue, saturation, and brightness sliders provide keyboard alternatives to the color plane. A checkerboard reveals transparency. Invalid or incomplete input stays visible with an error and disables Add color. Cancel discards the draft.
-Saving selects the custom accent and retains its swatch in this browser. Up to 24 custom colors can be saved; each has a removal action. CMYK is an approximate screen conversion. Explain beside the preview that interface accents use derived readable shades while saved swatches preserve their original color and opacity.
-Mode and accent persist locally and apply before React mounts. Restricted storage still permits changes within the current session; custom-color persistence failures show an explicit message. The fallback is light mode with Moss.
+Add color expands an inline editor with HEX selected. RGBA, HSV, CMYK, and HEX edit the same color; opacity remains available in every format. Labeled hue, saturation, and brightness sliders provide keyboard alternatives to the color plane. A checkerboard reveals transparency. Invalid or incomplete input stays visible with an error and disables Add color. Cancel discards the draft and returns focus to Add color. Adding also restores focus to that action.
+Saving selects the custom accent and retains its swatch in this browser. Up to 24 custom colors can be saved; each has a removal action. CMYK is an approximate screen conversion. The preview tooltip explains that interface shades adapt for readable contrast. Saved swatches preserve their original color and opacity. At the 24-color limit, Add color is disabled with a short removal instruction.
+Mode and accent persist locally and apply before React mounts. Restricted storage still permits changes within the current session; appearance and custom-color persistence failures show local session-only messages with Retry storage or Retry colors. Synchronous appearance changes have no artificial loading or success delay. The fallback is light mode with Moss.
 
 ### New conversation defaults
 
-Settings places Default permissions and Default model after appearance and before saved workspace permission rules. These labeled selectors save defaults for the selected workspace. Model choices come from configured models; this task-specific choice is not decorative runtime metadata.
-Default permissions offers Require permissions and YOLO. Explain that YOLO skips approval requests and saved permission denials when selected. Changes apply only to new conversations; existing conversations retain their settings. Loading and save errors remain visible with a retry action.
+Models contains Default model. Permissions contains Default permissions above saved workspace rules. These labeled selectors save defaults for the selected workspace. Model choices come from configured models; this task-specific choice is not decorative runtime metadata.
+Default permissions offers Require permissions and YOLO — skip approvals. Changes apply only to new conversations; existing conversations retain their settings. Initial reads use stable skeletons. Each save updates only its field and disables both defaults while pending, with a local spinner. A failed write restores the confirmed selection; Retry repeats the attempted write. Read errors have a disabled Unavailable selector and Retry. An empty model catalog shows a disabled No models configured selector. Selection communicates success without an idle saved label.
 Harness documentation remains accessible from the command menu. The [settings study](docs/design/settings/STUDY.md) records the interaction contract and evidence limits.
 
 ## Do's and Don'ts

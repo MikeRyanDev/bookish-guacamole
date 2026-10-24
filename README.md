@@ -95,7 +95,7 @@ then run the tests again and report the actual result.
 ## Work with the agent
 
 Choose **Model: [name]** in the composer to select a configured model for this conversation.
-The choice survives reloads and server restarts. New conversations use the workspace default selected in Settings, initially your configured default.
+The choice survives reloads and server restarts. New conversations use the workspace default selected in **Settings → Models**, initially your configured default.
 Coding and goal checks use this selection; Intelligence Learning keeps its separate configuration.
 
 Review each approval card before choosing **Allow once** or **Reject**. Consecutive completed tools share a compact activity summary. Expand it to see individual calls, then open a call for its exact evidence. Failed, denied, running, and missing-result calls remain visible outside completed groups. Bash previews show the exact command; patch previews show added and removed lines.
@@ -114,6 +114,7 @@ The workspace picker opens existing folders or creates named workspaces. Switch,
 The right panel previews files and published Skills. Folders start collapsed and load on expansion. Directory pages contain up to 100 entries, with a control to load more. Search runs across workspace file paths, including unopened folders. Search results also load in pages; neither browsing nor search stops at 1,000 files. Folders sort before files. Git colors and status badges show file changes and aggregate folder changes. Search file paths, open a file, and expand the viewer for more reading space. Code supports syntax highlighting, find, line navigation, wrap, copy, and download. Markdown and HTML have Source and Preview modes. HTML runs unchanged in an isolated iframe; scripts work, while parent access, popups, forms, and top navigation stay blocked. Network requests remain possible. Images support fit, zoom, and rotation; PDFs support page navigation and extracted page text. DOCX, XLSX, and PPTX have local reading previews with an original-file download. Legacy Office formats download without a preview. Office layout and advanced formatting can differ; workbook formulas show saved values.
 
 Text previews are limited to 256 KiB; assets and downloads to 20 MiB. Use the header controls for panels and settings.
+Settings uses a left-side menu for **Appearance**, **Models**, and **Permissions**.
 In **Settings → Appearance**, choose **Light**, **Dark**, or **System**. System follows your operating-system appearance. Keep one of eight warm accents, or choose **Add color** to enter HEX, RGBA, HSV, or CMYK values. Custom swatches and appearance persist in this browser. CMYK is an approximate screen conversion. Interface shades adapt for readable contrast. Press **⌘K** or **Ctrl+K** for the command menu. CopilotKit's Inspector is enabled in local development. Motion respects your system's reduced-motion setting.
 
 ## Teach it a reusable lesson
@@ -201,10 +202,10 @@ The composer has two permission choices:
 **Plan mode** is a separate toggle beside Create goal. It permits inspection but prevents edits and shell commands.
 The permission preference stays selected during planning. Turning Plan mode off restores that preference.
 Both choices belong to the selected thread and survive reloads. One thread can use YOLO while another uses Plan mode and a third requires permissions.
-New threads start with Plan off and your workspace’s **Default permissions** choice in Settings (initially Require permissions). **Default model** selects their coding model. These defaults persist across server restarts and do not change existing conversations. Changes apply to the next turn. Pending approvals still require a decision.
+New threads start with Plan off and your workspace’s **Default permissions** choice in **Settings → Permissions** (initially Require permissions). **Default model** selects their coding model. These defaults persist across server restarts and do not change existing conversations. Changes apply to the next turn. Pending approvals still require a decision.
 
 Interrupts offer **Reject**, **Approve Once**, and **Always Approve**. Both approval buttons use the positive action style.
 Always Approve shows the exact scope before **Approve and Save** submits it. Saved permissions apply across conversations in the workspace.
 
-**Settings → Workspace permissions** lists saved rules and provides Remove. Removal takes effect after active turns finish.
+**Settings → Permissions** lists saved rules with remove controls. Removal takes effect after active turns finish.
 YOLO does not change saved rules. [The design study](docs/design/permissions/STUDY.md) records the current controls and review evidence.

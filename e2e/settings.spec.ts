@@ -10,6 +10,7 @@ test("settings support system theme, four color formats, persistence, defaults a
       defaults = { ...defaults, ...route.request().postDataJSON() };
     await route.fulfill({ json: defaults });
   });
+  await page.route("**/api/permissions?*", (route) => route.fulfill({ json: [] }));
   await page.goto(`${fixture}/settings.html`);
   await page.getByRole("button", { name: "Settings", exact: true }).click();
   await page.getByRole("radio", { name: "System", exact: true }).check();
@@ -29,7 +30,9 @@ test("settings support system theme, four color formats, persistence, defaults a
     "aria-pressed",
     "true",
   );
+  await page.getByRole("tab", { name: "Permissions", exact: true }).click();
   await page.getByLabel("Default permissions", { exact: true }).selectOption("bypass");
+  await page.getByRole("tab", { name: "Models", exact: true }).click();
   await page.getByLabel("Default model", { exact: true }).selectOption("second");
   await page.reload();
   await page.getByRole("button", { name: "Settings", exact: true }).click();
@@ -38,8 +41,11 @@ test("settings support system theme, four color formats, persistence, defaults a
     "aria-pressed",
     "true",
   );
+  await page.getByRole("tab", { name: "Models", exact: true }).click();
   await expect(page.getByLabel("Default model", { exact: true })).toHaveValue("second");
+  await page.getByRole("tab", { name: "Permissions", exact: true }).click();
   await expect(page.getByLabel("Default permissions", { exact: true })).toHaveValue("bypass");
+  await page.getByRole("tab", { name: "Appearance", exact: true }).click();
   for (const width of [1440, 390])
     for (const theme of ["Light", "Dark"]) {
       await page.setViewportSize({ width, height: 960 });
@@ -82,12 +88,17 @@ test("workspace defaults reach new native conversations without changing existin
   await request.get(`${origin}/api/model?thread=${existing}`, { headers });
   await page.goto(origin!);
   await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("tab", { name: "Permissions", exact: true }).click();
   await page.getByLabel("Default permissions", { exact: true }).selectOption("bypass");
+  await page.getByRole("tab", { name: "Models", exact: true }).click();
   await page.getByLabel("Default model", { exact: true }).selectOption("second");
+  await page.getByRole("tab", { name: "Permissions", exact: true }).click();
   await expect(page.getByLabel("Default permissions", { exact: true })).toHaveValue("bypass");
+  await page.getByRole("tab", { name: "Models", exact: true }).click();
   await expect(page.getByLabel("Default model", { exact: true })).toHaveValue("second");
   await page.reload();
   await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("tab", { name: "Permissions", exact: true }).click();
   await expect(page.getByLabel("Default permissions", { exact: true })).toHaveValue("bypass");
   expect(
     await (await request.get(`${origin}/api/model?thread=${fresh}`, { headers })).json(),
@@ -101,6 +112,7 @@ test("workspace defaults reach new native conversations without changing existin
   expect(
     await (await request.get(`${origin}/api/approval-mode?thread=${existing}`, { headers })).json(),
   ).toMatchObject({ permissionMode: "acceptEdits" });
+  await page.getByRole("tab", { name: "Appearance", exact: true }).click();
   for (const width of [1440, 390])
     for (const theme of ["Light", "Dark"]) {
       await page.setViewportSize({ width, height: 960 });

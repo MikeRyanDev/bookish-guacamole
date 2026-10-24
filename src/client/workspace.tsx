@@ -22,9 +22,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { useAppearance } from "./appearance";
-import { WorkspacePermissions } from "./components/approval-settings";
-import { ConversationDefaults } from "./components/conversation-defaults";
-import { AppearanceSettings } from "./components/appearance-settings";
+import { SettingsPanel } from "./components/settings-panel";
 import { workspaceRoute } from "./router";
 import { configQuery, type AppConfig } from "./api";
 import { IconButton } from "./components/icon-button";
@@ -106,7 +104,7 @@ function Shell({ config }: { config: AppConfig }) {
   const [filter, setFilter] = useState("");
   const [busy, setBusy] = useState(false);
   const onBusy = useCallback((value: boolean) => setBusy(value), []);
-  const { theme, accent, setTheme, setAccent } = useAppearance();
+  const { theme, accent, setTheme, setAccent, storageError, retryStorage } = useAppearance();
   const dialog = useRef<HTMLDialogElement>(null);
   const [modal, setModal] = useState<"commands" | "settings">("commands");
   const threads = useThreads({ agentId: config.agentId, limit: 30 });
@@ -266,7 +264,7 @@ function Shell({ config }: { config: AppConfig }) {
       />
       <dialog
         ref={dialog}
-        className="command-dialog"
+        className={`command-dialog${modal === "settings" ? " settings-dialog" : ""}`}
         aria-labelledby="command-title"
         onClose={() => setModal("commands")}
       >
@@ -319,16 +317,15 @@ function Shell({ config }: { config: AppConfig }) {
             </button>
           </div>
         ) : (
-          <div className="settings-content">
-            <AppearanceSettings
-              theme={theme}
-              accent={accent}
-              setTheme={setTheme}
-              setAccent={setAccent}
-            />
-            <ConversationDefaults config={config} />
-            <WorkspacePermissions config={config} />
-          </div>
+          <SettingsPanel
+            config={config}
+            theme={theme}
+            accent={accent}
+            setTheme={setTheme}
+            setAccent={setAccent}
+            storageError={storageError}
+            retryStorage={retryStorage}
+          />
         )}
       </dialog>
     </div>

@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { X } from "lucide-react";
+import { IconButton } from "../../src/client/components/icon-button";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AppearanceSettings } from "../../src/client/components/appearance-settings";
-import { ConversationDefaults } from "../../src/client/components/conversation-defaults";
+import { SettingsPanel } from "../../src/client/components/settings-panel";
 import { useAppearance } from "../../src/client/appearance";
 import "../../src/client/styles.css";
 import "@fontsource-variable/manrope";
@@ -10,36 +11,43 @@ import "@fontsource/ibm-plex-mono/400.css";
 const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 function Fixture() {
   const appearance = useAppearance();
+  const [generation, setGeneration] = useState(0);
   const dialog = useRef<HTMLDialogElement>(null);
   return (
     <main>
       <button onClick={() => dialog.current?.showModal()}>Settings</button>
-      <dialog ref={dialog} className="command-dialog" aria-labelledby="settings-heading">
+      <dialog
+        ref={dialog}
+        onClose={() => setGeneration((value) => value + 1)}
+        className="command-dialog settings-dialog"
+        aria-labelledby="settings-heading"
+      >
         <header>
           <h2 id="settings-heading">Settings</h2>
-          <button aria-label="Close settings" onClick={() => dialog.current?.close()}>
-            Close
-          </button>
+          <IconButton label="Close settings" onClick={() => dialog.current?.close()}>
+            <X size={16} />
+          </IconButton>
         </header>
-        <div className="settings-content">
-          <AppearanceSettings {...appearance} />
-          <ConversationDefaults
-            config={{
-              token: "fixture",
-              runtimeUrl: "/unused",
-              workspace: "fixture",
-              workspaceId: "fixture",
-              workspaceName: "Fixture",
-              agentId: "fixture",
-              containerId: "fixture",
-              defaultModel: "first",
-              models: [
-                { id: "first", label: "First model", provider: "openai", model: "first" },
-                { id: "second", label: "Second model", provider: "anthropic", model: "second" },
-              ],
-            }}
-          />
-        </div>
+        <SettingsPanel
+          key={generation}
+          {...appearance}
+          config={{
+            token: "fixture",
+            runtimeUrl: "/unused",
+            workspace: "fixture",
+            workspaceId: "fixture",
+            workspaceName: "Fixture",
+            agentId: "fixture",
+            containerId: "fixture",
+            defaultModel: "first",
+            models: location.search.includes("empty-models")
+              ? []
+              : [
+                  { id: "first", label: "First model", provider: "openai", model: "first" },
+                  { id: "second", label: "Second model", provider: "anthropic", model: "second" },
+                ],
+          }}
+        />
       </dialog>
     </main>
   );
