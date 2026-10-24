@@ -1,5 +1,5 @@
 import { request as httpRequest } from "node:http";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, test, vi } from "vitest";
@@ -44,6 +44,22 @@ test("local browser bootstrap refuses cross-origin access and protects workspace
     });
     expect(wrongHost).toBe(403);
     expect((await fetch(origin + "/api/workspace/files")).status).toBe(401);
+    const asset = origin + "/api/workspace/asset?path=example.png";
+    await writeFile(join(app.root, "example.png"), Buffer.from([137, 80, 78, 71, 0, 255]));
+    expect((await fetch(asset)).status).toBe(401);
+    expect((await fetch(asset + `&token=${app.token}`)).status).toBe(401);
+    expect(
+      (
+        await fetch(asset, {
+          headers: { authorization: `Bearer ${app.token}`, origin: "https://untrusted.example" },
+        })
+      ).status,
+    ).toBe(403);
+    const downloaded = await fetch(asset, { headers: { authorization: `Bearer ${app.token}` } });
+    expect(downloaded.headers.get("cache-control")).toBe("no-store");
+    expect(downloaded.headers.get("content-disposition")).toBe("attachment");
+    expect(downloaded.headers.get("x-content-type-options")).toBe("nosniff");
+    expect([...new Uint8Array(await downloaded.arrayBuffer())]).toEqual([137, 80, 78, 71, 0, 255]);
     expect(
       (await fetch(origin + "/api/workspace/files", { headers: { authorization: "Bearer wrong" } }))
         .status,

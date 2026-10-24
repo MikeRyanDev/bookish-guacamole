@@ -1323,3 +1323,419 @@ dialog[open] {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* Reading owns the available height; navigation never pushes a file below the fold. */
+.inspector-utilities,
+.reader-actions,
+.reader-modes,
+.file-filter,
+.reader-find,
+.file-heading {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.file-browser {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+.file-navigation {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 10px;
+  flex: 1;
+}
+.file-filter {
+  padding: 4px 0 8px;
+  color: var(--muted);
+}
+.file-filter input,
+.reader-find input {
+  min-width: 0;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 8px;
+  color: var(--text);
+}
+.file-list {
+  overflow: auto;
+  min-height: 0;
+  padding-bottom: 12px;
+}
+.file-folder summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 6px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+}
+.folder-chevron {
+  flex-shrink: 0;
+}
+.file-folder[open] .folder-chevron {
+  transform: rotate(90deg);
+}
+.file-folder summary span {
+  overflow-wrap: anywhere;
+}
+.file-folder .file-row {
+  padding-left: 24px;
+}
+.file-browser.has-file .file-navigation {
+  display: none;
+}
+.file-preview {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+}
+.file-preview .file-heading {
+  padding: 4px 8px;
+}
+.file-path {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+  flex: 1;
+  user-select: text;
+}
+.file-reader {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+.reader-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 8px;
+}
+.reader-actions {
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+.reader-modes button {
+  padding: 6px 8px;
+  font-size: 11px;
+  background: transparent;
+}
+.reader-modes button[aria-pressed="true"],
+.reader-actions button[aria-pressed="true"] {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.reader-find {
+  flex-wrap: wrap;
+  padding: 4px 8px;
+}
+.reader-find input {
+  flex: 1;
+  min-width: 90px;
+}
+.reader-find [role="status"] {
+  font-size: 11px;
+  color: var(--muted);
+}
+.reader-feedback {
+  margin: 4px 12px 8px;
+  font-size: 12px;
+}
+.reader-error,
+.reader-empty {
+  padding: 12px 16px;
+}
+.file-source,
+.file-markdown {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  background: var(--code);
+}
+.file-source {
+  padding: 10px 0;
+}
+.source-lines {
+  position: relative;
+  min-width: 100%;
+}
+.source-line {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  font:
+    12px/22px "IBM Plex Mono",
+    monospace;
+}
+.source-line code {
+  font: inherit;
+  white-space: pre;
+  padding-right: 16px;
+}
+.line-number {
+  flex: 0 0 44px;
+  width: 44px;
+  text-align: right;
+  padding-right: 12px;
+  color: var(--muted);
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+.wrap-source .source-line {
+  width: 100%;
+}
+.wrap-source .source-line code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.source-line mark {
+  background: var(--accent-bg);
+  color: var(--text);
+}
+.source-line .current-match {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.file-markdown {
+  padding: 16px;
+  overflow-wrap: anywhere;
+}
+.reader-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.reader-footer span:last-child {
+  margin-left: auto;
+}
+.file-selection-hint {
+  display: none;
+  padding: 24px;
+}
+@media (min-width: 851px) {
+  .workspace:not(.hide-inspector):has(> .inspector-expanded) > .main-pane {
+    display: none;
+  }
+  .inspector-expanded {
+    grid-column: 2 / -1;
+  }
+  .inspector-expanded .file-browser {
+    flex-direction: row;
+  }
+  .inspector-expanded .file-browser .file-navigation {
+    display: flex;
+    flex: 0 0 224px;
+  }
+  .inspector-expanded .file-selection-hint {
+    display: block;
+  }
+}
+
+.source-token {
+  color: var(--token-light, var(--text));
+}
+[data-theme="dark"] .source-token {
+  color: var(--token-dark, var(--text));
+}
+.asset-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  font-size: 12px;
+}
+.image-canvas,
+.pdf-canvas {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  padding: 16px;
+  background: var(--code);
+}
+.image-canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.image-canvas img {
+  object-fit: contain;
+  flex: none;
+}
+.pdf-canvas canvas {
+  display: block;
+  margin: 0 auto;
+}
+.page-picker {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+.page-picker input {
+  width: 56px;
+  background: var(--bg);
+  color: var(--text);
+  border: 0;
+  padding: 6px;
+}
+.pdf-text {
+  max-height: 25%;
+  overflow: auto;
+  padding: 8px 12px;
+}
+.pdf-text p {
+  line-height: 1.7;
+}
+.office-section-picker {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+}
+.office-section-picker select {
+  min-width: 0;
+  max-width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border: 0;
+  padding: 8px;
+}
+.office-note {
+  font-size: 11px;
+  padding: 4px 12px;
+  margin: 0 0 8px;
+}
+.office-document {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px 24px;
+  background: var(--bg);
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.office-document p {
+  max-width: 75ch;
+}
+.sheet-scroll {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  background: var(--bg);
+}
+.sheet-table {
+  border-collapse: collapse;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.sheet-table th,
+.sheet-table td {
+  height: 32px;
+  max-width: 260px;
+  min-width: 90px;
+  padding: 4px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid var(--line);
+}
+.sheet-table th {
+  text-align: left;
+  color: var(--muted);
+  background: var(--panel);
+}
+.sheet-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.sheet-table tr > :first-child {
+  min-width: 48px;
+}
+.office-heading {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 20px 0 12px;
+}
+.office-document img {
+  max-width: 100%;
+  height: auto;
+}
+.office-table-scroll {
+  overflow: auto;
+}
+.office-table-scroll td {
+  border-bottom: 1px solid var(--line);
+  padding: 8px 12px;
+  white-space: pre-wrap;
+}
+.slide-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px;
+  background: var(--code);
+}
+.slide-frame {
+  position: relative;
+  width: 100%;
+  min-width: 240px;
+  background: white;
+  color: black;
+  container-type: inline-size;
+}
+.slide-element {
+  position: absolute;
+  overflow: hidden;
+}
+.slide-element img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.slide-element p {
+  margin: 0 0 0.25em;
+}
+.image-canvas {
+  display: block;
+}
+.image-stage {
+  position: relative;
+  margin: auto;
+}
+.image-stage img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  max-width: none;
+  max-height: none;
+}
+
+@media (max-width: 850px) {
+  .inspector-utilities .icon-control:has(.viewer-expansion) {
+    display: none;
+  }
+}

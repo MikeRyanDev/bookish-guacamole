@@ -5,7 +5,7 @@ import { once } from "node:events";
 import { mkdir } from "node:fs/promises";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { SkillRegistry } from "@copilotkit/runtime/internal/learned-skills";
-import { listWorkspaceFiles, readWorkspaceFile } from "./workspace.js";
+import { listWorkspaceFiles, readWorkspaceFile, readWorkspaceAsset } from "./workspace.js";
 import { resolve } from "node:path";
 import { CopilotKitIntelligence, CopilotRuntime } from "@copilotkit/runtime/v2";
 import { createCopilotNodeListener } from "@copilotkit/runtime/v2/node";
@@ -212,6 +212,21 @@ export async function startApp(
         response,
         await readWorkspaceFile(selectedWorkspace(url).path, url.searchParams.get("path") ?? ""),
       );
+      return;
+    }
+    if (url.pathname === "/api/workspace/asset" && request.method === "GET") {
+      const bytes = await readWorkspaceAsset(
+        selectedWorkspace(url).path,
+        url.searchParams.get("path") ?? "",
+      );
+      response.writeHead(200, {
+        "content-type": "application/octet-stream",
+        "content-length": bytes.length,
+        "content-disposition": "attachment",
+        "cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+      });
+      response.end(bytes);
       return;
     }
     if (url.pathname === "/api/skills" && request.method === "GET") {

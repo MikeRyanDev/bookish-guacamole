@@ -82,3 +82,21 @@ test("an opened folder ignored by its parent Git repository still lists its own 
     await rm(parent, { recursive: true, force: true });
   }
 });
+
+test("binary asset reads preserve bytes and enforce the same workspace boundary and a hard size limit", async () => {
+  const { readWorkspaceAsset } = await import("../src/workspace.js");
+  const root = await mkdtemp(join(tmpdir(), "workspace-assets-"));
+  try {
+    const bytes = Buffer.from([137, 80, 78, 71, 0, 255]);
+    await writeFile(join(root, "image.png"), bytes);
+    await writeFile(join(root, ".secret"), "private");
+    await symlink(join(root, ".secret"), join(root, "public.png"));
+    expect(await readWorkspaceAsset(root, "image.png")).toEqual(bytes);
+    for (const path of ["../outside.png", ".secret", "public.png"])
+      await expect(readWorkspaceAsset(root, path)).rejects.toThrow();
+    await writeFile(join(root, "large.pdf"), Buffer.alloc(20 * 1024 * 1024 + 1));
+    await expect(readWorkspaceAsset(root, "large.pdf")).rejects.toThrow(/20 MiB/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});

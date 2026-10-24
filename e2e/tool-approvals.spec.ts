@@ -1,3 +1,4 @@
+import { fixtureUrl } from "./fixture-url";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -6,7 +7,7 @@ for (const kind of ["bash", "patch"] as const) {
     test(`${theme} ${kind} approval shares the tool preview and safely retries a failed decision`, async ({
       page,
     }) => {
-      await page.goto(`http://127.0.0.1:4174/?approval=${kind}&fail`);
+      await page.goto(`${fixtureUrl}/?approval=${kind}&fail`);
       await page.evaluate((theme) => {
         document.documentElement.dataset.theme = theme;
       }, theme);
@@ -38,7 +39,7 @@ for (const kind of ["bash", "patch"] as const) {
 
 test("patch approval stays readable and keyboard operable on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("http://127.0.0.1:4174/?approval=patch");
+  await page.goto(`${fixtureUrl}/?approval=patch`);
   const permission = page.getByRole("region", { name: "Permission request" });
   await expect(permission.getByLabel("Proposed patch")).toContainText("name.trim()");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

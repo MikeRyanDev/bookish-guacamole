@@ -1,3 +1,4 @@
+import { fixtureUrl } from "./fixture-url";
 import { expect, test, type Locator } from "@playwright/test";
 
 async function distanceFromEnd(transcript: Locator) {
@@ -9,7 +10,7 @@ async function distanceFromEnd(transcript: Locator) {
 test("long transcripts render a bounded window, follow streaming, and preserve reading position", async ({
   page,
 }) => {
-  await page.goto("http://127.0.0.1:4174");
+  await page.goto(`${fixtureUrl}`);
   const transcript = page.getByLabel("Conversation transcript");
   await expect(transcript.locator("article").last()).toContainText("Message 999");
   expect(await transcript.locator("article").count()).toBeLessThan(40);
@@ -41,7 +42,7 @@ test("long transcripts render a bounded window, follow streaming, and preserve r
 });
 
 test("jump control stays circular while hovered and keyboard focused", async ({ page }) => {
-  await page.goto("http://127.0.0.1:4174");
+  await page.goto(`${fixtureUrl}`);
   const transcript = page.getByLabel("Conversation transcript");
   await expect(transcript.locator("article").last()).toContainText("Message 999");
   await transcript.hover();

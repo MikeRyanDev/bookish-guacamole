@@ -7,8 +7,8 @@ test("real workspace supports files, skills, themes, commands, and new sessions"
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
-  await expect(page.getByRole("button", { name: "greet.js", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "greet.js", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Open greet.js", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Open greet.js", exact: true }).click();
   await expect(page.locator(".file-preview")).toContainText("function greet");
   await page.getByRole("button", { name: "Learned skills", exact: true }).click();
   await expect(

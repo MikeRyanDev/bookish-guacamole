@@ -6,6 +6,7 @@ import { join, resolve } from "node:path";
 import { promisify } from "node:util";
 
 const execute = promisify(execFile);
+import { fixtureUrl } from "./fixture-url";
 
 test("Impeccable scans rendered tools and approvals in both themes and sizes", async ({}, testInfo) => {
   test.setTimeout(120_000);
@@ -18,7 +19,7 @@ test("Impeccable scans rendered tools and approvals in both themes and sizes", a
     const port = (await readFile(join(profile, "DevToolsActivePort"), "utf8")).split("\n")[0]!;
     const page = context.pages()[0]!;
     for (const target of ["tools", "approval=bash", "approval=patch"]) {
-      await page.goto(`http://127.0.0.1:4174/?${target}`);
+      await page.goto(`${fixtureUrl}/?${target}`);
       await expect(page.locator(".tool-call").first()).toBeVisible();
       for (const summary of await page.locator(".tool-details:not([open]) > summary").all())
         await summary.click();
@@ -39,7 +40,7 @@ test("Impeccable scans rendered tools and approvals in both themes and sizes", a
               "--cdp",
               port,
               "--target",
-              "127.0.0.1:4174",
+              new URL(fixtureUrl).host,
             ],
             { timeout: 20_000, maxBuffer: 2 * 1024 * 1024 },
           ).catch(async (error) => {

@@ -56,7 +56,7 @@ The session history also uses TanStack Virtual with stable thread IDs. Its visib
 
 The server binds to `127.0.0.1:4173`. It refuses foreign Host/Origin headers. Bootstrap returns an ephemeral bearer to the same-origin browser; authenticated APIs expose files, Skills, and the runtime. Provider and Intelligence keys stay server-side. Config responses use `no-store`.
 
-File previews reject dot paths, traversal, outside symlinks, binary files, and files above 256 KiB. Discovery uses Git's tracked/unignored files, capped at 1,000. Folders outside Git use a bounded walk of at most 10,000 entries, skip dot paths, dependency trees, and symlinks, and report truncated results. The sample gets its own Git boundary so the starter's ignore rules cannot hide it.
+Text previews reject dot paths, traversal, private/outside symlink targets, invalid UTF-8, binary files, and files above 256 KiB. `GET /api/workspace/asset` uses the same authentication and workspace registry, and returns at most 20 MiB of exact bytes with attachment, no-store, and nosniff headers. Both paths use a bounded read on an opened file descriptor; a file that grows during reading cannot bypass the cap. Browser asset requests carry the bearer in a header, never a URL. Discovery uses Git's tracked/unignored files, capped at 1,000. Folders outside Git use a bounded walk of at most 10,000 entries, skip dot paths, dependency trees, and symlinks, and report truncated results. The sample gets its own Git boundary so the starter's ignore rules cannot hide it.
 
 This is a single-developer tool, not a hosted multi-user service. The shell tool can access the host after approval; it is not a sandbox. Use a trusted workspace. The fixed `local-developer` identity must be replaced before multi-user use.
 
@@ -77,3 +77,15 @@ Saved session rows use TanStack Router links. The provider subscribes only to th
 `tool-approval.tsx` resolves the pending interrupt's tool-call ID against CopilotKit messages and reuses `ToolCall` for the proposed command, patch, or file contents. The decision applies to that interrupt only. A pending submission disables both actions; a rejected request restores them with an error. Approval state does not duplicate transcript state.
 
 CSS uses short opacity/transform entrances for approvals, dialogs, and reopened panels, plus control feedback. Virtual transcript rows do not animate on remount. The jump control keeps a circular inner button in hover and focus states. The system reduced-motion setting disables animations and transitions.
+
+## File viewer extension boundary
+
+`web/src/viewers/registry.ts` owns lightweight extension dispatch. `Inspector` retains Router-provided selections and Query reads; `file-viewer.tsx` owns transient text controls. Add a format to the registry and implement its lazy renderer under `web/src/viewers/`; keep transport, parsing, and presentation separate. Preserve abort signals, workspace-scoped query keys, size limits, and local failure states. New archive formats require expansion limits and worker cancellation tests.
+
+Code highlighting runs Shiki in a disposable worker with lazy grammar imports and a five-second deadline. Files with lines longer than 10,000 characters retain plain text. Source and spreadsheet rows are virtualized. PDF.js loads only for PDFs, renders one page at a time with a 16-million-pixel canvas cap, cancels page renders, and destroys documents on cleanup. Its extracted page text provides a selectable alternative to the canvas.
+
+OOXML previews use fflate and fast-xml-parser in a worker. Parsing refuses document entities and external relationships, limits archive entries and expanded bytes, and terminates after ten seconds. React renders text and tables; embedded images use revocable blob URLs. No document HTML, macros, formulas, or remote assets execute. Supported reading previews are DOCX, XLSX and PPTX; legacy and unsupported formats expose downloads. Layout fidelity limits are shown in the viewer. Markdown excludes raw HTML, external images, and non-HTTP links. Asset queries have no retained cache after unmount.
+
+Fixture tests accept `FILE_VIEWER_FIXTURE_URL` (default `http://127.0.0.1:4174`); browser app tests accept `FILE_VIEWER_APP_URL` (default `http://127.0.0.1:4173`). These are test overrides for isolated worktrees, not runtime configuration. The fixture uses a separate Vite cache to avoid development dependency-cache collisions with the app.
+
+When running two development checkouts, set `PORT` for the second app and `STARTER_HMR_PORT` for its Vite reload WebSocket (for example, `PORT=4193 STARTER_HMR_PORT=24993 pnpm dev`). Without the override, Vite keeps its normal HMR default, 24678. This setting affects local development only.

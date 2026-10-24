@@ -86,7 +86,9 @@ Use the stop control to cancel a run. Click a session name to reopen its convers
 
 The workspace picker opens existing folders or creates named workspaces. Switch, rename, or remove entries there. Removing an entry keeps its files and conversations; opening the same folder restores its identity. Files and sessions stay scoped to the selected workspace.
 
-The right panel previews files and published Skills. Use the header controls for panels and settings.
+The right panel previews files and published Skills. Search file paths, open a file, and expand the viewer for more reading space. Code supports syntax highlighting, find, line navigation, wrap, copy, and download. Markdown has Source and Preview modes. Images support fit, zoom, and rotation; PDFs support page navigation and extracted page text. DOCX, XLSX, and PPTX have local reading previews with an original-file download. Legacy Office formats download without a preview. Office layout and advanced formatting can differ; workbook formulas show saved values.
+
+Text previews are limited to 256 KiB; assets and downloads to 20 MiB. Use the header controls for panels and settings.
 In **Settings → Appearance**, choose light/dark mode and one of eight warm accent colors. Both choices persist on this browser. Press **⌘K** or **Ctrl+K** for the command menu. CopilotKit's Inspector is enabled in local development. Motion respects your system's reduced-motion setting.
 
 ## Teach it a reusable lesson
@@ -148,4 +150,4 @@ Stop the app with Ctrl-C. The backend remains available until you run `pnpm inte
 | Luna Learning fails on release 0.15.0 | Complete the temporary branch setup above; model configuration alone does not update the runtime                                                |
 | Need to undo the temporary image      | Run `pnpm intelligence:image:restore` and follow the [retirement checklist](docs/TEMPORARY-INTELLIGENCE.md#retire-the-workaround-after-release) |
 
-The app accepts only local Intelligence URLs. Private dot paths and outside symlinks are excluded from file previews. Large frontend chunks remain a build warning. For the exact checks, real Learning runs, screenshots, and limits, read the [latest UI proof](docs/NEW-IMPROVEMENTS-VERIFICATION.md) and [runtime verification record](docs/VERIFICATION.md).
+The app accepts only local Intelligence URLs. Private dot paths and outside symlinks are excluded from file previews and downloads. Large frontend chunks remain a build warning. For the exact checks, real Learning runs, screenshots, and limits, read the [latest UI proof](docs/NEW-IMPROVEMENTS-VERIFICATION.md) and [runtime verification record](docs/VERIFICATION.md).

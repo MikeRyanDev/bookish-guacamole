@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { opendir, readFile, realpath, stat } from "node:fs/promises";
+import { open, opendir, realpath } from "node:fs/promises";
 import { isAbsolute, join, relative, resolve } from "node:path";
 import { promisify } from "node:util";
 const execute = promisify(execFile);
@@ -83,18 +83,55 @@ export async function listWorkspaceFiles(root: string) {
     throw error;
   }
 }
-/** Reads bounded UTF-8 text only after resolving the real filesystem boundary. */
+/** Reads bounded UTF-8 source; binary and invalid text use the asset viewer instead. */
 export async function readWorkspaceFile(root: string, path: string) {
+  const bytes = await readBoundedWorkspaceFile(
+    root,
+    path,
+    256 * 1024,
+    "Text previews are limited to 256 KiB.",
+  );
+  const content = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(bytes);
+  if (content.includes("\0")) throw new Error("Binary files cannot be previewed as text.");
+  return { path, content };
+}
+
+/** Reads at most 20 MiB for local viewers/downloads, never following private or outside targets. */
+export function readWorkspaceAsset(root: string, path: string): Promise<Buffer> {
+  return readBoundedWorkspaceFile(
+    root,
+    path,
+    20 * 1024 * 1024,
+    "File viewing and downloads are limited to 20 MiB.",
+  );
+}
+
+/** Resolves the path before opening and bounds every read even if the file grows. */
+async function readBoundedWorkspaceFile(
+  root: string,
+  path: string,
+  limit: number,
+  limitMessage: string,
+): Promise<Buffer> {
   if (!visible(path)) throw new Error("File is outside the preview boundary.");
   const base = await realpath(root);
   const target = await realpath(resolve(base, path));
   const within = relative(base, target);
-  if (within.startsWith("..") || isAbsolute(within))
-    throw new Error("File is outside the preview boundary.");
-  const info = await stat(target);
-  if (!info.isFile() || info.size > 256 * 1024)
-    throw new Error("Preview requires a text file smaller than 256 KiB.");
-  const content = await readFile(target, "utf8");
-  if (content.includes("\0")) throw new Error("Binary files cannot be previewed.");
-  return { path, content };
+  if (!visible(within)) throw new Error("File is outside the preview boundary.");
+  const handle = await open(target, "r");
+  try {
+    const info = await handle.stat();
+    if (!info.isFile() || info.size > limit) throw new Error(limitMessage);
+    const bytes = Buffer.alloc(Math.min(info.size + 1, limit + 1));
+    let offset = 0;
+    while (offset < bytes.length) {
+      const { bytesRead } = await handle.read(bytes, offset, bytes.length - offset, offset);
+      if (!bytesRead) break;
+      offset += bytesRead;
+    }
+    if (offset > info.size) throw new Error("File changed while reading. Refresh and try again.");
+    return bytes.subarray(0, offset);
+  } finally {
+    await handle.close();
+  }
 }

@@ -1,0 +1,5 @@
+{
+  "tool": "image_gen.imagegen",
+  "prompt": "Use case: ui-mockup. Create a compact component and state study for an existing developer workspace file viewer, extending the reference study's quiet neutral charcoal and warm accent system, Manrope controls and Plex Mono code. This board explores file types requested by the user: highlighted TypeScript with search matches; an image preview with Fit, zoom and rotate; PDF with page navigation and zoom; Word document reading; a spreadsheet with sheet selector, column letters, row numbers and a scrollable values table; and a presentation with slide navigation. Show useful legible file contents, not decorative cards. Also show one narrow mobile layout and an unsupported-format state with Download. Flat surfaces and spacing, no enclosing outlines or decoration. Show the viewer as part of a coding workspace, keep the file path visible. No framework branding or model identifiers. Distinguish previews of document content from original layout where needed. This is a design study, not runtime evidence.",
+  "role": "File format component study"
+}

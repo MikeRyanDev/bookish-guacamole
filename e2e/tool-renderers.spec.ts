@@ -1,10 +1,11 @@
+import { fixtureUrl } from "./fixture-url";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 test("coding tools show commands, honest exit status, readable diffs, and numbered file content", async ({
   page,
 }) => {
-  await page.goto("http://127.0.0.1:4174/?tools");
+  await page.goto(`${fixtureUrl}/?tools`);
   await expect(page.getByText("npm test -- --runInBand", { exact: true })).toBeVisible();
   await expect(page.getByText("Exit 1", { exact: true })).toBeVisible();
   const patch = page.getByRole("region", { name: "patch tool call" });

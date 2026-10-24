@@ -1,3 +1,4 @@
+import { fixtureUrl } from "./fixture-url";
 import { expect, test } from "@playwright/test";
 
 test("tool activity can collapse without hiding status and copy preserves the command", async ({
@@ -5,7 +6,7 @@ test("tool activity can collapse without hiding status and copy preserves the co
   context,
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("http://127.0.0.1:4174/?tools");
+  await page.goto(`${fixtureUrl}/?tools`);
   const tool = page.getByRole("region", { name: "bash tool call" });
   await expect(tool.getByText("Exit 1", { exact: true })).toBeVisible();
   await tool.getByRole("button", { name: "Copy command", exact: true }).click();
@@ -23,7 +24,7 @@ test("tool activity can collapse without hiding status and copy preserves the co
 });
 
 test("streaming, missing results, and unknown-tool failures stay honest", async ({ page }) => {
-  await page.goto("http://127.0.0.1:4174/?states");
+  await page.goto(`${fixtureUrl}/?states`);
   const running = page.getByRole("region", { name: "bash tool call" });
   await expect(running.getByText("Running", { exact: true })).toBeVisible();
   await expect(running.locator(".tool-arguments pre")).toHaveText('{"command":"npm');
@@ -39,7 +40,7 @@ test("streaming, missing results, and unknown-tool failures stay honest", async 
 });
 
 test("copy failure reports the problem without claiming success", async ({ page }) => {
-  await page.goto("http://127.0.0.1:4174/?tools");
+  await page.goto(`${fixtureUrl}/?tools`);
   await page.evaluate(() =>
     Object.defineProperty(navigator.clipboard, "writeText", {
       value: () => Promise.reject(new Error("denied")),
@@ -56,7 +57,7 @@ test("copy confirmation does not survive a changed streaming payload", async ({
   context,
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("http://127.0.0.1:4174/?streamcopy");
+  await page.goto(`${fixtureUrl}/?streamcopy`);
   await page.getByRole("button", { name: "Copy command", exact: true }).click();
   await expect(page.getByRole("button", { name: "Copied", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Complete arguments", exact: true }).click();

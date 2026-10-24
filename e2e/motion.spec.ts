@@ -1,3 +1,4 @@
+import { fixtureUrl } from "./fixture-url";
 import { test, expect } from "@playwright/test";
 
 for (const reducedMotion of ["no-preference", "reduce"] as const) {
@@ -5,7 +6,7 @@ for (const reducedMotion of ["no-preference", "reduce"] as const) {
     page,
   }) => {
     await page.emulateMedia({ reducedMotion });
-    await page.goto("http://127.0.0.1:4174/?approval=bash");
+    await page.goto(`${fixtureUrl}/?approval=bash`);
     const permission = page.getByRole("region", { name: "Permission request" });
     const duration = await permission.evaluate((element) =>
       parseFloat(getComputedStyle(element).animationDuration),
