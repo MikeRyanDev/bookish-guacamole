@@ -42,3 +42,17 @@ export function useToolDisclosure(defaultOpen: boolean, explicitId?: string) {
     },
   ] as const;
 }
+
+/** Reveals evidence only after a reader's action; remounts and streamed updates stay still. */
+export function revealToolContent(container: HTMLElement | null, selector: string) {
+  if (!container || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  requestAnimationFrame(() => {
+    const content = container.querySelector<HTMLElement>(selector);
+    if (!content?.isConnected) return;
+    content.getAnimations().forEach((animation) => animation.cancel());
+    content.animate([{ clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0)" }], {
+      duration: 180,
+      easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+    });
+  });
+}

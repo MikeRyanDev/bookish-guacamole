@@ -62,10 +62,8 @@ test("failures, denial and active calls remain visible outside completed groups"
   await page.getByRole("button", { name: "Finish call" }).click();
   await expect(page.getByText("Running", { exact: true })).toHaveCount(0);
   await expect(
-    page
-      .getByRole("region", { name: "custom_tool tool call" })
-      .getByText("Result received", { exact: true }),
-  ).toBeVisible();
+    page.getByRole("region", { name: "custom_tool tool call" }).locator(".tool-status"),
+  ).toHaveAttribute("title", "Result received");
 });
 
 test("grouped activity is accessible in both themes and at narrow widths", async ({ page }) => {

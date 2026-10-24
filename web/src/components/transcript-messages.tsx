@@ -6,7 +6,12 @@ import type { Message } from "@copilotkit/react-core/v2";
 import { IconButton } from "./icon-button";
 import { VirtualTranscript } from "./virtual-transcript";
 import { activitySummary, transcriptRows, type TranscriptCall } from "./transcript-rows";
-import { ToolDisclosureProvider, ToolDisclosureScope, useToolDisclosure } from "./tool-disclosure";
+import {
+  ToolDisclosureProvider,
+  ToolDisclosureScope,
+  useToolDisclosure,
+  revealToolContent,
+} from "./tool-disclosure";
 
 function ActivityGroup({
   calls,
@@ -23,7 +28,10 @@ function ActivityGroup({
         className="activity-summary"
         aria-expanded={open}
         aria-controls={bodyId}
-        onClick={() => setOpen(!open)}
+        onClick={(event) => {
+          if (!open) revealToolContent(event.currentTarget.parentElement, ".activity-calls");
+          setOpen(!open);
+        }}
       >
         <ChevronRight size={14} className="tool-chevron" aria-hidden="true" />
         <Layers size={14} aria-hidden="true" />

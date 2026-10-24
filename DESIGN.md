@@ -82,7 +82,7 @@ typography:
   tool-action:
     fontFamily: '"Manrope Variable", sans-serif'
     fontSize: 12px
-    fontWeight: 650
+    fontWeight: 550
   metadata:
     fontFamily: '"Manrope Variable", sans-serif'
     fontSize: 11px
@@ -250,7 +250,7 @@ At 850px, panes occupy one shared content area and navigation selects the visibl
 The conversation uses compact grouped spacing and contained scrolling. Tool headers wrap below 600px. Eight accent choices form one row, then two four-item rows below 480px.
 
 The virtual transcript follows streaming only while the reader remains near its end. User-triggered disclosure preserves the clicked control's viewport position while row heights settle; streaming then resumes following only at the end. Saved session rows stay mounted during navigation.
-Do not animate virtual rows on remount. Short local motion explains disclosure, focus, press, panel, and dialog state; reduced-motion preferences disable it.
+Do not animate virtual rows on remount. User-opened tool and group disclosures reveal in place over 180ms with a decelerating clip; their layout height settles immediately so inspection anchoring stays authoritative. Content remains at full contrast throughout. Restored nested disclosures do not replay the reveal. Reduced motion skips it. Short local motion explains disclosure, focus, press, panel, and dialog state; reduced-motion preferences disable it.
 
 ## Elevation & Depth
 
@@ -281,7 +281,10 @@ The composer is a subtly filled surface with a focus outline. Workspace form inp
 
 ### Tool activity and source
 
+The [tool polish study](docs/design/tool-polish/STUDY.md) records the rejected tree-like concept and the final minimal treatment. Stacking, grouping, indentation, and interruption rules remain unchanged.
+
 Reuse `ToolCall` within the derived `TranscriptMessages` view. A flat native disclosure row shows a human action, target, and truthful outcome.
+Action and activity-count labels use weight 550. Tool-type icons remain unframed. Completed results use a quiet checkmark with the accessible name and tooltip “Result received”; exit codes, missing results, failures, running work, and approvals keep visible text. Approval status uses a soft accent fill; errors retain semantic danger color.
 Two or more consecutive completed calls without failed outcomes share one initially collapsed activity summary, including across assistant message boundaries. A single call remains a direct tool row. Narrative, user messages, pending approvals, and exceptional or unfinished calls break groups.
 The summary reports call count and work categories; expansion reveals calls in order, each with its own payload disclosure. Failed, denied, running, and missing-result calls remain outside completed groups. Pending approvals retain their separate decision surface.
 Completed calls, including patches, begin collapsed. Failures, running work, and approval content begin expanded unless the reader has chosen otherwise. Missing-result rows retain their explicit status.
@@ -290,14 +293,14 @@ Explicit group and top-level tool disclosure choices survive virtual row remount
 
 **The Inspection Origin Rule.** Preserve the clicked disclosure's viewport position during expansion and collapse. Continue following streaming output only when the reader remains at the end.
 
-Commands and their output share one code surface. Expanded file/patch content has one file heading; collapsed rows retain target context.
+Commands and their output share one code surface. A subtle neutral surface change separates output from its command without a divider. Source headings use a quiet neutral fill. Expanded file/patch content has one file heading; collapsed rows retain target context.
 Copy actions preserve the exact source payload and report failure explicitly. Raw arguments remain inspectable.
 Patch previews omit redundant transport framing for a single file while retaining meaningful multi-file framing, signs, and counts. File previews retain provider-supplied line numbers.
 
 ### Permissions
 
 Keep the proposed payload and the per-call decision footer together through spacing, without an enclosing panel. Use explicit Allow once and Reject labels.
-Approval required appears in the tool row. Per-call scope and decisions remain readable beside the change; do not repeat an approval heading or nest bordered cards.
+Approval required appears in the tool row. The footer aligns with the source payload, with 34px-minimum decision buttons. Per-call scope and decisions remain readable beside the change; do not repeat an approval heading or nest bordered cards.
 
 ### Appearance
 

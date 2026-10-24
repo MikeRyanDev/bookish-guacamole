@@ -1,5 +1,5 @@
 import { toolOutcome } from "./tool-outcome";
-import { useToolDisclosure } from "./tool-disclosure";
+import { revealToolContent, useToolDisclosure } from "./tool-disclosure";
 import { useState } from "react";
 import { IconButton } from "./icon-button";
 import {
@@ -11,6 +11,10 @@ import {
   CircleAlert,
   ShieldCheck,
   Copy,
+  Search,
+  FolderSearch,
+  BookOpen,
+  Wrench,
 } from "lucide-react";
 
 function CopyToolText({ text, label }: { text: string; label: string }) {
@@ -177,7 +181,19 @@ export function ToolCall({
             ? "Running"
             : "No result";
   const Icon =
-    name === "read_file" ? FileCode : patch || name === "write_file" ? FileDiff : Terminal;
+    name === "read_file"
+      ? FileCode
+      : patch || name === "write_file"
+        ? FileDiff
+        : name === "bash"
+          ? Terminal
+          : name === "search"
+            ? Search
+            : name === "list_files"
+              ? FolderSearch
+              : name === "load_skill" || name === "read_skill_resource"
+                ? BookOpen
+                : Wrench;
   const filePath =
     path ?? (patch ? /^\*\*\* (?:Update|Add|Delete) File: (.+)$/m.exec(patch)?.[1] : undefined);
   const title =
@@ -209,9 +225,14 @@ export function ToolCall({
           if (event.currentTarget.open !== open) setOpen(event.currentTarget.open);
         }}
       >
-        <summary className="tool-header">
+        <summary
+          className="tool-header"
+          onClick={(event) => {
+            if (!open) revealToolContent(event.currentTarget.parentElement, ".tool-body");
+          }}
+        >
           <ChevronRight size={14} className="tool-chevron" />
-          <Icon size={14} />
+          <Icon size={14} aria-hidden="true" />
           <strong>{title}</strong>
           {(filePath || command) && (
             <code className="tool-path" title={filePath || command}>
@@ -227,7 +248,19 @@ export function ToolCall({
               <span>−{removals}</span>
             </span>
           )}
-          <span className="tool-status" title={status}>
+          <span
+            className="tool-status"
+            data-state={
+              awaitingApproval
+                ? "approval"
+                : failed
+                  ? "error"
+                  : running && output === undefined
+                    ? "running"
+                    : "settled"
+            }
+            title={status}
+          >
             {awaitingApproval ? (
               <ShieldCheck size={14} />
             ) : failed ? (
@@ -239,7 +272,7 @@ export function ToolCall({
             ) : (
               <ChevronRight size={14} />
             )}
-            <span>{status}</span>
+            <span className={status === "Result received" ? "sr-only" : undefined}>{status}</span>
           </span>
         </summary>
         <div className="tool-body">
