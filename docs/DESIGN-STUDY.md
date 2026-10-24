@@ -1,5 +1,8 @@
 # Coding workspace redesign
 
+> Historical implementation and validation record. Named models describe those runs, not starter requirements.
+> For current provider-neutral setup, use [model configuration](MODELS.md) and the [README](../README.md).
+
 ## Current refinement: darker neutrals, less chrome
 
 The user rejected the green cast, persistent metadata, and remaining boxes after the first redesign.

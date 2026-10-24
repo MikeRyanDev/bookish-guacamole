@@ -24,3 +24,7 @@ playwright-report/
 !.impeccable/surfaces/
 .impeccable/surfaces/*
 !.impeccable/surfaces/*.md
+
+# Developer-selected provider configuration
+models.json
+learning.json

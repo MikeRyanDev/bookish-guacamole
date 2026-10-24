@@ -5,7 +5,7 @@ import { resolve, join } from "node:path";
 test("named workspaces isolate real files and conversations and retain identity after reopening", async ({
   page,
 }) => {
-  test.skip(process.env.LIVE_MODEL !== "1", "Uses the configured OpenAI account.");
+  test.skip(process.env.LIVE_MODEL !== "1", "Uses the configured provider account.");
   test.setTimeout(180_000);
   await mkdir(".data/workspace-proof", { recursive: true });
   const parent = await mkdtemp(resolve(".data/workspace-proof/run-"));

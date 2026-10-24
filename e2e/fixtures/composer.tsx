@@ -1,3 +1,5 @@
+import { ApprovalControls } from "../../web/src/components/approval-settings";
+import { ModelSelector } from "../../web/src/components/model-selector";
 import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import type { Goal } from "@tanstack/ai-harness/plugins";
@@ -12,6 +14,9 @@ import "@fontsource/ibm-plex-mono/400.css";
 const params = new URLSearchParams(location.search);
 applyAppearance({ theme: params.get("theme") === "dark" ? "dark" : "light", accent: "moss" });
 function Fixture() {
+  const [planOnly, setPlanOnly] = useState(false);
+  const [permissionMode, setPermissionMode] = useState<"acceptEdits" | "bypass">("acceptEdits");
+  const [selectedModel, setSelectedModel] = useState("local");
   const [state, setState] = useState("none");
   const [draft, setDraft] = useState("");
   const [goalDraft, setGoalDraft] = useState("");
@@ -133,6 +138,33 @@ function Fixture() {
           }
         />
         <ConversationComposer
+          approvals={
+            params.has("models") ? (
+              <>
+                <ApprovalControls
+                  mode={permissionMode}
+                  planOnly={planOnly}
+                  onMode={setPermissionMode}
+                  onPlanOnly={setPlanOnly}
+                  onRefresh={() => {}}
+                />
+                <ModelSelector
+                  models={[
+                    { id: "local", label: "Local coder", provider: "ollama", model: "my-model" },
+                    {
+                      id: "remote",
+                      label: "Remote coder",
+                      provider: "openai-compatible",
+                      model: "my-other-model",
+                    },
+                  ]}
+                  selected={selectedModel}
+                  onSelect={setSelectedModel}
+                  disabled={state === "active" || state === "approval"}
+                />
+              </>
+            ) : undefined
+          }
           draft={mode ? goalDraft : draft}
           onDraftChange={mode ? setGoalDraft : setDraft}
           goalMode={mode}

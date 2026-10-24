@@ -2177,3 +2177,15 @@ dialog[open] {
 .workspace-permissions h3 {
   font-size: 14px;
 }
+
+/* Model names are developer-defined; truncate only the toolbar, wrap the choices. */
+.model-selector-label {
+  max-width: 180px;
+}
+.model-choice > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.model-choice strong {
+  display: block;
+}

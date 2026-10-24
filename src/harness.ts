@@ -3,11 +3,12 @@ import { SkillRegistry } from "@copilotkit/runtime/internal/learned-skills";
 import type { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 import { type AnyTextAdapter } from "@tanstack/ai";
 import { defineHarness } from "@tanstack/ai-harness";
-import { goal, permissions, todos } from "@tanstack/ai-harness/plugins";
+import { permissions, todos } from "@tanstack/ai-harness/plugins";
 import { workspaceTools } from "@tanstack/ai-harness/plugins/coding";
 import { projectInstructions } from "@tanstack/ai-harness/plugins/node";
 import { learnedSkills } from "./learned-skills.js";
-import { createCodingAdapter } from "./model.js";
+import { loadModelCatalog, type ModelCatalog } from "./model.js";
+import { selectedModelGoal } from "./model-settings.js";
 
 /** Combines official coding plugins with published Intelligence Skills. */
 export function createCodingHarness(options: {
@@ -15,7 +16,13 @@ export function createCodingHarness(options: {
   intelligence: CopilotKitIntelligence;
   containerId: string;
   adapter?: AnyTextAdapter;
+  models?: ModelCatalog;
 }) {
+  const catalog: Pick<ModelCatalog, "defaultModel" | "adapters"> =
+    options.models ??
+    (options.adapter
+      ? { defaultModel: "custom", adapters: { custom: options.adapter } }
+      : loadModelCatalog());
   const skills = new SkillRegistry({
     client: options.intelligence,
     containerId: options.containerId,
@@ -23,7 +30,8 @@ export function createCodingHarness(options: {
   });
   return defineHarness({
     name: "starter/coder",
-    adapter: options.adapter ?? createCodingAdapter(),
+    adapter: catalog.adapters[catalog.defaultModel]!,
+    models: catalog.adapters,
     systemPrompts: [
       "You are a coding agent. Read the project instructions and inspect relevant files before editing.",
       "The learned Skill catalog is injected automatically. Load and apply relevant Skills with load_skill before editing, and cite their names.",
@@ -41,7 +49,7 @@ export function createCodingHarness(options: {
       permissionPreview(options.root),
       permissions({ root: options.root }),
       todos(),
-      goal({ judge: options.adapter ?? createCodingAdapter(), maxRounds: 20 }),
+      selectedModelGoal(catalog.adapters, catalog.defaultModel),
     ],
   });
 }

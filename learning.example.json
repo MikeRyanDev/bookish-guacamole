@@ -1,0 +1,7 @@
+{
+  "provider": "compatible",
+  "model": "YOUR_PROVIDER/YOUR_MODEL_ID",
+  "baseUrl": "https://YOUR_PROVIDER_HOST/v1",
+  "apiKeyEnv": "LEARNING_PROVIDER_API_KEY",
+  "api": "openai-completions"
+}

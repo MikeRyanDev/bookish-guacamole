@@ -83,7 +83,7 @@ Do not modify a real HTTPS deployment for local acceptance.
 Use a fresh public starter clone and the published CLI's normal setup flow.
 Require no private checkout, manual image patch, or hidden source-build dependency.
 Record host architecture, cache reuse, commands, artifact identities, and actual results.
-Verify setup, connection, Inspector status/retry, Learning links, Luna approvals, and transcript reload.
+Verify setup, connection, Inspector status/retry, Learning links, configured-model approvals, and transcript reload.
 Run real Learning, review its evidence, publish a supported Skill, and prove delivery on the next turn without an app restart.
 Verify restart recovery and Learning runtime recycling. Separate deterministic fixtures from real backend and model evidence.
 Report untested deployment or platform coverage explicitly. Never substitute fixture coverage for a claimed live deployment check.

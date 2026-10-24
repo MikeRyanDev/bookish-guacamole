@@ -1,33 +1,19 @@
 # Temporary Intelligence branch image
 
+> Historical implementation and validation record. Named models describe those runs, not starter requirements.
+> For current provider-neutral setup, use [model configuration](MODELS.md) and the [README](../README.md).
+
 Use this only while the Intelligence fixes await release. Normal `pnpm dev` and `pnpm start` never select or patch an image. The CLI remains responsible for installing and connecting the stack.
 
-**Validation status:** commit `34918f9e1` passed the runtime-image smoke, local rollout, installed Luna Learning, Skill publication, and browser ingestion checks. Restoration returned the deployment to the captured CLI image and `IfNotPresent` policy; reapplication also passed. The local stack currently uses this temporary branch image. See [proof](VERIFICATION.md#installed-luna-learning-and-automatic-refresh).
+**Validation status:** commit `34918f9e1` passed the runtime-image smoke, local rollout, installed Luna Learning, Skill publication, and browser ingestion checks. Restoration returned the deployment to the captured CLI image and `IfNotPresent` policy; reapplication also passed. That validation used the temporary branch image; inspect current local status before recovery. See [proof](VERIFICATION.md#installed-luna-learning-and-automatic-refresh).
 
-## Configure native Luna with the branch CLI
+## Current setup
 
-The installed CLI 4.29.0 does not offer Luna in its Learning catalog. Use the
-CLI built from the same Intelligence branch for this one setup operation;
-keep the starter's normal CLI dependency unchanged.
-
-1. Check out `codex/luna-learning-starter-fixes` in your Intelligence repository.
-2. In that repository, run `pnpm install --frozen-lockfile`, then `pnpm nx build cli`.
-3. Return to the starter and run `pnpm learning:config`. It writes the OpenAI key
-   from `.env` to ignored `.data/learning-model.json` with private permissions.
-4. Set `INTELLIGENCE_REPO` to that checkout's absolute path, then run:
-
-   ```sh
-   node "$INTELLIGENCE_REPO/dist/apps/cli/index.js" local setup \
-     --model-config "$PWD/.data/learning-model.json" --json
-   ```
-
-5. Build and apply the branch image below before running Learning. Keep using
-   `pnpm intelligence` for connection, dashboard, and container commands.
-
-Sign-in and personal terms acceptance are prerequisites, as in the README.
-Setup retains the CLI-owned release and configures native `openai/gpt-6-luna`.
-Do not supply `baseUrl` for this native provider. This source-CLI step can be
-removed with the image override once the released CLI catalog includes Luna.
+Use the pinned CLI and [provider-neutral setup](MODELS.md#learning-configuration).
+The earlier source-built CLI procedure applied to release 0.15.0 and is no longer the starter setup path.
+Its native-provider result remains in the [historical verification record](VERIFICATION.md#installed-luna-learning-and-automatic-refresh).
+The commands below preserve recovery instructions for developers who explicitly installed that historical image.
+They are not required for a particular coding provider.
 
 ## Build the reviewed branch
 

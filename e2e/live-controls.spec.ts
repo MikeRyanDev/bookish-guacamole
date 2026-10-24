@@ -13,10 +13,10 @@ function backend() {
   });
 }
 
-test("rejecting a browser permission prevents a real Luna write and survives reload", async ({
+test("rejecting a browser permission prevents a real model write and survives reload", async ({
   page,
 }) => {
-  test.skip(process.env.LIVE_MODEL !== "1", "Uses the configured OpenAI account.");
+  test.skip(process.env.LIVE_MODEL !== "1", "Uses the configured provider account.");
   test.setTimeout(90000);
   const filename = `rejected-browser-${Date.now()}.txt`;
   await page.goto("/");
@@ -53,8 +53,8 @@ test("rejecting a browser permission prevents a real Luna write and survives rel
   );
 });
 
-test("stopping a streaming Luna run records cancellation in Intelligence", async ({ page }) => {
-  test.skip(process.env.LIVE_MODEL !== "1", "Uses the configured OpenAI account.");
+test("stopping a streaming model run records cancellation in Intelligence", async ({ page }) => {
+  test.skip(process.env.LIVE_MODEL !== "1", "Uses the configured provider account.");
   test.setTimeout(90000);
   await page.goto("/");
   await page

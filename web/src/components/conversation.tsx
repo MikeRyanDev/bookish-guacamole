@@ -1,3 +1,4 @@
+import { ModelSelector, useConversationModel } from "./model-selector";
 import type { AppConfig } from "../api";
 import { ConversationApprovals } from "./approval-settings";
 import { useEffect, useRef, useState } from "react";
@@ -74,6 +75,7 @@ function ActiveConversation({
     },
     [],
   );
+  const model = useConversationModel(config, threadId);
   const permission = useInterrupt({
     agentId,
     renderInChat: false,
@@ -107,7 +109,14 @@ function ActiveConversation({
     wasRunning.current = running;
   }, [running, onBusyChange, queryClient]);
   async function goalCommand(action: "resume" | "stop") {
-    if (agent.isRunning || connecting || agent.pendingInterrupts.length) return;
+    if (
+      agent.isRunning ||
+      connecting ||
+      agent.pendingInterrupts.length ||
+      model.change.isPending ||
+      !model.query.data
+    )
+      return;
     setError("");
     try {
       await copilotkit.runAgent({ agent, forwardedProps: { starterGoal: { action } } });
@@ -117,7 +126,15 @@ function ActiveConversation({
   }
   async function send() {
     const content = (goalMode ? goalDraft : draft).trim();
-    if (!content || !isReady || connecting || agent.isRunning || agent.pendingInterrupts.length)
+    if (
+      !content ||
+      !isReady ||
+      connecting ||
+      agent.isRunning ||
+      agent.pendingInterrupts.length ||
+      model.change.isPending ||
+      !model.query.data
+    )
       return;
     if (
       goalMode &&
@@ -191,7 +208,30 @@ function ActiveConversation({
         }
       />
       <ConversationComposer
-        approvals={<ConversationApprovals config={config} threadId={threadId} />}
+        approvals={
+          <>
+            <ConversationApprovals config={config} threadId={threadId} />
+            <ModelSelector
+              models={config.models}
+              selected={model.query.data?.modelId}
+              disabled={
+                running ||
+                connecting ||
+                agent.pendingInterrupts.length > 0 ||
+                model.change.isPending
+              }
+              error={model.change.error?.message ?? model.query.error?.message}
+              onSelect={(id) => model.change.mutate(id)}
+              onRetry={
+                model.query.isError
+                  ? () => {
+                      void model.query.refetch();
+                    }
+                  : undefined
+              }
+            />
+          </>
+        }
         draft={goalMode ? goalDraft : draft}
         onDraftChange={goalMode ? setGoalDraft : setDraft}
         goalMode={goalMode}
@@ -200,7 +240,7 @@ function ActiveConversation({
         goal={goal}
         running={running}
         connecting={connecting}
-        ready={isReady}
+        ready={isReady && !!model.query.data && !model.change.isPending}
         pendingApproval={agent.pendingInterrupts.length > 0}
         onSend={() => {
           void send();

@@ -7,7 +7,8 @@ export interface AppConfig {
   workspaceId: string;
   workspaceName: string;
   agentId: string;
-  model: string;
+  defaultModel: string;
+  models: Array<{ id: string; label: string; provider: string; model: string }>;
   containerId: string;
 }
 export interface Skill {

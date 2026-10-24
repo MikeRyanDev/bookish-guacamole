@@ -2,7 +2,8 @@ import { createPermissionSettings } from "./permission-settings.js";
 import { z } from "zod";
 import { browseWorkspace, searchWorkspace, FileDiscoveryError } from "./workspace-discovery.js";
 import { openWorkspaceRegistry, WorkspaceError, type WorkspaceEntry } from "./workspaces.js";
-import { CODING_MODEL } from "./model.js";
+import { loadModelCatalog, type ModelCatalog } from "./model.js";
+import { createModelSettings } from "./model-settings.js";
 import { randomBytes } from "node:crypto";
 import { once } from "node:events";
 import { mkdir } from "node:fs/promises";
@@ -42,11 +43,12 @@ function localUrl(name: string, protocols: string[]): string {
 export async function startApp(
   options: {
     port?: number;
+    models?: ModelCatalog;
     dataDirectory?: string;
     serve?: (request: IncomingMessage, response: ServerResponse) => void;
   } = {},
 ) {
-  required("OPENAI_API_KEY");
+  const models = options.models ?? loadModelCatalog();
   const apiUrl = localUrl("INTELLIGENCE_API_URL", ["http:", "https:"]);
   const wsUrl = localUrl("INTELLIGENCE_GATEWAY_WS_URL", ["ws:", "wss:"]);
   const apiKey = required("CPK_INTELLIGENCE_API_KEY");
@@ -79,7 +81,18 @@ export async function startApp(
     const host = createHarnessHost({
       persistence: defineAIPersistence({ stores: { log: store.log, metadata: store.metadata } }),
     });
-    const harness = createCodingHarness({ root: workspace.path, intelligence, containerId });
+    const harness = createCodingHarness({
+      root: workspace.path,
+      intelligence,
+      containerId,
+      models,
+    });
+    const modelSettings = createModelSettings({
+      host,
+      harness,
+      defaultModel: models.defaultModel,
+      models: models.adapters,
+    });
     const approvalSettings = createPermissionSettings({
       host,
       harness,
@@ -102,6 +115,7 @@ export async function startApp(
       agentId,
       basePath,
       approvalSettings,
+      modelSettings,
       listener: createCopilotNodeListener({ runtime, basePath }),
       close: async () => {
         await host.close();
@@ -175,7 +189,10 @@ export async function startApp(
         workspaceId: workspace.id,
         workspaceName: workspace.name,
         workspace: workspace.path,
-        model: CODING_MODEL,
+        // Compatibility: this field names the configured default, not the thread selection.
+        model: models.adapters[models.defaultModel]!.model,
+        models: models.publicModels,
+        defaultModel: models.defaultModel,
         containerId,
       });
       return;
@@ -188,6 +205,25 @@ export async function startApp(
     if (request.headers.authorization !== `Bearer ${token}`) {
       json(response, { error: "Unauthorized" }, 401);
       return;
+    }
+    if (url.pathname === "/api/model") {
+      const selected = runtimeFor(selectedWorkspace(url));
+      const settings = selected.modelSettings;
+      const thread = url.searchParams.get("thread") ?? "";
+      if (request.method === "GET") {
+        json(response, await settings.read(thread));
+        return;
+      }
+      if (request.method === "PUT") {
+        const input = z
+          .object({ modelId: z.string() })
+          .strict()
+          .safeParse(await readJson(request));
+        if (!input.success) throw new WorkspaceError("Send a configured model ID.");
+        await selected.approvalSettings.initialize(thread);
+        json(response, await settings.set(thread, input.data.modelId));
+        return;
+      }
     }
     if (url.pathname === "/api/approval-mode") {
       const settings = runtimeFor(selectedWorkspace(url)).approvalSettings;

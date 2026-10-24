@@ -111,6 +111,8 @@ Read README.md, docs/ARCHITECTURE.md, and docs/VERIFICATION.md before changing b
 
 ## Choose guidance
 
+For first-time setup, use `.agents/skills/setup/SKILL.md`. Coding and Learning model configuration are separate; see `docs/MODELS.md`.
+
 | Work                                     | Read                                                                                  |
 | ---------------------------------------- | ------------------------------------------------------------------------------------- |
 | React UI, URL/query state, accessibility | `.agents/skills/starter-react/SKILL.md` and `.agents/skills/react-practices/SKILL.md` |

@@ -1,5 +1,8 @@
 # Intelligence Flue upgrade boundary
 
+> Historical implementation and validation record. Named models describe those runs, not starter requirements.
+> For current provider-neutral setup, use [model configuration](MODELS.md) and the [README](../README.md).
+
 ## Current delivery state
 
 Intelligence now uses Flue 2.3 with native upstream providers. Draft PR #2041

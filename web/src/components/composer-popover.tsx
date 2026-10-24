@@ -7,9 +7,11 @@ export function ComposerPopover({
   label,
   title,
   children,
+  disabled,
 }: {
   label: ReactNode;
   title: string;
+  disabled?: boolean;
   children: ReactNode;
 }) {
   const id = useId();
@@ -49,6 +51,7 @@ export function ComposerPopover({
       <button
         ref={trigger}
         type="button"
+        disabled={disabled}
         className="composer-control"
         popoverTarget={id}
         aria-expanded={open}

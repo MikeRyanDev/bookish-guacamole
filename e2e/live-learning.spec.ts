@@ -10,6 +10,10 @@ test("a newly published Learning Skill reaches the next browser turn without res
     "Requires the installed Learning publication proof.",
   );
   test.setTimeout(120_000);
+  const modelConfig = await (await page.request.get("/api/config")).json();
+  const configuredModel = modelConfig.models.find(
+    (model: { id: string }) => model.id === modelConfig.defaultModel,
+  );
   await page.goto("/");
   await page
     .getByRole("textbox", { name: "Message your coding agent" })
@@ -62,7 +66,13 @@ test("a newly published Learning Skill reaches the next browser turn without res
   await writeFile(
     ".data/flue2-browser-learning-proof.json",
     JSON.stringify(
-      { threadId, skill: "regression-only-coverage", model: "gpt-6-luna", answer, events: saved },
+      {
+        threadId,
+        skill: "regression-only-coverage",
+        model: configuredModel,
+        answer,
+        events: saved,
+      },
       null,
       2,
     ),

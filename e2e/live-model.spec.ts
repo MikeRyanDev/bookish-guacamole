@@ -2,11 +2,15 @@ import { test, expect } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 
-test("Luna loads a learned Skill, executes approved tests, and restores without duplicate tools", async ({
+test("the selected model loads a learned Skill, executes approved tests, and restores without duplicate tools", async ({
   page,
 }) => {
-  test.skip(process.env.LIVE_MODEL !== "1", "Opt in: this uses the configured OpenAI account.");
+  test.skip(process.env.LIVE_MODEL !== "1", "Opt in: this uses the configured provider account.");
   test.setTimeout(180_000);
+  const modelConfig = await (await page.request.get("/api/config")).json();
+  const configuredModel = modelConfig.models.find(
+    (model: { id: string }) => model.id === modelConfig.defaultModel,
+  );
   await page.goto("/");
   await page
     .getByRole("textbox", { name: "Message your coding agent" })
@@ -63,7 +67,7 @@ test("Luna loads a learned Skill, executes approved tests, and restores without 
   expect(reloaded.events.filter((event) => event.type === "TOOL_CALL_START")).toHaveLength(
     toolCount,
   );
-  await writeFile(".data/luna-browser-events.json", JSON.stringify(saved));
+  await writeFile(".data/model-browser-events.json", JSON.stringify(saved));
   await mkdir("docs/proof", { recursive: true });
   await page.screenshot({
     path: "docs/proof/luna-light.png",
@@ -77,7 +81,7 @@ test("Luna loads a learned Skill, executes approved tests, and restores without 
     animations: "disabled",
   });
   await writeFile(
-    ".data/luna-browser-proof.json",
-    JSON.stringify({ url, approvals, toolCount, model: "gpt-6-luna" }),
+    ".data/model-browser-proof.json",
+    JSON.stringify({ url, approvals, toolCount, model: configuredModel }),
   );
 });

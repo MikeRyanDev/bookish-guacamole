@@ -25,7 +25,8 @@ function Fixture() {
             workspaceName: "Fixture",
             runtimeUrl: "",
             agentId: "",
-            model: "",
+            models: [],
+            defaultModel: "",
             containerId: "",
           }}
           panel={panel}

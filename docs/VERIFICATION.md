@@ -1,5 +1,10 @@
 # Verification record
 
+> Historical implementation and validation record. Named models describe those runs, not starter requirements.
+> For current provider-neutral setup, use [model configuration](MODELS.md) and the [README](../README.md).
+
+Latest provider configuration and composer evidence: [model delivery](MODEL-VERIFICATION.md).
+
 ## Lazy file discovery — 2026-10-23
 
 Implemented in `feat/lazy-files`, based on main `9bdbe42`. [API contract and performance limits](FILE-DISCOVERY.md).
@@ -414,7 +419,6 @@ Pre-integration checks: `pnpm check` passed 152 tests with 47 declared skips, li
 The affected permission, composer, tool approval, and motion browser suite passed 20 tests.
 A broader run found an old mobile inspector overlap and one transient patch retry failure during UI edits. The focused patch retry passed afterward.
 Main advanced during this work with composer and mobile file-entry changes. Final integrated results follow this record.
-
 
 Final integrated checks include main through `2b8caa3`:
 

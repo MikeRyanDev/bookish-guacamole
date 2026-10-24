@@ -3,6 +3,7 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, test, vi } from "vitest";
+import { createModelCatalog } from "../src/model.js";
 import { startApp } from "../src/app.js";
 
 test("local browser bootstrap refuses cross-origin access and protects workspace APIs", async () => {
@@ -15,14 +16,88 @@ test("local browser bootstrap refuses cross-origin access and protects workspace
     CODING_WORKSPACE: join(directory, "workspace"),
   }))
     vi.stubEnv(key, value);
-  const app = await startApp({ dataDirectory: join(directory, "data") });
+  const app = await startApp({
+    models: createModelCatalog({
+      defaultModel: "test",
+      models: [
+        {
+          id: "test",
+          label: "Test",
+          provider: "openai",
+          model: "test-model",
+          apiKeyEnv: "OPENAI_API_KEY",
+        },
+      ],
+    }),
+    dataDirectory: join(directory, "data"),
+  });
   const origin = new URL(app.runtimeUrl).origin;
   try {
     const response = await fetch(origin + "/api/config");
     const config = await response.json();
     expect(response.headers.get("cache-control")).toBe("no-store");
-    expect(config.model).toBe("gpt-6-luna");
+    expect(config.defaultModel).toBe("test");
+    expect(config.model).toBe("test-model");
+    expect(config.models).toEqual([
+      { id: "test", label: "Test", provider: "openai", model: "test-model" },
+    ]);
     expect(JSON.stringify(config)).not.toContain("private-test");
+    const newThreadHeaders = {
+      authorization: `Bearer ${app.token}`,
+      "content-type": "application/json",
+    };
+    await fetch(origin + "/api/model?thread=model-first", {
+      method: "PUT",
+      headers: newThreadHeaders,
+      body: JSON.stringify({ modelId: "test" }),
+    });
+    expect(
+      await (
+        await fetch(origin + "/api/approval-mode?thread=model-first", { headers: newThreadHeaders })
+      ).json(),
+    ).toMatchObject({ mode: "acceptEdits" });
+    const modelUrl = origin + "/api/model?thread=model-api-test";
+    expect((await fetch(modelUrl)).status).toBe(401);
+    const modelHeaders = {
+      authorization: `Bearer ${app.token}`,
+      "content-type": "application/json",
+    };
+    expect(await (await fetch(modelUrl, { headers: modelHeaders })).json()).toMatchObject({
+      modelId: "test",
+    });
+    expect(
+      await (
+        await fetch(origin + "/api/approval-mode?thread=model-api-test", { headers: modelHeaders })
+      ).json(),
+    ).toMatchObject({ mode: "acceptEdits" });
+    expect(
+      (
+        await fetch(modelUrl, {
+          method: "PUT",
+          headers: modelHeaders,
+          body: JSON.stringify({ modelId: "not-configured" }),
+        })
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await fetch(modelUrl, {
+          method: "PUT",
+          headers: modelHeaders,
+          body: JSON.stringify({ modelId: "test", apiKey: "injected" }),
+        })
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await fetch(modelUrl, {
+          method: "PUT",
+          headers: modelHeaders,
+          body: JSON.stringify({ modelId: "test" }),
+        })
+      ).status,
+    ).toBe(200);
+
     expect(
       (await fetch(origin + "/api/config", { headers: { origin: "https://untrusted.example" } }))
         .status,
@@ -105,7 +180,21 @@ test("workspace APIs create isolated identities and preserve files when an entry
     CODING_WORKSPACE: join(directory, "original"),
   }))
     vi.stubEnv(key, value);
-  const app = await startApp({ dataDirectory: join(directory, "data") });
+  const app = await startApp({
+    models: createModelCatalog({
+      defaultModel: "test",
+      models: [
+        {
+          id: "test",
+          label: "Test",
+          provider: "openai",
+          model: "test-model",
+          apiKeyEnv: "OPENAI_API_KEY",
+        },
+      ],
+    }),
+    dataDirectory: join(directory, "data"),
+  });
   const origin = new URL(app.runtimeUrl).origin;
   const headers = { authorization: `Bearer ${app.token}`, "content-type": "application/json" };
   try {
@@ -177,7 +266,21 @@ test("approval settings require local authentication and preserve conversation s
     CODING_WORKSPACE: join(directory, "workspace"),
   }))
     vi.stubEnv(key, value);
-  const app = await startApp({ dataDirectory: join(directory, "data") });
+  const app = await startApp({
+    models: createModelCatalog({
+      defaultModel: "test",
+      models: [
+        {
+          id: "test",
+          label: "Test",
+          provider: "openai",
+          model: "test-model",
+          apiKeyEnv: "OPENAI_API_KEY",
+        },
+      ],
+    }),
+    dataDirectory: join(directory, "data"),
+  });
   const origin = new URL(app.runtimeUrl).origin;
   const headers = { authorization: `Bearer ${app.token}`, "content-type": "application/json" };
   try {

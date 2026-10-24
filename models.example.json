@@ -1,0 +1,13 @@
+{
+  "defaultModel": "my-coder",
+  "models": [
+    {
+      "id": "my-coder",
+      "label": "My coder",
+      "provider": "openai-compatible",
+      "model": "YOUR_MODEL_ID",
+      "baseURL": "https://YOUR_PROVIDER_HOST/v1",
+      "apiKeyEnv": "CODING_PROVIDER_API_KEY"
+    }
+  ]
+}

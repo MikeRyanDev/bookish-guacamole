@@ -6,7 +6,7 @@ flowchart LR
   Runtime --> Intelligence[CLI-installed Intelligence]
   Runtime --> Bridge[AG-UI bridge]
   Bridge --> Harness[TanStack AI harness]
-  Harness --> Luna[GPT-6 Luna Responses]
+  Harness --> Model[Selected TanStack provider adapter]
   Harness --> Tools[Workspace tools and permissions]
   Harness --> Log[SQLite execution log]
   Intelligence --> Learning[Learning and published Skills]
@@ -64,7 +64,7 @@ This is a single-developer tool, not a hosted multi-user service. The shell tool
 
 Vite 8 uses Rolldown/Oxc for the browser. tsdown builds the Node entry and leaves Vite external because production does not load the dev server. Oxlint checks code; Oxfmt formats it; Vitest tests the backend; Playwright and axe test the browser. Direct dependencies and the package manager are pinned.
 
-Change `src/model.ts` for the coding model. Add tools/plugins in `src/harness.ts`. Render tool output with v2 `useDefaultRenderTool`/`useRenderToolCall`, or add a typed `useRenderTool` renderer. Use `useInterrupt` for permission decisions. Do not introduce a second chat client or message store.
+Configure coding models in `models.json`; extend adapters in `src/model.ts`. See [model architecture](MODELS.md#code-level-design-and-extension). Add tools/plugins in `src/harness.ts`. Render tool output with v2 `useDefaultRenderTool`/`useRenderToolCall`, or add a typed `useRenderTool` renderer. Use `useInterrupt` for permission decisions. Do not introduce a second chat client or message store.
 
 The CopilotKit Inspector is explicitly enabled. The SDK shows it only on local development builds; production and remote hosts keep its built-in restrictions. The workspace's Files/Skills inspector is a separate app panel.
 

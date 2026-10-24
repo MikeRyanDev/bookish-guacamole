@@ -1,5 +1,8 @@
 # Browser starter delivery
 
+> Historical implementation and validation record. Named models describe those runs, not starter requirements.
+> For current provider-neutral setup, use [model configuration](MODELS.md) and the [README](../README.md).
+
 Source: `../IMPROVEMENTS.md`. Latest reviewed SHA-256: `33e5db5726591088bae60885edd1e1e7cdec4787a90fc7a2e443491c3843c898`.
 
 Re-read the source after each implementation phase and before final verification. Preserve user edits to it. The historical terminal proof does not prove this browser delivery.

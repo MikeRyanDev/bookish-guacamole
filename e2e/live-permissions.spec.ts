@@ -7,6 +7,10 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
 }) => {
   test.skip(process.env.LIVE_MODEL !== "1", "Opt in to the configured local model account.");
   test.setTimeout(180000);
+  const modelConfig = await (await page.request.get("/api/config")).json();
+  const configuredModel = modelConfig.models.find(
+    (model: { id: string }) => model.id === modelConfig.defaultModel,
+  );
   await page.goto("/");
   await expect(page.getByRole("button", { name: "Require permissions" })).toBeVisible();
   const input = page.getByRole("textbox", { name: "Message your coding agent" });
@@ -93,7 +97,7 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
       threadId,
       bashCalls: 3,
       events: events.events.length,
-      model: "gpt-6-luna",
+      model: configuredModel,
     }),
   );
   await page.screenshot({ path: ".data/live-permissions.png", fullPage: true });

@@ -3,10 +3,10 @@ import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 
-test("Luna patch approval previews the exact change, waits for consent, and persists after reload", async ({
+test("model patch approval previews the exact change, waits for consent, and persists after reload", async ({
   page,
 }) => {
-  test.skip(process.env.LIVE_MODEL !== "1", "Uses the configured OpenAI account.");
+  test.skip(process.env.LIVE_MODEL !== "1", "Uses the configured provider account.");
   test.setTimeout(120_000);
   await mkdir(".data/patch-proof", { recursive: true });
   const folder = await mkdtemp(resolve(".data/patch-proof/run-"));

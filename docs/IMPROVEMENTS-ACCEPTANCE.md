@@ -1,5 +1,8 @@
 # Improvements acceptance
 
+> Historical implementation and validation record. Named models describe those runs, not starter requirements.
+> For current provider-neutral setup, use [model configuration](MODELS.md) and the [README](../README.md).
+
 Checked against the unchanged `IMPROVEMENTS.md` on 2026-10-23 (SHA-256
 `33e5db5726591088bae60885edd1e1e7cdec4787a90fc7a2e443491c3843c898`).
 

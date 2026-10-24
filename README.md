@@ -18,7 +18,7 @@ an upgrade or another stack. Preserve existing conversations and Skills when cha
 
 | Part                                | What it does                                                           |
 | ----------------------------------- | ---------------------------------------------------------------------- |
-| TanStack AI harness                 | Runs GPT-6 Luna, workspace tools, and permission pauses                |
+| TanStack AI harness                 | Runs your selected model, workspace tools, and permission pauses       |
 | CopilotKit React v2                 | Streams the conversation, restores sessions, and renders approvals     |
 | Intelligence                        | Stores conversations and turns their evidence into Insights and Skills |
 | TanStack Router, Query, and Virtual | Manage URL selections, server reads, and long transcripts              |
@@ -28,22 +28,26 @@ This is a starter for one trusted local developer. Provider keys stay on the ser
 
 ## Get running
 
-You need Node.js **22.13+**, pnpm **10.9**, Git, Docker, and an OpenAI API key with access to GPT-6 Luna. Start Docker before setting up Intelligence.
+You need Node.js **22.13+**, pnpm **10.9**, Git, Docker, and access to your chosen model provider or local model server. Start Docker before setting up Intelligence.
 
 ### 1. Prepare the starter
 
 ```sh
 pnpm install --frozen-lockfile
 cp .env.example .env
+cp models.example.json models.json
+cp learning.example.json learning.json
 pnpm workspace:create
 ```
 
-Add `OPENAI_API_KEY` to `.env` in your editor. Keep the file private. `workspace:create` copies the small greeting example into `workspace/` and refuses to replace an existing folder.
+Configure your coding models in `models.json` and their referenced keys in `.env`. Keep both files private.
+Choose your own providers and model IDs. [Model configuration](docs/MODELS.md) covers native adapters, compatible endpoints, and multiple choices.
+For guided setup, ask your coding assistant to use the repository `$setup` skill. `workspace:create` copies the small greeting example into `workspace/` and refuses to replace an existing folder.
 
 ### 2. Sign in to CopilotKit
 
 ```sh
-pnpm intelligence login
+pnpm intelligence login --json
 pnpm intelligence local accept-terms
 ```
 
@@ -51,15 +55,17 @@ Review and accept the evaluation terms yourself. An agent cannot accept them for
 
 ### 3. Install Intelligence and configure Learning
 
-**Temporary step for release 0.15.0:** native Luna Learning requires the fixes in [Intelligence PR #2041](https://github.com/CopilotKit/Intelligence/pull/2041). Follow [the branch CLI and image setup](docs/TEMPORARY-INTELLIGENCE.md#configure-native-luna-with-the-branch-cli), then return here. The guide includes the tested restore command and removal checklist. Normal starter startup never changes backend images.
-
-Once the fixed CLI and Intelligence release are available, use the normal setup command instead:
+Configure Learning separately in `learning.json`. It can use the same provider as coding or a different one.
+The [Learning configuration guide](docs/MODELS.md#learning-configuration) explains native and compatible endpoints.
 
 ```sh
-pnpm intelligence local setup
+pnpm learning:config
+pnpm intelligence local setup --model-config .data/learning-model.json --json
 ```
 
-The coding agent and Learning service have separate model configuration. Your `.env` key configures the coding agent; the setup flow configures Learning.
+The CLI validates its supported model catalog and the current agreement. Provider keys stay in private configuration.
+Existing stacks retain their installed release. Do not change backend images as part of normal startup.
+[Temporary release diagnostics](docs/TEMPORARY-INTELLIGENCE.md) apply only to the older release described there.
 
 ### 4. Connect this app
 
@@ -86,6 +92,10 @@ then run the tests again and report the actual result.
 ```
 
 ## Work with the agent
+
+Choose **Model: [name]** in the composer to select a configured model for this conversation.
+The choice survives reloads and server restarts. New conversations use your configured default.
+Coding and goal checks use this selection; Intelligence Learning keeps its separate configuration.
 
 Review each approval card before choosing **Allow once** or **Reject**. Consecutive completed tools share a compact activity summary. Expand it to see individual calls, then open a call for its exact evidence. Failed, denied, running, and missing-result calls remain visible outside completed groups. Bash previews show the exact command; patch previews show added and removed lines.
 Use the copy controls for exact payloads and **Raw details** for original arguments. Completed calls start collapsed. Your expansion choices last while the conversation stays open, including when you scroll through a long history. Approval applies only to that tool call. If submitting a decision fails, retry it from the same card.
@@ -119,7 +129,7 @@ The catalog is refreshed through the SDK before each turn. Skills are not copied
 
 | Change                                   | Start here                                                                                   |
 | ---------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Model or model options                   | [`src/model.ts`](src/model.ts)                                                               |
+| Model or model options                   | [`models.json` configuration](docs/MODELS.md)                                                |
 | Tools, prompts, or permission policy     | [`src/harness.ts`](src/harness.ts)                                                           |
 | Transcript, approvals, and tool displays | [`web/src/components/`](web/src/components/)                                                 |
 | Workspace shell and navigation           | [`web/src/workspace.tsx`](web/src/workspace.tsx), [`web/src/router.tsx`](web/src/router.tsx) |
@@ -145,7 +155,7 @@ node --test example/greet.test.js
 pnpm test:e2e
 ```
 
-Start the app before browser tests. `pnpm check` runs lint, the design source check, both TypeScript checks, unit tests, and production builds. Live model tests are opt-in because they use your OpenAI account; see [verification](docs/VERIFICATION.md) for their prerequisites and commands.
+Start the app before browser tests. `pnpm check` runs lint, the design source check, both TypeScript checks, unit tests, and production builds. Live model tests are opt-in because they use your configured provider account; see [verification](docs/VERIFICATION.md) for their prerequisites and commands.
 
 ```sh
 pnpm build
@@ -156,13 +166,12 @@ Stop the app with Ctrl-C. The backend remains available until you run `pnpm inte
 
 ## If something does not work
 
-| Symptom                               | Check                                                                                                                                           |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Runtime unavailable                   | Docker is running; run `pnpm intelligence local status` and check the CLI-written connection settings                                           |
-| Model request fails                   | `OPENAI_API_KEY` is set in `.env` and the account can use Luna                                                                                  |
-| No learned Skills                     | The configured container has an approved Skill; a pending candidate is not published                                                            |
-| Luna Learning fails on release 0.15.0 | Complete the temporary branch setup above; model configuration alone does not update the runtime                                                |
-| Need to undo the temporary image      | Run `pnpm intelligence:image:restore` and follow the [retirement checklist](docs/TEMPORARY-INTELLIGENCE.md#retire-the-workaround-after-release) |
+| Symptom                          | Check                                                                                                                                           |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Runtime unavailable              | Docker is running; run `pnpm intelligence local status` and check the CLI-written connection settings                                           |
+| Model request fails              | The selected model ID, endpoint, and referenced key match your provider configuration                                                           |
+| No learned Skills                | The configured container has an approved Skill; a pending candidate is not published                                                            |
+| Need to undo the temporary image | Run `pnpm intelligence:image:restore` and follow the [retirement checklist](docs/TEMPORARY-INTELLIGENCE.md#retire-the-workaround-after-release) |
 
 The app accepts only local Intelligence URLs. Private dot paths and outside symlinks are excluded from file previews and downloads. Large frontend chunks remain a build warning. For the exact checks, real Learning runs, screenshots, and limits, read the [latest UI proof](docs/NEW-IMPROVEMENTS-VERIFICATION.md) and [runtime verification record](docs/VERIFICATION.md).
 
