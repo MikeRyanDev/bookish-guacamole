@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ArrowDown } from "lucide-react";
 import { IconButton } from "./icon-button";
@@ -19,6 +19,7 @@ export function VirtualTranscript<T extends { id: string }>({
 }) {
   const scroll = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
+  const [disclosing, setDisclosing] = useState(false);
   const virtualizer = useVirtualizer({
     count: items.length + 1,
     getScrollElement: () => scroll.current,
@@ -27,11 +28,19 @@ export function VirtualTranscript<T extends { id: string }>({
       index === items.length
         ? `transcript-footer:${items.at(-1)?.id ?? "empty"}`
         : `message:${items[index]!.id}`,
-    anchorTo: "end",
-    followOnAppend: true,
+    anchorTo: disclosing ? "start" : "end",
+    followOnAppend: !disclosing,
     scrollEndThreshold: 24,
     overscan: 4,
   });
+  useLayoutEffect(() => {
+    // New agent data may resume following when inspection still leaves us at
+    // the end. UI-only disclosures keep their anchor even if tool renderers
+    // mount asynchronously several frames after the click.
+    const element = scroll.current;
+    if (element && element.scrollHeight - element.clientHeight - element.scrollTop <= 24)
+      setDisclosing(false);
+  }, [items]);
   useLayoutEffect(() => {
     if (!initialized.current && items.length) {
       initialized.current = true;
@@ -47,6 +56,15 @@ export function VirtualTranscript<T extends { id: string }>({
         aria-label="Conversation transcript"
         aria-busy={busy}
         tabIndex={0}
+        onScroll={(event) => {
+          const element = event.currentTarget;
+          if (element.scrollHeight - element.clientHeight - element.scrollTop <= 24)
+            setDisclosing(false);
+        }}
+        onClickCapture={(event) => {
+          if (event.target instanceof Element && event.target.closest("summary, .activity-summary"))
+            setDisclosing(true);
+        }}
       >
         <div className="virtual-items" style={{ height: virtualizer.getTotalSize() }}>
           {virtualizer.getVirtualItems().map((row) => {
@@ -75,7 +93,13 @@ export function VirtualTranscript<T extends { id: string }>({
       </div>
       {items.length > 0 && !virtualizer.isAtEnd() && (
         <div className="jump-latest">
-          <IconButton label="Jump to latest" onClick={() => virtualizer.scrollToEnd()}>
+          <IconButton
+            label="Jump to latest"
+            onClick={() => {
+              setDisclosing(false);
+              virtualizer.scrollToEnd();
+            }}
+          >
             <ArrowDown size={16} />
           </IconButton>
         </div>

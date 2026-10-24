@@ -79,8 +79,8 @@ then run the tests again and report the actual result.
 
 ## Work with the agent
 
-Review each approval card before choosing **Allow once** or **Reject**. Expandable tool rows show the action and its outcome. Bash previews show the exact command; patch previews show added and removed lines.
-Use the copy controls for exact payloads and **Raw details** for original arguments. Successful file reads start collapsed. Approval applies only to that tool call. If submitting a decision fails, retry it from the same card.
+Review each approval card before choosing **Allow once** or **Reject**. Consecutive completed tools share a compact activity summary. Expand it to see individual calls, then open a call for its exact evidence. Failed, denied, running, and missing-result calls remain visible outside completed groups. Bash previews show the exact command; patch previews show added and removed lines.
+Use the copy controls for exact payloads and **Raw details** for original arguments. Completed calls start collapsed. Your expansion choices last while the conversation stays open, including when you scroll through a long history. Approval applies only to that tool call. If submitting a decision fails, retry it from the same card.
 
 Use the stop control to cancel a run. Click a session name to reopen its conversation; browser Back and Forward restore your selection. The transcript follows new output while you are at the bottom. Scroll up to read without being pulled down, then use **Jump to latest** when ready.
 

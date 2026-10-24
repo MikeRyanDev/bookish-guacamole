@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T00:39:09.988903+00:00",
+  "generatedAt": "2026-10-24T01:47:02.375793+00:00",
   "title": "Design System: TanStack Coding Starter",
   "extensions": {
     "colorMeta": {
@@ -941,9 +941,17 @@
       "name": "Tool disclosure",
       "kind": "custom",
       "refersTo": "tool-disclosure",
-      "description": "A compact completed read expands into exact source.",
+      "description": "A completed call, including a patch, starts collapsed. Explicit top-level choices survive virtual remounts within the mounted conversation; failures, running calls, and approvals default open.",
       "html": "<details class=\"ds-tool\"><summary><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/></svg><strong>Read file</strong><span>greet.ts</span><span class=\"ds-status\">Result received</span></summary><pre>export const greeting = \"Hello\";</pre></details>",
-      "css": ".ds-tool{font-family:\"Manrope Variable\",sans-serif;font-size:13px;color:var(--text)}.ds-tool summary{display:flex;align-items:center;gap:8px;min-height:38px;padding:6px 2px;border-radius:6px;font-size:12px;color:var(--muted);cursor:pointer;list-style:none}.ds-tool summary::-webkit-details-marker{display:none}.ds-tool summary:hover{background:var(--panel);color:var(--text)}.ds-tool summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.ds-tool strong{font-weight:650;color:var(--text)}.ds-status{margin-left:auto;font-size:11px}.ds-tool[open] svg{transform:rotate(90deg)}.ds-tool pre{font-family:\"IBM Plex Mono\",monospace;font-size:12px;line-height:1.8;background:var(--code);border-radius:8px;padding:12px;overflow:auto}"
+      "css": ".ds-tool{font-family:\"Manrope Variable\",sans-serif;font-size:13px;color:var(--text)}.ds-tool summary{display:flex;align-items:center;gap:8px;min-height:34px;padding:4px 6px;border-radius:6px;font-size:12px;color:var(--muted);cursor:pointer;list-style:none}.ds-tool summary::-webkit-details-marker{display:none}.ds-tool summary:hover{background:var(--panel);color:var(--text)}.ds-tool summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.ds-tool strong{font-weight:650;color:var(--text)}.ds-status{margin-left:auto;font-size:11px}.ds-tool[open] svg{transform:rotate(90deg)}.ds-tool pre{font-family:\"IBM Plex Mono\",monospace;font-size:12px;line-height:1.8;background:var(--code);border-radius:8px;padding:12px;overflow:auto}"
+    },
+    {
+      "name": "Completed activity",
+      "kind": "custom",
+      "refersTo": "activity-summary",
+      "description": "Two or more consecutive completed calls share a count and category summary. Narrative, approvals, exceptions, and unfinished calls break groups. Production uses an aria-expanded button and individually disclosed calls; this static specimen shows the group hierarchy.",
+      "html": "<details class=\"ds-activity\"><summary><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/></svg><strong>2 tool calls</strong><span class=\"ds-activity-types\">1 read · 1 command</span></summary><div class=\"ds-activity-calls\"><div class=\"ds-activity-call\">Read file <code>greet.ts</code></div><div class=\"ds-activity-call\">Run command <code>node --test example/greet.test.js</code></div></div></details>",
+      "css": ".ds-activity{font-family:\"Manrope Variable\",sans-serif;font-size:12px;color:var(--muted);max-width:960px;padding-bottom:8px}.ds-activity>summary{display:flex;align-items:center;gap:8px;width:100%;min-height:34px;padding:4px 6px;background:transparent;border:0;border-radius:6px;cursor:pointer;list-style:none}.ds-activity>summary::-webkit-details-marker{display:none}.ds-activity>summary:hover{background:var(--panel);color:var(--text)}.ds-activity>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.ds-activity strong{font-weight:600;color:var(--text);flex-shrink:0}.ds-activity-types{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ds-activity[open]>summary>svg{transform:rotate(90deg)}.ds-activity-calls{padding:2px 0 0 22px}.ds-activity-call{display:flex;align-items:center;gap:8px;min-height:34px;padding:4px 6px}.ds-activity-call code{font-family:\"IBM Plex Mono\",monospace;font-size:11px}@media(max-width:600px){.ds-activity>summary{flex-wrap:wrap}.ds-activity-types{flex-basis:100%;padding-left:44px;white-space:normal}.ds-activity-calls{padding-left:8px}}"
     },
     {
       "name": "Permission group",
@@ -951,7 +959,7 @@
       "refersTo": "permission",
       "description": "Unframed proposed call and its per-call decision footer.",
       "html": "<section class=\"ds-permission\" aria-label=\"Tool approval\"><details open><summary><strong>Run command</strong><span class=\"ds-status\">Approval required</span></summary><pre>node --test example/greet.test.js</pre></details><footer><span>This tool call only</span><button>Reject</button><button class=\"ds-allow\">Allow once</button></footer></section>",
-      "css": ".ds-permission{font-family:\"Manrope Variable\",sans-serif;font-size:13px;background:transparent;color:var(--text);border:0;padding:0}.ds-permission summary{display:flex;align-items:center;gap:8px;min-height:38px;padding:6px 2px;font-size:12px;cursor:pointer;list-style:none}.ds-permission summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.ds-status{margin-left:auto;color:var(--accent);font-size:11px}.ds-permission footer>span{margin-right:auto;color:var(--muted);font-size:11px}.ds-permission pre{font-family:\"IBM Plex Mono\",monospace;font-size:12px;line-height:1.8;background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto}.ds-permission footer{display:flex;justify-content:flex-end;gap:8px;padding:10px 0}.ds-permission button{font-family:\"Manrope Variable\",sans-serif;font-size:13px;border:0;border-radius:6px;padding:7px 12px;cursor:pointer;transition:background 120ms,border-color 120ms;background:var(--bg);color:var(--text)}.ds-permission button:hover{background:var(--hover)}.ds-permission button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.ds-permission .ds-allow{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}"
+      "css": ".ds-permission{font-family:\"Manrope Variable\",sans-serif;font-size:13px;background:transparent;color:var(--text);border:0;padding:0}.ds-permission summary{display:flex;align-items:center;gap:8px;min-height:34px;padding:4px 6px;font-size:12px;cursor:pointer;list-style:none}.ds-permission summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.ds-status{margin-left:auto;color:var(--accent);font-size:11px}.ds-permission footer>span{margin-right:auto;color:var(--muted);font-size:11px}.ds-permission pre{font-family:\"IBM Plex Mono\",monospace;font-size:12px;line-height:1.8;background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto}.ds-permission footer{display:flex;justify-content:flex-end;gap:8px;padding:10px 0}.ds-permission button{font-family:\"Manrope Variable\",sans-serif;font-size:13px;border:0;border-radius:6px;padding:7px 12px;cursor:pointer;transition:background 120ms,border-color 120ms;background:var(--bg);color:var(--text)}.ds-permission button:hover{background:var(--hover)}.ds-permission button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.ds-permission .ds-allow{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}"
     }
   ],
   "narrative": {
@@ -988,6 +996,11 @@
         "name": "The Flat Activity Rule",
         "body": "Separate tool events with spacing and disclosure hierarchy. Keep the meaningful payload in one quiet surface.",
         "section": "elevation"
+      },
+      {
+        "name": "The Inspection Origin Rule",
+        "body": "Preserve the clicked disclosure's viewport position during expansion and collapse. Continue following streaming output only when the reader remains at the end.",
+        "section": "components"
       }
     ],
     "dos": [

@@ -1,3 +1,5 @@
+import { toolOutcome } from "./tool-outcome";
+import { useToolDisclosure } from "./tool-disclosure";
 import { useState } from "react";
 import { IconButton } from "./icon-button";
 import {
@@ -47,16 +49,6 @@ function argumentsOf(value: string): Record<string, unknown> {
       : {};
   } catch {
     return {};
-  }
-}
-/** Unwraps serialized string results without interpreting model output as HTML. */
-function outputText(value: string | undefined): string | undefined {
-  if (value === undefined) return undefined;
-  try {
-    const parsed: unknown = JSON.parse(value);
-    return typeof parsed === "string" ? parsed : value;
-  } catch {
-    return value;
   }
 }
 /** Adds restrained code coloring while preserving the exact source text. */
@@ -154,7 +146,8 @@ export function ToolCall({
   awaitingApproval?: boolean;
 }) {
   const parameters = argumentsOf(args);
-  const output = outputText(result);
+  const { output, exitCode, failed, denied } = toolOutcome(result);
+  const [open, setOpen] = useToolDisclosure(awaitingApproval || failed || running);
   const command = typeof parameters.command === "string" ? parameters.command : undefined;
   const path = typeof parameters.path === "string" ? parameters.path : undefined;
   const patch =
@@ -168,23 +161,21 @@ export function ToolCall({
             ...parameters.new.split("\n").map((line) => `+${line}`),
           ].join("\n")
         : undefined;
-  const exitCode = output === undefined ? undefined : /^exit code:\s*(-?\d+)/i.exec(output)?.[1];
-  const failed =
-    (exitCode !== undefined && Number(exitCode) !== 0) ||
-    Boolean(output && /^\s*(?:Error:|\{"error":)/.test(output));
   const status = awaitingApproval
     ? "Approval required"
-    : failed
-      ? exitCode
-        ? `Exit ${exitCode}`
-        : "Error"
-      : output !== undefined
+    : denied
+      ? "Denied"
+      : failed
         ? exitCode
           ? `Exit ${exitCode}`
-          : "Result received"
-        : running
-          ? "Running"
-          : "No result";
+          : "Error"
+        : output !== undefined
+          ? exitCode
+            ? `Exit ${exitCode}`
+            : "Result received"
+          : running
+            ? "Running"
+            : "No result";
   const Icon =
     name === "read_file" ? FileCode : patch || name === "write_file" ? FileDiff : Terminal;
   const filePath =
@@ -213,15 +204,18 @@ export function ToolCall({
     >
       <details
         className="tool-details"
-        open={awaitingApproval || failed || running || Boolean(patch) || undefined}
+        open={open}
+        onToggle={(event) => {
+          if (event.currentTarget.open !== open) setOpen(event.currentTarget.open);
+        }}
       >
         <summary className="tool-header">
           <ChevronRight size={14} className="tool-chevron" />
           <Icon size={14} />
           <strong>{title}</strong>
-          {filePath && (
-            <code className="tool-path" title={filePath}>
-              {filePath}
+          {(filePath || command) && (
+            <code className="tool-path" title={filePath || command}>
+              {filePath || command}
             </code>
           )}
           {patch && (

@@ -1,21 +1,18 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useAgent,
   useCopilotKit,
   useInterrupt,
   useDefaultRenderTool,
   useRenderToolCall,
-  contentToText,
 } from "@copilotkit/react-core/v2";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowUp, Square, Copy, ChevronRight } from "lucide-react";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { ArrowUp, Square, ChevronRight } from "lucide-react";
 import { IconButton } from "./icon-button";
 import { ToolCall } from "./tool-call";
 import { Permission, approvalToolCallId } from "./tool-approval";
 import { PendingStatus } from "./pending-status";
-import { VirtualTranscript } from "./virtual-transcript";
+import { TranscriptMessages } from "./transcript-messages";
 
 type ConversationProps = {
   threadId: string;
@@ -108,27 +105,14 @@ function ActiveConversation({
     }
     input.current?.focus();
   }
-  const results = new Map(
-    agent.messages
-      .filter((message) => message.role === "tool")
-      .map((message) => [message.toolCallId, message]),
-  );
   const pendingCallIds = new Set(agent.pendingInterrupts.map(approvalToolCallId));
   return (
     <section className="conversation" aria-label="Coding conversation">
-      <VirtualTranscript
-        items={agent.messages
-          .filter((message) => message.role === "user" || message.role === "assistant")
-          .filter((message) => {
-            if (message.role === "user") return true;
-            if (message.role !== "assistant") return false;
-            // The permission surface owns pending calls, including their otherwise empty row.
-            return (
-              contentToText(message.content) ||
-              !message.toolCalls?.length ||
-              message.toolCalls.some((call) => !pendingCallIds.has(call.id))
-            );
-          })}
+      <TranscriptMessages
+        messages={agent.messages}
+        pendingIds={pendingCallIds}
+        renderCall={({ call, result }) => renderToolCall({ toolCall: call, toolMessage: result })}
+        onCopyError={() => setError("Could not copy message.")}
         busy={connecting}
         empty={
           !connecting && (
@@ -157,44 +141,6 @@ function ActiveConversation({
             )}
           </>
         }
-        renderItem={(message) => {
-          const text = contentToText(message.content);
-          return (
-            <article
-              className={`message ${message.role}`}
-              key={message.id}
-              aria-label={message.role === "user" ? "Your message" : "Agent response"}
-            >
-              <div className="message-label">
-                {text && (
-                  <IconButton
-                    label="Copy message"
-                    onClick={() => {
-                      navigator.clipboard
-                        .writeText(text)
-                        .catch(() => setError("Could not copy message."));
-                    }}
-                  >
-                    <Copy size={13} />
-                  </IconButton>
-                )}
-              </div>
-              {text && (
-                <div className="markdown">
-                  <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
-                </div>
-              )}
-              {message.role === "assistant" &&
-                message.toolCalls
-                  ?.filter((call) => !pendingCallIds.has(call.id))
-                  .map((call) => (
-                    <Fragment key={call.id}>
-                      {renderToolCall({ toolCall: call, toolMessage: results.get(call.id) })}
-                    </Fragment>
-                  ))}
-            </article>
-          );
-        }}
       />
       <form
         className="composer"

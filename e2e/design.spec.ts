@@ -18,11 +18,14 @@ test("Impeccable scans rendered tools and approvals in both themes and sizes", a
   try {
     const port = (await readFile(join(profile, "DevToolsActivePort"), "utf8")).split("\n")[0]!;
     const page = context.pages()[0]!;
-    for (const target of ["tools", "approval=bash", "approval=patch"]) {
+    for (const target of ["tools", "activity", "approval=bash", "approval=patch"]) {
       await page.goto(`${fixtureUrl}/?${target}`);
+      if (target === "activity") await page.getByRole("button", { name: /8 tool calls/ }).click();
       await expect(page.locator(".tool-call").first()).toBeVisible();
-      for (const summary of await page.locator(".tool-details:not([open]) > summary").all())
-        await summary.click();
+      for (const summary of await page.locator(".tool-details > summary").all()) {
+        if (!(await summary.evaluate((element) => element.parentElement?.hasAttribute("open"))))
+          await summary.click();
+      }
       await page.evaluate(() => document.fonts.ready);
       for (const theme of ["light", "dark"]) {
         await page.evaluate((value) => (document.documentElement.dataset.theme = value), theme);

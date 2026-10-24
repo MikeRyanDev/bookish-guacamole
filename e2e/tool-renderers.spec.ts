@@ -6,9 +6,10 @@ test("coding tools show commands, honest exit status, readable diffs, and number
   page,
 }) => {
   await page.goto(`${fixtureUrl}/?tools`);
-  await expect(page.getByText("npm test -- --runInBand", { exact: true })).toBeVisible();
+  await expect(page.locator(".shell-command code")).toBeVisible();
   await expect(page.getByText("Exit 1", { exact: true })).toBeVisible();
   const patch = page.getByRole("region", { name: "patch tool call" });
+  await patch.locator("summary.tool-header").click();
   await expect(patch.locator(".diff-line.removed")).toHaveText("-return `Hello, ${name}`;");
   await expect(patch.locator(".diff-line.added")).toHaveText("+return `Hello, ${name.trim()}`;");
   const read = page.getByRole("region", { name: "read_file tool call" });

@@ -154,7 +154,13 @@ components:
   tool-disclosure:
     textColor: "{colors.light-muted}"
     rounded: "{rounded.control}"
-    padding: 6px 2px
+    padding: 4px 6px
+  activity-summary:
+    textColor: "{colors.light-muted}"
+    rounded: "{rounded.control}"
+    typography: "{typography.label}"
+    padding: 4px 6px
+    width: 100%
   tool-surface:
     backgroundColor: "{colors.light-code}"
     rounded: "{rounded.surface}"
@@ -195,6 +201,7 @@ Generic design guidance must not override the compact workspace brief. Source va
 For new or substantially redesigned component families, use imagegen concepts and component/state studies before implementation, as requested by the user. Small fixes can use existing studies and rendered UI.
 Consult the [component inventory](docs/IMPROVEMENTS-PLAN.md#component-inventory), the current [workspace](docs/design/redesign/workspace.png), [tools](docs/design/redesign/tools.png), and [appearance](docs/design/redesign/appearance.png) studies, and their [direction contract](docs/DESIGN-STUDY.md).
 The earlier [navigation](docs/design/navigation.png), [conversation](docs/design/conversation.png), and [inspector](docs/design/inspector.png) studies remain historical references.
+The [tool activity state study](docs/design/tool-stack/concept-study.png) was generated retrospectively after the first implementation pass. It was not an approved pre-build comp; this deviates from the study-before-implementation process above. Its [study record](docs/design/tool-stack/STUDY.md) documents the user-selected grouping and evidence limits.
 Generated labels, data, and status indicators are not product facts. The user brief, real behavior, and accessibility take priority over generated details. Verify the translation in the rendered app.
 
 **Key Characteristics:**
@@ -242,7 +249,7 @@ Its grid is 224px / flexible (minimum 320px) / 290px beneath a 48px header. At 1
 At 850px, panes occupy one shared content area and navigation selects the visible pane; icon hit areas grow from 32px to 40px.
 The conversation uses compact grouped spacing and contained scrolling. Tool headers wrap below 600px. Eight accent choices form one row, then two four-item rows below 480px.
 
-The virtual transcript follows streaming only while the reader remains near its end. Saved session rows stay mounted during navigation.
+The virtual transcript follows streaming only while the reader remains near its end. User-triggered disclosure preserves the clicked control's viewport position while row heights settle; streaming then resumes following only at the end. Saved session rows stay mounted during navigation.
 Do not animate virtual rows on remount. Short local motion explains disclosure, focus, press, panel, and dialog state; reduced-motion preferences disable it.
 
 ## Elevation & Depth
@@ -274,8 +281,15 @@ The composer is a subtly filled surface with a focus outline. Workspace form inp
 
 ### Tool activity and source
 
-Reuse `ToolCall`. A flat native disclosure row shows a human action, target, and truthful outcome.
-Successful reads and completed commands begin collapsed. Failures, running work, patches, and approval content begin expanded.
+Reuse `ToolCall` within the derived `TranscriptMessages` view. A flat native disclosure row shows a human action, target, and truthful outcome.
+Two or more consecutive completed calls without failed outcomes share one initially collapsed activity summary, including across assistant message boundaries. A single call remains a direct tool row. Narrative, user messages, pending approvals, and exceptional or unfinished calls break groups.
+The summary reports call count and work categories; expansion reveals calls in order, each with its own payload disclosure. Failed, denied, running, and missing-result calls remain outside completed groups. Pending approvals retain their separate decision surface.
+Completed calls, including patches, begin collapsed. Failures, running work, and approval content begin expanded unless the reader has chosen otherwise. Missing-result rows retain their explicit status.
+Activity summaries and tool headers have a minimum height of 34px and use the compact padding in the frontmatter. Expanded headers are adjacent without message-sized gaps; activity blocks have 8px trailing separation. Group content is inset 22px, reduced to 8px below 600px; category summaries wrap at that breakpoint.
+Explicit group and top-level tool disclosure choices survive virtual row remounts only within the mounted conversation. Nested output/raw-detail disclosures are not covered by that retention, and choices are not stored for a later conversation mount.
+
+**The Inspection Origin Rule.** Preserve the clicked disclosure's viewport position during expansion and collapse. Continue following streaming output only when the reader remains at the end.
+
 Commands and their output share one code surface. Expanded file/patch content has one file heading; collapsed rows retain target context.
 Copy actions preserve the exact source payload and report failure explicitly. Raw arguments remain inspectable.
 Patch previews omit redundant transport framing for a single file while retaining meaningful multi-file framing, signs, and counts. File previews retain provider-supplied line numbers.

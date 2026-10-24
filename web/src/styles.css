@@ -308,6 +308,7 @@ pre {
   scrollbar-gutter: stable;
 }
 .message {
+  position: relative;
   margin-bottom: 22px;
   max-width: 960px;
 }
@@ -723,7 +724,7 @@ summary::-webkit-details-marker {
 }
 
 .tool-call {
-  margin: 16px 0;
+  margin: 0;
   min-width: 0;
   background: transparent;
   border: 0;
@@ -735,8 +736,8 @@ summary::-webkit-details-marker {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 38px;
-  padding: 6px 2px;
+  min-height: 34px;
+  padding: 4px 6px;
   font-size: 12px;
   color: var(--muted);
   min-width: 0;
@@ -779,7 +780,7 @@ summary::-webkit-details-marker {
   color: var(--danger);
 }
 .tool-body {
-  padding-top: 4px;
+  padding: 4px 0 12px 28px;
 }
 .tool-surface {
   background: var(--code);
@@ -1737,5 +1738,77 @@ dialog[open] {
 @media (max-width: 850px) {
   .inspector-utilities .icon-control:has(.viewer-expansion) {
     display: none;
+  }
+}
+
+/* Activity and narrative have separate rhythms; SDK message boundaries add no space. */
+.tool-activity,
+.activity-single {
+  max-width: 960px;
+  padding-bottom: 8px;
+}
+.activity-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 34px;
+  padding: 4px 6px;
+  text-align: left;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  border: 0;
+  border-radius: 6px;
+}
+.activity-summary:hover {
+  background: var(--panel);
+  color: var(--text);
+}
+.activity-count {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: var(--text);
+}
+.activity-types {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.activity-summary[aria-expanded="true"] .tool-chevron {
+  transform: rotate(90deg);
+}
+.activity-calls {
+  padding: 2px 0 0 22px;
+}
+.message:has(.message-actions) {
+  padding-right: 30px;
+}
+.message-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: flex-end;
+  height: 24px;
+}
+.message-actions .icon-button {
+  width: 24px;
+  height: 24px;
+}
+@media (max-width: 600px) {
+  .activity-summary {
+    flex-wrap: wrap;
+  }
+  .activity-types {
+    flex-basis: 100%;
+    padding-left: 44px;
+    white-space: normal;
+  }
+  .activity-calls {
+    padding-left: 8px;
+  }
+  .tool-body {
+    padding-left: 6px;
   }
 }

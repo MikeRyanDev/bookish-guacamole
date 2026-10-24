@@ -1,3 +1,4 @@
+import { ToolActivityFixture } from "./tool-activity";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { VirtualTranscript } from "../../web/src/components/virtual-transcript";
@@ -9,6 +10,7 @@ import { Permission } from "../../web/src/components/tool-approval";
 import { ToolCall } from "../../web/src/components/tool-call";
 
 function Fixture() {
+  if (new URLSearchParams(location.search).has("activity")) return <ToolActivityFixture />;
   const [decision, setDecision] = useState("");
   const [streamCommand, setStreamCommand] = useState("npm test");
   const [attempts, setAttempts] = useState(0);
