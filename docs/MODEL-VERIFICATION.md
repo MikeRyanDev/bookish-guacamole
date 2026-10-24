@@ -17,7 +17,7 @@ The review used an isolated fixture at desktop and 390×844, in light and dark t
 Mobile controls wrap but remain visible. Native mobile keyboard behavior was not tested.
 The review made no provider calls and did not claim server persistence from the fixture.
 
-Visual review inspected rendered mobile dark mode and the inherited composer layout.
+Visual review inspected rendered desktop light mode, mobile dark mode, and the inherited composer layout.
 Browser tests cover both themes and widths, radio state, Escape focus, overflow, and axe accessibility scans.
 Backend tests separately cover durable thread selection and server enforcement.
 
@@ -73,4 +73,17 @@ The final live rerun passed with assertions on actual source-model metadata in p
 Final live thread: `ac7250d6-21b9-4f91-ad3d-35510edb088d`; persisted events: 59.
 
 The build retains the existing large frontend chunk warning. No upstream PR, package preview, backend release, or shared deployment changed.
-Merged-main verification follows the integration commit.
+
+## Merged-main verification
+
+The implementation merged from `feat/model-providers` into `main` at `27d4978`.
+On that merged tree:
+
+- `pnpm install --frozen-lockfile`: passed.
+- `pnpm check`: passed lint, design source checks, both TypeScript checks, 166 tests, and builds; 47 declared persistence skips.
+- `node --test example/greet.test.js`: one passed.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4173 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4474 pnpm exec playwright test e2e/models.spec.ts e2e/thread-models.spec.ts e2e/workspace.spec.ts e2e/composer.spec.ts --output .data/models-main-browser`: 16 passed.
+
+The local main app restarted on port 4173 with an explicit ignored catalog derived from the validated local configuration.
+No credentials entered Git. The existing checklist edit retained its original SHA-256 checksum throughout integration.
+The separate worktree and main contain the same implementation. This final evidence update changes documentation only.
