@@ -429,3 +429,35 @@ for (const tool of [
       await f.close();
     }
   });
+
+test("planning is independent of permissions and restores the selected preference", async () => {
+  const f = await codingFixture();
+  try {
+    const thread = f.agent().threadId;
+    await f.settings.setPermissions(thread, "bypass");
+    expect(await f.settings.setPlanOnly(thread, true)).toMatchObject({
+      mode: "plan",
+      permissionMode: "bypass",
+      planOnly: true,
+    });
+    await f.restart();
+    expect(await f.settings.read(thread)).toMatchObject({
+      mode: "plan",
+      permissionMode: "bypass",
+      planOnly: true,
+    });
+    await f.settings.setPermissions(thread, "acceptEdits");
+    expect(await f.settings.read(thread)).toMatchObject({
+      mode: "plan",
+      permissionMode: "acceptEdits",
+      planOnly: true,
+    });
+    expect(await f.settings.setPlanOnly(thread, false)).toMatchObject({
+      mode: "acceptEdits",
+      permissionMode: "acceptEdits",
+      planOnly: false,
+    });
+  } finally {
+    await f.close();
+  }
+});

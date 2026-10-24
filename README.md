@@ -166,18 +166,19 @@ Stop the app with Ctrl-C. The backend remains available until you run `pnpm inte
 
 The app accepts only local Intelligence URLs. Private dot paths and outside symlinks are excluded from file previews and downloads. Large frontend chunks remain a build warning. For the exact checks, real Learning runs, screenshots, and limits, read the [latest UI proof](docs/NEW-IMPROVEMENTS-VERIFICATION.md) and [runtime verification record](docs/VERIFICATION.md).
 
-## Approval modes
+## Permissions and planning
 
-Use **Approval mode** beside the composer to select how the agent works:
+The composer has two permission choices:
 
-- **Review changes** applies the permission rules. Ordinary edits and commands ask unless a rule allows them.
-- **Allow file edits** allows ordinary edits. Commands and sensitive paths still ask unless a rule allows them.
-- **Plan only** allows permitted reads. It blocks edits and shell commands.
-- **YOLO** runs tools without approval from the permissions plugin, even when its rules deny them. Separate tool restrictions still apply.
+- **Require permissions** allows ordinary file edits. Commands and sensitive paths ask unless a saved rule allows them.
+- **YOLO** bypasses approval requests and permission-rule denials. Separate tool restrictions still apply.
 
-New conversations start in Allow file edits. Existing harness conversations retain their mode. Changes apply to the next turn, including the next goal round. Pending approvals still require a decision.
+**Plan only** is a separate toggle beside Create goal. It permits inspection but prevents edits and shell commands.
+The permission preference stays selected during planning. Turning Plan only off restores that preference.
+Both choices persist per conversation and apply to the next turn. Pending approvals still require a decision.
 
-**Allow once** applies only to the proposed call. **Remember this permission** shows the exact scope before **Save and allow** submits it.
-Saved permissions apply to all conversations in the workspace and survive restart. Some shell expressions cannot be remembered.
-**Workspace permissions** lists saved rules and provides a Remove action. Removal takes effect after active turns finish. It does not undo a submitted approval.
-YOLO does not change saved rules. Leaving YOLO restores the selected mode's rules.
+Interrupts offer **Reject**, **Approve Once**, and **Always Approve**. Both approval buttons use the positive action style.
+Always Approve shows the exact scope before **Approve and Save** submits it. Saved permissions apply across conversations in the workspace.
+
+**Settings → Workspace permissions** lists saved rules and provides Remove. Removal takes effect after active turns finish.
+YOLO does not change saved rules. [The design study](docs/design/permissions/STUDY.md) records the current controls and review evidence.

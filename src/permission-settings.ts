@@ -14,6 +14,8 @@ export function isApprovalMode(value: unknown): value is ApprovalMode {
 }
 export interface ApprovalSettings {
   mode: ApprovalMode;
+  permissionMode: "acceptEdits" | "bypass";
+  planOnly: boolean;
   status: string;
   pending: number;
 }
@@ -62,6 +64,15 @@ export function createPermissionSettings({
       const snapshot = session.snapshot();
       return {
         mode: isApprovalMode(mode) ? mode : "default",
+        permissionMode:
+          mode === "plan"
+            ? (await store.metadata.get("starter/permission-preference", threadId)) === "bypass"
+              ? "bypass"
+              : "acceptEdits"
+            : mode === "bypass"
+              ? "bypass"
+              : "acceptEdits",
+        planOnly: mode === "plan",
         status: snapshot.status,
         pending: snapshot.pendingWaits.length,
       };
@@ -69,8 +80,45 @@ export function createPermissionSettings({
       await session.close();
     }
   }
+  async function setNative(threadId: string, value: ApprovalMode) {
+    const session = await host.open(harness, { threadId });
+    try {
+      const receipt = await session.setPluginSetting({ key: "mode", value });
+      if (receipt.status === "rejected")
+        throw new WorkspaceError("Could not change approval mode.", 409);
+    } finally {
+      await session.close();
+    }
+  }
+  const updates = new Map<string, Promise<unknown>>();
+  async function change(threadId: string, action: () => Promise<ApprovalSettings>) {
+    const previous = updates.get(threadId) ?? Promise.resolve();
+    const next = previous.catch(() => {}).then(action);
+    updates.set(threadId, next);
+    try {
+      return await next;
+    } finally {
+      if (updates.get(threadId) === next) updates.delete(threadId);
+    }
+  }
   return {
     initialize,
+    setPermissions(threadId: string, value: "acceptEdits" | "bypass") {
+      return change(threadId, async () => {
+        const current = await read(threadId);
+        await store.metadata.set("starter/permission-preference", threadId, value);
+        if (!current.planOnly) await setNative(threadId, value);
+        return read(threadId);
+      });
+    },
+    setPlanOnly(threadId: string, enabled: boolean) {
+      return change(threadId, async () => {
+        const current = await read(threadId);
+        await store.metadata.set("starter/permission-preference", threadId, current.permissionMode);
+        await setNative(threadId, enabled ? "plan" : current.permissionMode);
+        return read(threadId);
+      });
+    },
     read,
     async set(threadId: string, value: unknown) {
       if (!isApprovalMode(value)) throw new WorkspaceError("Choose a supported approval mode.");

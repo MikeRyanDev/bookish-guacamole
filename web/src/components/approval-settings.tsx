@@ -1,80 +1,54 @@
 import { useId, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ListChecks } from "lucide-react";
 import type { PermissionRule } from "@tanstack/ai-harness/plugins";
-import type { ApprovalMode, ApprovalSettings } from "../../../src/permission-settings";
+import type { ApprovalSettings } from "../../../src/permission-settings";
 import { request, changeWorkspace, type AppConfig } from "../api";
 import { ComposerPopover } from "./composer-popover";
 
-export const modeChoices: { value: ApprovalMode; label: string; description: string }[] = [
-  {
-    value: "default",
-    label: "Review changes",
-    description: "Ask before edits and commands unless a rule allows them.",
-  },
+type PermissionMode = "acceptEdits" | "bypass";
+export const modeChoices: { value: PermissionMode; label: string; description: string }[] = [
   {
     value: "acceptEdits",
-    label: "Allow file edits",
-    description:
-      "Allow ordinary edits. Ask before commands and sensitive paths unless a rule allows them.",
+    label: "Require permissions",
+    description: "Ask before commands and sensitive edits.",
   },
-  {
-    value: "plan",
-    label: "Plan only",
-    description: "Inspect permitted files. Do not edit files or run shell commands.",
-  },
-  {
-    value: "bypass",
-    label: "YOLO",
-    description: "Run tools without approval. Ignore permission rules.",
-  },
+  { value: "bypass", label: "YOLO", description: "Run without permission prompts." },
 ];
-/** Pure controls shared by the production workspace and the isolated prototype. */
+/** Separate conversation behavior from permission policy. Both apply on the next turn. */
 export function ApprovalControls({
   mode,
+  planOnly,
   loading,
   busy,
   error,
   onMode,
-  rules,
-  rulesLoading,
-  rulesError,
-  removing,
-  onRemove,
+  onPlanOnly,
   onRefresh,
 }: {
-  mode: ApprovalMode;
+  mode: PermissionMode;
+  planOnly: boolean;
   loading?: boolean;
   busy?: boolean;
   error?: string;
-  onMode: (mode: ApprovalMode) => void;
-  rules: PermissionRule[];
-  rulesLoading?: boolean;
-  rulesError?: string;
-  removing?: boolean;
-  onRemove: (rule: PermissionRule) => void;
+  onMode: (mode: PermissionMode) => void;
+  onPlanOnly: (enabled: boolean) => void;
   onRefresh: () => void;
 }) {
   const id = useId();
-  const refreshButton = useRef<HTMLButtonElement>(null);
-  const selected = modeChoices.find((choice) => choice.value === mode)!;
   return (
-    <div className="approval-controls">
+    <>
       <ComposerPopover
-        title="Approval mode"
-        label={`Approval mode: ${loading ? "Loading…" : selected.label}`}
+        title="Permissions"
+        label={loading ? "Loading…" : modeChoices.find((choice) => choice.value === mode)!.label}
       >
-        <p>
-          This conversation only. Changes apply to the next turn, including the next goal round.
-          Pending approvals still require a decision.
-        </p>
         <fieldset className="approval-mode-list" disabled={loading || busy}>
-          <legend className="sr-only">Approval mode</legend>
+          <legend className="sr-only">Permissions</legend>
           {modeChoices.map((choice) => (
             <label key={choice.value} className="approval-mode-choice">
               <input
                 type="radio"
                 name={id}
-                value={choice.value}
                 checked={mode === choice.value}
                 onChange={() => onMode(choice.value)}
               />
@@ -85,62 +59,116 @@ export function ApprovalControls({
             </label>
           ))}
         </fieldset>
-        {busy && <p role="status">Saving mode…</p>}
-        {error && <p role="alert">{error}</p>}
+        <p className="muted">Applies next turn. Pending approvals stay open.</p>
         {loading && (
           <button type="button" onClick={onRefresh}>
-            Retry mode
+            Retry
           </button>
         )}
-        {mode === "bypass" && (
-          <p>Separate tool restrictions still apply. YOLO does not change saved permissions.</p>
-        )}
       </ComposerPopover>
-      <ComposerPopover title="Workspace permissions" label="Workspace permissions">
-        <p>
-          Saved permissions apply to all conversations in this workspace, including after restart.
-        </p>
-        <p>
-          Removal takes effect after active turns finish. Existing approval decisions remain
-          unchanged.
-        </p>
-        {rulesLoading ? (
-          <p role="status">Loading permissions…</p>
-        ) : rules.length === 0 ? (
-          <p>No saved permissions.</p>
-        ) : (
-          <ul className="saved-permissions">
-            {rules.map((rule) => (
-              <li key={JSON.stringify(rule)}>
-                <span>
-                  <strong>{rule.tool}</strong>
-                  <code>{rule.resource ?? "Every call of this tool"}</code>
-                </span>
-                <button
-                  type="button"
-                  disabled={removing}
-                  aria-label={`Remove permission for ${rule.tool} ${rule.resource ?? "all calls"}`}
-                  onClick={() => {
-                    onRemove(rule);
-                    refreshButton.current?.focus();
-                  }}
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-        {removing && <p role="status">Removing permission… Waiting for active turns to finish.</p>}
-        {rulesError && <p role="alert">{rulesError}</p>}
-        <button ref={refreshButton} type="button" onClick={onRefresh}>
-          Refresh permissions
-        </button>
-      </ComposerPopover>
-    </div>
+      <button
+        className="composer-control"
+        type="button"
+        aria-pressed={planOnly}
+        disabled={loading || busy}
+        title="Read and propose work without edits or commands. Applies next turn."
+        onClick={() => onPlanOnly(!planOnly)}
+      >
+        <ListChecks size={15} aria-hidden="true" />
+        Plan only
+      </button>
+      {busy && (
+        <span role="status" className="muted">
+          Saving…
+        </span>
+      )}
+      {error && <span role="alert">{error}</span>}
+    </>
   );
 }
-/** Query owns server settings. No optimistic mode change can misstate server authority. */
+/** Saved rules are occasional workspace maintenance, exposed in Settings. */
+export function SavedPermissions({
+  rules,
+  loading,
+  error,
+  removing,
+  onRemove,
+  onRefresh,
+}: {
+  rules: PermissionRule[];
+  loading?: boolean;
+  error?: string;
+  removing?: boolean;
+  onRemove: (rule: PermissionRule) => void;
+  onRefresh: () => void;
+}) {
+  const refresh = useRef<HTMLButtonElement>(null);
+  return (
+    <section className="workspace-permissions" aria-label="Workspace permissions">
+      <h3>Workspace permissions</h3>
+      <p className="muted">Saved for all conversations in this workspace.</p>
+      {loading ? (
+        <p role="status">Loading permissions…</p>
+      ) : rules.length === 0 ? (
+        <p>No saved permissions.</p>
+      ) : (
+        <ul className="saved-permissions">
+          {rules.map((rule) => (
+            <li key={JSON.stringify(rule)}>
+              <span>
+                <strong>{rule.tool}</strong>
+                <code>{rule.resource ?? "Every call of this tool"}</code>
+              </span>
+              <button
+                type="button"
+                disabled={removing}
+                aria-label={`Remove permission for ${rule.tool} ${rule.resource ?? "all calls"}`}
+                onClick={() => {
+                  onRemove(rule);
+                  refresh.current?.focus();
+                }}
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {removing && <p role="status">Removing permission after active turns finish…</p>}
+      {error && <p role="alert">{error}</p>}
+      <button ref={refresh} type="button" onClick={onRefresh}>
+        Refresh permissions
+      </button>
+    </section>
+  );
+}
+export function WorkspacePermissions({ config }: { config: AppConfig }) {
+  const client = useQueryClient();
+  const key = ["permissions", config.workspaceId];
+  const url = `/api/permissions?${new URLSearchParams({ workspace: config.workspaceId })}`;
+  const rules = useQuery({
+    queryKey: key,
+    queryFn: ({ signal }) => request<PermissionRule[]>(url, config.token, signal),
+  });
+  const remove = useMutation({
+    mutationFn: (rule: PermissionRule) =>
+      changeWorkspace<PermissionRule[]>(url, config.token, "DELETE", rule),
+    onSuccess: (value) => client.setQueryData(key, value),
+  });
+  return (
+    <SavedPermissions
+      rules={rules.data ?? []}
+      loading={rules.isPending}
+      error={remove.error?.message ?? rules.error?.message}
+      removing={remove.isPending}
+      onRemove={(rule) => remove.mutate(rule)}
+      onRefresh={() => {
+        void rules.refetch();
+      }}
+    />
+  );
+}
+/** Query owns server settings; selection reflects the server response. */
 export function ConversationApprovals({
   config,
   threadId,
@@ -149,48 +177,29 @@ export function ConversationApprovals({
   threadId: string;
 }) {
   const client = useQueryClient();
-  const query = new URLSearchParams({ workspace: config.workspaceId, thread: threadId });
-  const modeKey = ["approval-mode", config.workspaceId, threadId];
-  const rulesKey = ["permissions", config.workspaceId];
-  const mode = useQuery({
-    queryKey: modeKey,
-    queryFn: ({ signal }) =>
-      request<ApprovalSettings>(`/api/approval-mode?${query}`, config.token, signal),
+  const key = ["approval-mode", config.workspaceId, threadId];
+  const url = `/api/approval-mode?${new URLSearchParams({ workspace: config.workspaceId, thread: threadId })}`;
+  const settings = useQuery({
+    queryKey: key,
+    queryFn: ({ signal }) => request<ApprovalSettings>(url, config.token, signal),
     refetchInterval: 3000,
   });
-  const rules = useQuery({
-    queryKey: rulesKey,
-    queryFn: ({ signal }) =>
-      request<PermissionRule[]>(`/api/permissions?${query}`, config.token, signal),
-    refetchInterval: 3000,
-  });
-  const setMode = useMutation({
-    mutationFn: (value: ApprovalMode) =>
-      changeWorkspace<ApprovalSettings>(`/api/approval-mode?${query}`, config.token, "PUT", {
-        mode: value,
-      }),
-    onSuccess: (value) => client.setQueryData(modeKey, value),
-  });
-  const remove = useMutation({
-    mutationFn: (rule: PermissionRule) =>
-      changeWorkspace<PermissionRule[]>(`/api/permissions?${query}`, config.token, "DELETE", rule),
-    onSuccess: (value) => client.setQueryData(rulesKey, value),
+  const change = useMutation({
+    mutationFn: (value: { permissions: PermissionMode } | { planOnly: boolean }) =>
+      changeWorkspace<ApprovalSettings>(url, config.token, "PUT", value),
+    onSuccess: (value) => client.setQueryData(key, value),
   });
   return (
     <ApprovalControls
-      mode={mode.data?.mode ?? "default"}
-      loading={!mode.data}
-      busy={setMode.isPending}
-      error={setMode.error?.message ?? mode.error?.message}
-      onMode={(value) => setMode.mutate(value)}
-      rules={rules.data ?? []}
-      rulesLoading={rules.isPending}
-      rulesError={remove.error?.message ?? rules.error?.message}
-      removing={remove.isPending}
-      onRemove={(rule) => remove.mutate(rule)}
+      mode={settings.data?.permissionMode ?? "acceptEdits"}
+      planOnly={settings.data?.planOnly ?? false}
+      loading={!settings.data}
+      busy={change.isPending}
+      error={change.error?.message ?? settings.error?.message}
+      onMode={(permissions) => change.mutate({ permissions })}
+      onPlanOnly={(planOnly) => change.mutate({ planOnly })}
       onRefresh={() => {
-        void mode.refetch();
-        void rules.refetch();
+        void settings.refetch();
       }}
     />
   );

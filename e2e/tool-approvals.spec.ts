@@ -24,7 +24,7 @@ for (const kind of ["bash", "patch"] as const) {
         path: `docs/proof/approval-${kind}-${theme}.png`,
         animations: "disabled",
       });
-      await permission.getByRole("button", { name: "Allow once", exact: true }).click();
+      await permission.getByRole("button", { name: "Approve Once", exact: true }).click();
       await expect(permission.getByRole("button", { name: "Reject", exact: true })).toBeDisabled();
       await expect(permission.getByRole("alert")).toContainText("Try again");
       await permission.getByRole("button", { name: "Reject", exact: true }).click();
@@ -48,7 +48,7 @@ test("patch approval stays readable and keyboard operable on mobile", async ({ p
     fullPage: true,
     animations: "disabled",
   });
-  await permission.getByRole("button", { name: "Allow once" }).focus();
+  await permission.getByRole("button", { name: "Approve Once" }).focus();
   await page.keyboard.press("Enter");
   await expect(page.getByLabel("Decision")).toHaveText("once");
 });

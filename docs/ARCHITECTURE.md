@@ -123,3 +123,12 @@ The removal response waits for this boundary. An error leaves the UI available f
 The preview plugin reads `PermissionResources` from the installed native coding plugins. It describes the exact rule pairs that native `always` saves.
 The preview is descriptive only. Native permissions still inspect resources and enforce the submitted decision.
 Its regression tests must accompany TanStack upgrades because native saved-rule derivation is version-sensitive.
+
+### Separate planning behavior
+
+The UI exposes permission preferences `acceptEdits` (Require permissions) and `bypass` (YOLO). Plan only is a separate behavior toggle.
+The server applies native `plan` while the toggle is active. Metadata namespace `starter/permission-preference` retains the conversation preference.
+Turning planning off restores that preference. Changing the preference during planning does not permit tools to change files.
+The API accepts `{ permissions: "acceptEdits" | "bypass" }` or `{ planOnly: boolean }`. Per-conversation updates serialize.
+The older `{ mode }` API remains compatible. Existing native default sessions retain their stricter policy until the user selects a preference.
+Settings owns the saved-rule view. Closing Settings unmounts it, so reopening reads current rules.

@@ -429,3 +429,26 @@ The expanded visual scan found insufficient control padding. The final controls 
 The scan also exposed an invalid fixture theme switch that retained light accent colors. Each permission scenario now loads its actual theme.
 The final independent keyboard review passed save, cancel, and removal. Human participant feedback remains pending.
 No dependency versions, SDK code, Intelligence code, or shared deployments changed. The local main checklist edit remains outside this feature.
+
+## Simpler permissions and separate planning
+
+The user's UI feedback replaces the four-mode design. The composer has Require permissions, YOLO, and a separate Plan only toggle.
+Saved permissions moved into Settings. Interrupts use Reject, Approve Once, and Always Approve, with two positive approval actions.
+
+A failing native regression first showed that independent planning controls did not exist. It now covers planning, saved permission preference, restart, and return to execution.
+API tests cover independent permission changes during planning. Existing native tests cover read-only enforcement and active-turn boundaries.
+A browser position assertion initially sampled before patch layout settled. It now waits for fonts and two layout frames before measuring.
+
+Current validation in `feat/simpler-permissions`:
+
+- `pnpm check`: passed lint, design checks, TypeScript, 153 tests, and build; 47 declared persistence skips.
+- `node --test example/greet.test.js`: one passed.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm test:e2e`: 87 passed, 9 opt-in tests skipped.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm design:browser`: passed 28 scans in both themes and widths.
+- `LIVE_MODEL=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm exec playwright test e2e/live-permissions.spec.ts`: one passed in 18 seconds.
+- `git diff --check`: passed.
+
+The live test used the isolated workspace and CLI-installed Intelligence. Thread `a1e4ff9a-0e16-492e-b225-e583d3260f2c` contains 70 events and three shell calls.
+It saved and reused a permission, entered planning with YOLO selected, reloaded, left planning, ran the YOLO command, and removed the permission.
+An independent agent review passed discovery, keyboard recovery, and mobile layout. It did not claim backend enforcement from the fixture.
+The user's direct critique drove this revision. The [study](design/permissions/STUDY.md) records the revised behavior and screenshots.

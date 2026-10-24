@@ -54,7 +54,7 @@ test("live Goal runs with approval and persists its completion and evidence", as
   const permission = page.getByRole("region", { name: "Permission request" });
   await expect(permission).toBeVisible({ timeout: 60_000 });
   await expect(permission.locator(".shell-command code")).toHaveText("npm test");
-  await permission.getByRole("button", { name: "Allow once" }).click();
+  await permission.getByRole("button", { name: "Approve Once" }).click();
   await expect(page.getByRole("button", { name: "Stop run", exact: true })).toBeHidden({
     timeout: 60_000,
   });

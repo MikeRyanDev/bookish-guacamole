@@ -203,6 +203,18 @@ test("approval settings require local authentication and preserve conversation s
         await fetch(url, { method: "PUT", headers, body: JSON.stringify({ mode: "bypass" }) })
       ).json(),
     ).toMatchObject({ mode: "bypass" });
+    for (const [body, expected] of [
+      [{ planOnly: true }, { mode: "plan", permissionMode: "bypass", planOnly: true }],
+      [
+        { permissions: "acceptEdits" },
+        { mode: "plan", permissionMode: "acceptEdits", planOnly: true },
+      ],
+      [{ planOnly: false }, { mode: "acceptEdits", planOnly: false }],
+    ]) {
+      expect(
+        await (await fetch(url, { method: "PUT", headers, body: JSON.stringify(body) })).json(),
+      ).toMatchObject(expected!);
+    }
     expect(
       await (await fetch(origin + "/api/approval-mode?thread=two", { headers })).json(),
     ).toMatchObject({ mode: "acceptEdits" });

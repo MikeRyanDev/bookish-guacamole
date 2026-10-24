@@ -13,7 +13,7 @@ for (const reducedMotion of ["no-preference", "reduce"] as const) {
     );
     if (reducedMotion === "reduce") expect(duration).toBe(0);
     else expect(duration).toBeGreaterThan(0);
-    await permission.getByRole("button", { name: "Allow once" }).click();
+    await permission.getByRole("button", { name: "Approve Once" }).click();
     await expect(page.getByLabel("Decision")).toHaveText("once");
   });
 }

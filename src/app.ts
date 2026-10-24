@@ -198,11 +198,21 @@ export async function startApp(
       }
       if (request.method === "PUT") {
         const input = z
-          .object({ mode: z.string() })
-          .strict()
+          .union([
+            z.object({ mode: z.string() }).strict(),
+            z.object({ permissions: z.enum(["acceptEdits", "bypass"]) }).strict(),
+            z.object({ planOnly: z.boolean() }).strict(),
+          ])
           .safeParse(await readJson(request));
         if (!input.success) throw new WorkspaceError("Send an approval mode.");
-        json(response, await settings.set(thread, input.data.mode));
+        json(
+          response,
+          "planOnly" in input.data
+            ? await settings.setPlanOnly(thread, input.data.planOnly)
+            : "permissions" in input.data
+              ? await settings.setPermissions(thread, input.data.permissions)
+              : await settings.set(thread, input.data.mode),
+        );
         return;
       }
     }

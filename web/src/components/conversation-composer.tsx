@@ -110,9 +110,9 @@ export function ConversationComposer({
           to check completion. Pauses for approvals.
         </p>
       )}
-      {approvals}
       <div className="composer-toolbar">
         <div className="composer-tools">
+          {approvals}
           {goal && !goalMode ? (
             <GoalStatus
               goal={goal}

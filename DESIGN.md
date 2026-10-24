@@ -300,19 +300,19 @@ Patch previews omit redundant transport framing for a single file while retainin
 
 ### Permissions
 
-Keep the proposed payload and the per-call decision footer together through spacing, without an enclosing panel. Use explicit Allow once, Remember this permission, and Reject labels.
-Approval required appears in the tool row. The footer aligns with the source payload, with 34px-minimum decision buttons. Per-call scope and decisions remain readable beside the change; do not repeat an approval heading or nest bordered cards.
+Keep the proposed payload and decision footer together without an enclosing panel. Order the actions Reject, Approve Once, Always Approve.
+Both approval actions use the accent fill and on-accent text. Reject remains neutral.
+Always Approve opens an inline scope preview. Approve and Save and Cancel replace the footer until the user decides.
 
-The composer includes an Approval mode selector and a Workspace permissions action. All four modes, including YOLO, remain visible in the selector.
-The non-modal mode panel uses native radio inputs and complete effect descriptions. Its selected label reflects the server response.
-Remember this permission opens an inline scope confirmation. Save and allow and Cancel replace the original footer until the user decides.
-Saved rules identify the tool and exact resource. Removal feedback states the next-turn boundary.
-See the [approval study](docs/design/permissions/STUDY.md) for the behavior contract, concepts, prototype, and usability evidence.
+The composer has a compact Require permissions / YOLO selector. Plan only is a separate pressed-state toggle beside Create goal.
+Keep descriptions brief and inside the selector. The selected permission preference remains visible during planning.
+Saved rules belong in Settings, after appearance. They are not a composer action.
+See the [approval study](docs/design/permissions/STUDY.md) for behavior and review evidence.
 
 ### Appearance
 
 Settings has native radio groups for Light/Dark and the eight accents. Selected accent has a checkmark, outline, and visible name; keyboard selection remains available.
-Settings contains appearance choices, without model, container, or workspace metadata. Harness documentation remains accessible from the command menu.
+Settings contains appearance choices and saved workspace permissions, without model or container metadata. Harness documentation remains accessible from the command menu.
 Mode and accent persist locally and apply before React mounts. Restricted storage still permits changes within the current session. The fallback is light mode with Moss.
 
 ## Do's and Don'ts

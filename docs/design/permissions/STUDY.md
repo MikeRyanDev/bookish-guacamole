@@ -1,78 +1,66 @@
-# Approval modes and workspace permissions
+# Permissions and planning
 
-## Task and design decision
+## User feedback and revision
 
-Developers choose how much work runs without approval. They can allow one call, save a specific permission, or remove it later.
+The developer found the first interface too wordy. The requested revision removed Review changes, renamed Allow file edits to Require permissions, and separated Plan only.
+Saved permissions moved from the composer into Settings. Interrupts now offer Reject, Approve Once, and Always Approve.
+Both approval actions use the accent fill. The scope confirmation remains explicit before saving a permission.
 
-The [concept sheet](concepts.png) contains two imagegen studies. Concept A uses an inline select. Concept B exposes descriptions in a compact list.
-The implementation uses B's list and A's visible workspace-permissions action. This keeps the effects readable before selection.
-The generated copy is not authoritative. The image has inaccurate descriptions and extra borders. The implementation uses the behavior table and existing design system.
-
-The built-in imagegen tool produced the sheet. Prompt: create two compact developer-workspace concepts for the composer mode selector, inline command approval, and saved workspace permissions. A uses an inline select in light mode. B uses an expanded dropdown in charcoal dark mode. Include Review changes, Allow file edits, Plan only, and YOLO. Include Allow once, Remember this permission, Reject, Save and allow, Cancel, and Remove. Use Manrope-like labels, IBM Plex Mono-like commands, flat rows, warm accents, and no branding or decorative borders.
+The original [two-concept study](concepts.png) records exploration, not the current interface. Its labels and four-mode selector are superseded.
+The current screenshots and interactive prototype establish implementation truth.
 
 ## Behavior contract
 
-| Choice | Native value | Result |
+| Control | Result | Scope |
 | --- | --- | --- |
-| Review changes | `default` | Native rules apply. Standard reads run. Edits and commands ask unless a rule allows them. |
-| Allow file edits | `acceptEdits` | Ordinary edits run. Commands and sensitive paths still ask unless a rule allows them. |
-| Plan only | `plan` | Permitted reads run. Edits, shell commands, and calls that require approval do not run. |
-| YOLO | `bypass` | The permissions plugin allows all calls, including explicit denials. Separate tool restrictions remain. |
+| Require permissions | Ordinary edits run. Commands and sensitive paths ask unless a saved rule allows them. | Conversation |
+| YOLO | The native permissions plugin allows calls, including its explicit denials. Separate tool restrictions remain. | Conversation |
+| Plan only | Permitted reads run. Edits and shell commands cannot run. The permission preference remains selected. | Conversation |
+| Reject | Refuses the current call. | Current call |
+| Approve Once | Approves the current call. | Current call |
+| Always Approve | Shows exact saved scope before Approve and Save. | Workspace |
+| Settings → Workspace permissions | Shows saved rules and Remove. | Workspace |
 
-New harness conversations start in Allow file edits. Existing harness logs retain their current mode. Native session settings persist the mode.
-A mode change applies to the next turn, including a later goal round. Active turns retain their original mode. Pending approvals do not resolve automatically.
-YOLO does not add or delete saved rules. Leaving YOLO restores the selected mode's rules.
+Plan only is a separate pressed-state control beside Create goal. It takes precedence over either permission preference.
+Turning Plan only off restores the selected permission preference. That preference survives restart and changes during planning.
+Changes apply to the next turn. Active turns retain their original policy, and pending approvals remain open.
+New conversations use Require permissions. Existing native default conversations retain their stricter policy until the user selects a preference.
 
-Saved permissions belong to the workspace. They apply across conversations and survive restart. Native rules still define what an approval can save.
-The preview uses resources from the native tool plugins, including resolved file paths and separate command parts. It never grants permission.
-Some shell expressions and wildcard resources cannot be remembered. The UI offers the save action only when a preview contains a saveable rule.
-Removal deletes the native saved rule and reloads open session plugins. Reload waits for active turns. New turns wait until reload completes.
-Removal does not cancel a running tool or revoke a decision already submitted for a pending call.
+Saved permissions apply across conversations and survive restart. YOLO does not add or delete rules.
+The server derives scope from native tool resources. Some shell expressions cannot be remembered.
+Removal waits for active turns and reloads native session plugins. It does not undo an approval already submitted.
 
 ## Component specification
 
-| Task | Visible entry | Action | Recovery |
-| --- | --- | --- | --- |
-| Change mode | Approval mode: current choice | Opens a non-modal radio group with all four descriptions | Escape or Close restores focus |
-| Allow one call | Allow once beside the payload | Sends native `once` | Submission errors preserve the decision |
-| Save permission | Remember this permission | Shows every saved tool/resource pair and workspace scope | Cancel returns to the original footer |
-| Apply saved choice | Save and allow | Sends native `always` | Duplicate clicks cannot submit twice |
-| Inspect rules | Workspace permissions | Opens exact saved rules | Close leaves rules unchanged |
-| Remove a rule | Remove beside its scope | Deletes it and refreshes open plugins | Errors remain visible for retry |
+The compact composer toolbar contains the permission selector, Plan only, and Create goal.
+The selector contains two choices with short descriptions. Explanations stay inside the selector.
+Saved rules appear after appearance in Settings. Reopening Settings refreshes the rules.
 
-The selector stays beside the composer. Its popover does not resize the transcript. Radio labels state the effect, not only the native name.
-The save confirmation replaces the original decision footer. This prevents two competing primary actions.
-The permission preview stays beside the command or patch. Flat spacing replaces enclosing cards. All controls retain visible keyboard focus.
-The list supports empty, loading, error, and removal states. Mode controls show loading, submission errors, and the server-confirmed selection.
+Interrupt buttons appear in this order: Reject, Approve Once, Always Approve.
+Always Approve opens a scope preview with Approve and Save and Cancel. The preview replaces the original footer.
+Cancel restores focus to Always Approve. Approval returns focus to the composer. Removal moves focus to Refresh permissions.
+Errors preserve the pending choice. Duplicate clicks cannot submit twice.
 
-## Interactive prototype and scenarios
+## Prototype and visual evidence
 
 Run `pnpm exec vite --config e2e/fixtures/vite.config.ts --port 4274`. Open `http://127.0.0.1:4274/permissions.html`.
-The prototype imports the production controls and uses fixed data. It never calls a model or shell.
-Choose Command or Patch. Use `?theme=dark`, `?long`, `?fail`, or `?slow` for theme, overflow, failure, and duplicate-click scenarios.
+The prototype imports production controls and uses fixed data. It never runs a model or shell.
+Choose Command or Patch. Parameters `?theme=dark`, `?long`, `?fail`, and `?slow` exercise alternate states.
 
-Browser checks cover all four choices, saved scope, removal, submission failure, duplicate clicks, both themes, and 390px width.
-Native harness tests cover mode effects, sensitive files, saved scope, restart, mode changes during active work, and pending decisions.
-The real model check covers saved command reuse, YOLO, mode reload, removal, and durable Intelligence events.
+- [Light interrupt](interrupt-light.png) and [dark interrupt](interrupt-dark.png)
+- [Light selector](modes-light.png), [dark selector](modes-dark.png), and [mobile selector](modes-mobile.png)
+- [Light scope](scope-light.png) and [dark scope](scope-dark.png)
+- [Light saved rules](rules-light.png) and [dark saved rules](rules-dark.png).
 
 ## Usability findings
 
-A fresh reviewer received only tasks and the isolated preview URL. The reviewer recorded predictions before exploration and read no implementation or design rationale.
-The reviewer completed all four tasks at 1280px and 390px with pointer and keyboard controls.
-The initial uncertainty was whether Remember immediately approved the command. The scope confirmation resolved it without explanation.
-The reviewer understood conversation mode versus workspace permission scope. Escape restored focus. No horizontal overflow occurred.
-Verdict: usability pass for the fixture tasks. This was an independent agent walkthrough, not a study with recruited human participants.
-It does not establish backend correctness or broad user comprehension. Backend and visual evidence remain separate.
+A fresh independent agent received tasks and the fixture URL, without source or design rationale.
+The reviewer predicted the permission selector, separate planning control, and Settings destination correctly before exploration.
+The reviewer completed one-time approval, saved approval, cancellation, and removal. Desktop and 390px mobile controls had no overlap.
+Keyboard activation worked. Escape returned focus to the correct trigger. No material discovery confusion remained.
+The prototype cannot establish actual planning enforcement because its composer uses fixed data. Native tests establish that boundary separately.
+This review is agent-based. The user's direct feedback supplied the human critique that drove this revision.
 
-The visual pass identified competing primary actions in the save state. The final design replaces the original footer during confirmation.
-The follow-up walkthrough found focus loss. The final controls focus Save and allow on entry and restore Remember this permission on Cancel.
-Save returns focus to the composer. Remove moves focus to Refresh permissions.
-A final independent keyboard walkthrough passed these tasks at 390px. No task defects or horizontal overflow remained.
+## Verification
 
-Rendered evidence: [light modes](modes-light.png), [dark modes](modes-dark.png), [mobile modes](modes-mobile.png), [light scope](scope-light.png), [dark scope](scope-dark.png), [light rules](rules-light.png), and [dark rules](rules-dark.png).
-The rendered scan covers seven surfaces in both themes at 1440px and 390px. The permission browser tests also run axe on mode, scope, and removal states.
-
-## Verification record
-
-See [verification](../../VERIFICATION.md#approval-modes-and-saved-permissions) for exact commands and results.
-The generated concepts are exploratory. The running component prototype and rendered screenshots establish implementation truth.
+See [verification](../../VERIFICATION.md#simpler-permissions-and-separate-planning) for current commands and results.

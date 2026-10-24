@@ -22,6 +22,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { useAppearance } from "./appearance";
+import { WorkspacePermissions } from "./components/approval-settings";
 import { AppearanceSettings } from "./components/appearance-settings";
 import { workspaceRoute } from "./router";
 import { configQuery, type AppConfig } from "./api";
@@ -262,7 +263,12 @@ function Shell({ config }: { config: AppConfig }) {
         onPanel={(panel) => navigate({ search: (previous) => ({ ...previous, panel }) })}
         onFile={(file) => navigate({ search: (previous) => ({ ...previous, file }) })}
       />
-      <dialog ref={dialog} className="command-dialog" aria-labelledby="command-title">
+      <dialog
+        ref={dialog}
+        className="command-dialog"
+        aria-labelledby="command-title"
+        onClose={() => setModal("commands")}
+      >
         <header>
           <h2 id="command-title">{modal === "commands" ? "Commands" : "Settings"}</h2>
           <IconButton label="Close dialog" onClick={() => dialog.current?.close()}>
@@ -319,6 +325,7 @@ function Shell({ config }: { config: AppConfig }) {
               setTheme={setTheme}
               setAccent={setAccent}
             />
+            <WorkspacePermissions config={config} />
           </div>
         )}
       </dialog>

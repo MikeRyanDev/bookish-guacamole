@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ApprovalControls } from "../../web/src/components/approval-settings";
+import { ApprovalControls, SavedPermissions } from "../../web/src/components/approval-settings";
 import { Permission } from "../../web/src/components/tool-approval";
 import { ConversationComposer } from "../../web/src/components/conversation-composer";
 import { VirtualTranscript } from "../../web/src/components/virtual-transcript";
 import { applyAppearance } from "../../web/src/appearance";
-import type { ApprovalMode } from "../../src/permission-settings";
+
 import type { PermissionRule } from "@tanstack/ai-harness/plugins";
 import "../../web/src/styles.css";
 import "@fontsource-variable/manrope";
@@ -14,7 +14,9 @@ const params = new URLSearchParams(location.search);
 applyAppearance({ theme: params.get("theme") === "dark" ? "dark" : "light", accent: "moss" });
 const rule: PermissionRule = { tool: "bash", resource: "pnpm test", decision: "allow" };
 function Prototype() {
-  const [mode, setMode] = useState<ApprovalMode>("acceptEdits");
+  const [mode, setMode] = useState<"acceptEdits" | "bypass">("acceptEdits");
+  const [planOnly, setPlanOnly] = useState(false);
+  const settingsDialog = useRef<HTMLDialogElement>(null);
   const [rules, setRules] = useState<PermissionRule[]>([]);
   const [decision, setDecision] = useState("");
   const [submissions, setSubmissions] = useState(0);
@@ -46,6 +48,7 @@ function Prototype() {
     <main className="permission-prototype">
       <header>
         <h1>Approval prototype</h1>
+        <button onClick={() => settingsDialog.current?.showModal()}>Settings</button>
         <label>
           Scenario{" "}
           <select
@@ -129,18 +132,26 @@ function Prototype() {
           approvals={
             <ApprovalControls
               mode={mode}
-              rules={rules}
+              planOnly={planOnly}
+              onPlanOnly={setPlanOnly}
               error={error}
               onMode={(value) => {
                 if (params.has("fail")) setError("Could not change mode. Try again.");
                 else setMode(value);
               }}
-              onRemove={(target) => setRules((old) => old.filter((r) => r !== target))}
               onRefresh={() => {}}
             />
           }
         />
       </section>
+      <dialog ref={settingsDialog} aria-label="Settings">
+        <button onClick={() => settingsDialog.current?.close()}>Close settings</button>
+        <SavedPermissions
+          rules={rules}
+          onRemove={(target) => setRules((old) => old.filter((r) => r !== target))}
+          onRefresh={() => {}}
+        />
+      </dialog>
     </main>
   );
 }

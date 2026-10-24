@@ -2159,3 +2159,21 @@ dialog[open] {
     margin-left: 8px;
   }
 }
+
+/* Permission policy and planning share the compact behavior toolbar. */
+.composer-tools {
+  flex-wrap: wrap;
+}
+.composer-tools .composer-control {
+  padding-inline: 8px;
+}
+.composer-control[aria-pressed="true"] {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+.workspace-permissions {
+  margin-top: 24px;
+}
+.workspace-permissions h3 {
+  font-size: 14px;
+}

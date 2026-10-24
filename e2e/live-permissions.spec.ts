@@ -8,7 +8,7 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
   test.skip(process.env.LIVE_MODEL !== "1", "Opt in to the configured local model account.");
   test.setTimeout(180000);
   await page.goto("/");
-  await expect(page.getByRole("button", { name: "Approval mode: Allow file edits" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Require permissions" })).toBeVisible();
   const input = page.getByRole("textbox", { name: "Message your coding agent" });
   await input.fill(
     "Run exactly npm test once with bash in this workspace. Do not edit files. Report the actual result.",
@@ -17,14 +17,14 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
   const permission = page.getByRole("region", { name: "Permission request" });
   await expect(permission).toBeVisible({ timeout: 60000 });
   await expect(permission.locator(".shell-command code")).toHaveText("npm test");
-  await permission.getByRole("button", { name: "Remember this permission" }).click();
+  await permission.getByRole("button", { name: "Always Approve" }).click();
   await expect(
     permission.getByText("All conversations in this workspace can use this permission."),
   ).toBeVisible();
-  await permission.getByRole("button", { name: "Save and allow" }).click();
+  await permission.getByRole("button", { name: "Approve and Save" }).click();
   await expect(permission).toBeHidden({ timeout: 60000 });
   await expect(page.getByRole("button", { name: "Stop run" })).toBeHidden({ timeout: 60000 });
-  await page.getByRole("button", { name: "Workspace permissions", exact: true }).click();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Remove permission for bash npm test" }),
   ).toBeVisible();
@@ -39,11 +39,19 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
   const url = page.url();
   const threadId = new URL(url).searchParams.get("thread")!;
   await page.reload();
-  await expect(page.getByRole("button", { name: "Approval mode: Allow file edits" })).toBeVisible();
-  await page.getByRole("button", { name: "Approval mode: Allow file edits" }).click();
+  await expect(page.getByRole("button", { name: "Require permissions" })).toBeVisible();
+  await page.getByRole("button", { name: "Require permissions" }).click();
   await page.getByRole("radio", { name: /YOLO/ }).click();
-  await expect(page.getByRole("button", { name: "Approval mode: YOLO" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "YOLO" })).toBeVisible();
   await page.keyboard.press("Escape");
+  const plan = page.getByRole("button", { name: "Plan only", exact: true });
+  await plan.click();
+  await expect(plan).toHaveAttribute("aria-pressed", "true");
+  await page.reload();
+  await expect(plan).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "YOLO", exact: true })).toBeVisible();
+  await plan.click();
+  await expect(plan).toHaveAttribute("aria-pressed", "false");
   await input.fill(
     "Run exactly printf permissions-yolo with bash. Do not edit files. Report the output.",
   );
@@ -51,11 +59,11 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
   await expect(page.getByRole("button", { name: "Stop run" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Stop run" })).toBeHidden({ timeout: 60000 });
   await expect(permission).toBeHidden();
-  await page.getByRole("button", { name: "Approval mode: YOLO" }).click();
-  await page.getByRole("radio", { name: /Review changes/ }).click();
-  await expect(page.getByRole("button", { name: "Approval mode: Review changes" })).toBeVisible();
+  await page.getByRole("button", { name: "YOLO" }).click();
+  await page.getByRole("radio", { name: /Require permissions/ }).click();
+  await expect(page.getByRole("button", { name: "Require permissions" })).toBeVisible();
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "Workspace permissions", exact: true }).click();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
   await page.getByRole("button", { name: "Remove permission for bash npm test" }).click();
   await expect(page.getByText("No saved permissions.")).toBeVisible({ timeout: 15000 });
   await page.keyboard.press("Escape");
@@ -74,7 +82,7 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
   expect(calls).toHaveLength(3);
   expect(new Set(calls.map((e) => e.toolCallId)).size).toBe(3);
   await page.reload();
-  await expect(page.getByRole("button", { name: "Approval mode: Review changes" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Require permissions" })).toBeVisible();
   const reloaded = await intelligence.getThreadEvents({ threadId });
   expect(
     reloaded.events.filter((e) => e.type === "TOOL_CALL_START" && e.toolCallName === "bash"),

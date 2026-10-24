@@ -34,13 +34,13 @@ test("Impeccable scans rendered tools and approvals in both themes and sizes", a
             : `${fixtureUrl}/?${target}`,
         );
         if (target === "permission-scope" || target === "permission-list") {
-          await page.getByRole("button", { name: "Remember this permission" }).click();
+          await page.getByRole("button", { name: "Always Approve" }).click();
         }
         if (target === "permission-modes")
-          await page.getByRole("button", { name: "Approval mode: Allow file edits" }).click();
+          await page.getByRole("button", { name: "Require permissions" }).click();
         if (target === "permission-list") {
-          await page.getByRole("button", { name: "Save and allow" }).click();
-          await page.getByRole("button", { name: "Workspace permissions", exact: true }).click();
+          await page.getByRole("button", { name: "Approve and Save" }).click();
+          await page.getByRole("button", { name: "Settings", exact: true }).click();
           await expect(
             page.getByRole("button", { name: "Remove permission for bash pnpm test" }),
           ).toBeVisible();

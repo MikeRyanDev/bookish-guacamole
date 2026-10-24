@@ -111,7 +111,7 @@ export function Permission({
               void decide("always");
             }}
           >
-            Save and allow
+            Approve and Save
           </button>
           <button disabled={busy} onClick={() => setRemember(false)}>
             Cancel
@@ -120,12 +120,6 @@ export function Permission({
       )}
       {!remember && (
         <footer>
-          <span className="approval-scope">This tool call only</span>
-          {preview && preview.rules.length > 0 && !remember && (
-            <button ref={rememberButton} disabled={busy} onClick={() => setRemember(true)}>
-              Remember this permission
-            </button>
-          )}
           <button
             disabled={busy}
             onClick={() => {
@@ -141,8 +135,18 @@ export function Permission({
               decide("once");
             }}
           >
-            {busy ? "Submitting…" : "Allow once"}
+            {busy ? "Submitting…" : "Approve Once"}
           </button>
+          {preview && preview.rules.length > 0 && (
+            <button
+              ref={rememberButton}
+              className="primary"
+              disabled={busy}
+              onClick={() => setRemember(true)}
+            >
+              Always Approve
+            </button>
+          )}
         </footer>
       )}
     </section>

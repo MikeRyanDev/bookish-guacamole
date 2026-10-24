@@ -37,7 +37,7 @@ test("Luna patch approval previews the exact change, waits for consent, and pers
   await expect(permission.getByText("Approval required", { exact: true })).toBeVisible();
   expect(await readFile(filename, "utf8")).toBe("Hello before approval.\n");
   await page.screenshot({ path: "docs/proof/live-patch-approval.png", animations: "disabled" });
-  await permission.getByRole("button", { name: "Allow once", exact: true }).click();
+  await permission.getByRole("button", { name: "Approve Once", exact: true }).click();
   await expect(permission).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Stop run" })).toHaveCount(0, { timeout: 45000 });
   expect(await readFile(filename, "utf8")).toBe("Hello after approval.\n");

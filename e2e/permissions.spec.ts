@@ -6,23 +6,21 @@ for (const theme of ["light", "dark"])
     test(`permission tasks ${theme} ${width}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(`${fixtureUrl}/permissions.html?theme=${theme}`);
-      await page.getByRole("button", { name: "Approval mode: Allow file edits" }).click();
+      await page.getByRole("button", { name: "Require permissions" }).click();
       await page.getByRole("radio", { name: /YOLO/ }).check();
-      await expect(page.getByRole("button", { name: "Approval mode: YOLO" })).toBeVisible();
-      await expect(
-        page.getByText("Run tools without approval. Ignore permission rules."),
-      ).toBeVisible();
+      await expect(page.getByRole("button", { name: "YOLO" })).toBeVisible();
+      await expect(page.getByText("Run without permission prompts.")).toBeVisible();
       expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
       await page.keyboard.press("Escape");
-      await page.getByRole("button", { name: "Remember this permission" }).click();
+      await page.getByRole("button", { name: "Always Approve" }).click();
       await expect(
         page.getByText("All conversations in this workspace can use this permission."),
       ).toBeVisible();
       expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
-      await page.getByRole("button", { name: "Save and allow" }).click();
+      await page.getByRole("button", { name: "Approve and Save" }).click();
       await expect(page.getByRole("textbox")).toBeFocused();
       await expect(page.getByText("Decision: always")).toBeVisible();
-      await page.getByRole("button", { name: "Workspace permissions", exact: true }).click();
+      await page.getByRole("button", { name: "Settings", exact: true }).click();
       await page.getByRole("button", { name: "Remove permission for bash pnpm test" }).click();
       await expect(page.getByText("No saved permissions.")).toBeVisible();
       await expect(page.getByRole("button", { name: "Refresh permissions" })).toBeFocused();
@@ -36,15 +34,15 @@ test("permission errors preserve decisions and mode; double clicks submit once",
   page,
 }) => {
   await page.goto(`${fixtureUrl}/permissions.html?fail`);
-  await page.getByRole("button", { name: "Allow once" }).click();
+  await page.getByRole("button", { name: "Approve Once" }).click();
   await expect(page.getByRole("alert")).toContainText("Could not submit");
-  await expect(page.getByRole("button", { name: "Allow once" })).toBeEnabled();
-  await page.getByRole("button", { name: "Approval mode: Allow file edits" }).click();
+  await expect(page.getByRole("button", { name: "Approve Once" })).toBeEnabled();
+  await page.getByRole("button", { name: "Require permissions" }).click();
   await page.getByRole("radio", { name: /YOLO/ }).click();
   await expect(page.getByText("Could not change mode. Try again.")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Approval mode: Allow file edits" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Require permissions" })).toBeVisible();
   await page.goto(`${fixtureUrl}/permissions.html?slow`);
-  await page.getByRole("button", { name: "Allow once" }).dblclick();
+  await page.getByRole("button", { name: "Approve Once" }).dblclick();
   await expect(page.getByText("Submissions: 1")).toBeVisible();
 });
 
@@ -52,10 +50,10 @@ test("scope confirmation keeps keyboard focus and cancel preserves the pending d
   page,
 }) => {
   await page.goto(`${fixtureUrl}/permissions.html`);
-  const remember = page.getByRole("button", { name: "Remember this permission" });
+  const remember = page.getByRole("button", { name: "Always Approve" });
   await remember.focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("button", { name: "Save and allow" })).toBeFocused();
+  await expect(page.getByRole("button", { name: "Approve and Save" })).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(page.getByRole("button", { name: "Cancel", exact: true })).toBeFocused();
   await page.keyboard.press("Enter");
@@ -68,12 +66,19 @@ for (const scenario of ["command", "patch"]) {
     await page.setViewportSize({ width: 390, height: 900 });
     await page.goto(`${fixtureUrl}/permissions.html?long&theme=dark`);
     await page.getByLabel("Scenario").selectOption(scenario);
+    await page.evaluate(() => document.fonts.ready);
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
     const transcript = page.locator(".transcript");
     const before = await transcript.evaluate((element) => ({
       top: element.scrollTop,
       height: element.clientHeight,
     }));
-    await page.getByRole("button", { name: "Approval mode: Allow file edits" }).click();
+    await page.getByRole("button", { name: "Require permissions" }).click();
     await expect(page.getByRole("radio", { name: /YOLO/ })).toBeVisible();
     expect(
       await transcript.evaluate((element) => ({
@@ -86,3 +91,25 @@ for (const scenario of ["command", "patch"]) {
     );
   });
 }
+
+test("planning stays separate from permission policy and saved rules live in Settings", async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/permissions.html`);
+  await expect(page.locator(".composer").getByText("Workspace permissions")).toHaveCount(0);
+  await page.getByRole("button", { name: "Require permissions", exact: true }).click();
+  await expect(page.getByRole("radio")).toHaveCount(2);
+  await expect(page.getByRole("radio", { name: /Plan only|Review changes/ })).toHaveCount(0);
+  await page.getByRole("radio", { name: /YOLO/ }).check();
+  await page.keyboard.press("Escape");
+  const plan = page.getByRole("button", { name: "Plan only", exact: true });
+  await plan.click();
+  await expect(plan).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "YOLO", exact: true })).toBeVisible();
+  await plan.click();
+  await expect(plan).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByRole("button", { name: "YOLO", exact: true })).toBeVisible();
+  const footer = page.locator(".permission footer");
+  await expect(footer.getByRole("button")).toHaveText(["Reject", "Approve Once", "Always Approve"]);
+  await expect(footer.locator("button.primary")).toHaveText(["Approve Once", "Always Approve"]);
+});

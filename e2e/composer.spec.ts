@@ -71,7 +71,7 @@ for (const theme of ["light", "dark"]) {
       await draft.fill("Short draft");
       await expect.poll(() => endGap(transcript)).toBeLessThan(5);
       await page.getByLabel("Fixture state").selectOption("approval");
-      await expect(page.getByRole("button", { name: "Allow once" })).toBeInViewport();
+      await expect(page.getByRole("button", { name: "Approve Once" })).toBeInViewport();
       await page.screenshot({
         path: `.impeccable/review/${theme}-${width}-approval.png`,
         fullPage: true,

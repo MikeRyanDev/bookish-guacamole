@@ -25,7 +25,7 @@ test("Luna loads a learned Skill, executes approved tests, and restores without 
           path: "docs/proof/live-bash-approval.png",
           animations: "disabled",
         });
-      await permission.getByRole("button", { name: "Allow once" }).click();
+      await permission.getByRole("button", { name: "Approve Once" }).click();
       approvals++;
     }
     if (
