@@ -1,3 +1,4 @@
+import { ThreadHistory } from "./components/thread-history";
 import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -201,50 +202,39 @@ function Shell({ config }: { config: AppConfig }) {
             placeholder="Search…"
           />
         </div>
-        <nav aria-label="Conversation history">
-          {threads.isLoading && (
-            <p className="muted" role="status">
-              Loading sessions…
-            </p>
+        <ThreadHistory
+          items={threads.threads.filter((thread) =>
+            (thread.name ?? thread.id).toLowerCase().includes(filter.toLowerCase()),
           )}
-          {threads.error && (
-            <div className="inline-error">
-              <p role="alert">Could not load sessions.</p>
-              <button onClick={threads.refetchThreads}>Retry</button>
-            </div>
+          filter={filter}
+          loading={threads.isLoading}
+          error={threads.error}
+          hasMore={threads.hasMoreThreads}
+          fetchingMore={threads.isFetchingMoreThreads}
+          fetchMoreError={threads.fetchMoreError}
+          fetchMore={threads.fetchMoreThreads}
+          retry={threads.refetchThreads}
+          renderItem={(thread) => (
+            <Link
+              from="/"
+              to="/"
+              search={(previous) => ({ ...previous, thread: thread.id })}
+              className={`session-row ${thread.id === threadId ? "selected" : ""}`}
+              aria-disabled={busy && thread.id !== threadId}
+              aria-current={thread.id === threadId ? "page" : undefined}
+              onClick={(event) => {
+                if (busy && thread.id !== threadId) {
+                  event.preventDefault();
+                  return;
+                }
+                if (compact) setSidebar(false);
+              }}
+            >
+              <MessageSquare size={15} />
+              <span>{thread.name ?? "Untitled session"}</span>
+            </Link>
           )}
-          {threads.threads
-            .filter((thread) =>
-              (thread.name ?? thread.id).toLowerCase().includes(filter.toLowerCase()),
-            )
-            .map((thread) => (
-              <Link
-                from="/"
-                to="/"
-                search={(previous) => ({ ...previous, thread: thread.id })}
-                key={thread.id}
-                className={`session-row ${thread.id === threadId ? "selected" : ""}`}
-                aria-disabled={busy && thread.id !== threadId}
-                aria-current={thread.id === threadId ? "page" : undefined}
-                onClick={(event) => {
-                  if (busy && thread.id !== threadId) {
-                    event.preventDefault();
-                    return;
-                  }
-                  if (compact) setSidebar(false);
-                }}
-              >
-                <MessageSquare size={15} />
-                <span>{thread.name ?? "Untitled session"}</span>
-              </Link>
-            ))}
-          {threads.hasMoreThreads && (
-            <button disabled={threads.isFetchingMoreThreads} onClick={threads.fetchMoreThreads}>
-              Load more
-            </button>
-          )}
-          {threads.fetchMoreError && <p role="alert">Could not load more sessions.</p>}
-        </nav>
+        />
         <footer className="sidebar-footer">
           <span>
             CopilotKit <span className="muted">×</span> TanStack AI
