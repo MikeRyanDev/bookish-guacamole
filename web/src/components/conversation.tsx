@@ -45,6 +45,7 @@ function ActiveConversation({
   const { copilotkit } = useCopilotKit();
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState("");
+  const [goalDraft, setGoalDraft] = useState("");
   const [goalMode, setGoalMode] = useState(false);
   const goal = goalFromState(agent.state);
   const unfinishedGoal = goal?.status === "active" || goal?.status === "paused";
@@ -105,8 +106,9 @@ function ActiveConversation({
     }
   }
   async function send() {
-    if (!draft.trim() || !isReady || agent.isRunning || agent.pendingInterrupts.length) return;
-    const content = draft.trim();
+    const content = (goalMode ? goalDraft : draft).trim();
+    if (!content || !isReady || connecting || agent.isRunning || agent.pendingInterrupts.length)
+      return;
     if (
       goalMode &&
       (unfinishedGoal || content.length > 4000 || ["stop", "resume"].includes(content))
@@ -118,7 +120,8 @@ function ActiveConversation({
       );
       return;
     }
-    setDraft("");
+    if (goalMode) setGoalDraft("");
+    else setDraft("");
     setGoalMode(false);
     setError("");
     connected.current = true;
@@ -135,7 +138,6 @@ function ActiveConversation({
           ? { forwardedProps: { starterGoal: { action: "start", objective: content } } }
           : {}),
       });
-      setGoalMode(false);
     } catch (error) {
       setError(error instanceof Error ? error.message : "Run failed.");
     }
@@ -179,8 +181,8 @@ function ActiveConversation({
         }
       />
       <ConversationComposer
-        draft={draft}
-        onDraftChange={setDraft}
+        draft={goalMode ? goalDraft : draft}
+        onDraftChange={goalMode ? setGoalDraft : setDraft}
         goalMode={goalMode}
         onGoalModeChange={setGoalMode}
         input={input}

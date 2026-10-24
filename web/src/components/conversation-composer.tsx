@@ -1,9 +1,8 @@
 import { useId, useLayoutEffect, type RefObject } from "react";
 import type { Goal } from "@tanstack/ai-harness/plugins";
-import { ArrowUp, Square, Target, MessageSquare } from "lucide-react";
+import { ArrowUp, Square, Target } from "lucide-react";
 import { IconButton } from "./icon-button";
 import { GoalStatus } from "./goal-status";
-import { ComposerPopover } from "./composer-popover";
 
 type ComposerProps = {
   draft: string;
@@ -21,7 +20,7 @@ type ComposerProps = {
   onResumeGoal: () => void;
   onStopGoal: () => void;
 };
-/** Owns composer geometry; only draft growth changes its height, never goal state. */
+/** Owns composer geometry; draft growth and explicit goal creation change its height, never persisted goal state. */
 export function ConversationComposer({
   draft,
   onDraftChange,
@@ -68,8 +67,17 @@ export function ConversationComposer({
       onSubmit={(event) => {
         event.preventDefault();
         onSend();
+        input.current?.focus();
       }}
     >
+      {goalMode && (
+        <div className="goal-create-heading">
+          <span>New goal</span>
+          <button type="button" onClick={() => changeMode(false)}>
+            Cancel
+          </button>
+        </div>
+      )}
       <label className="sr-only" htmlFor={id}>
         {goalMode ? "Goal objective" : "Message your coding agent"}
       </label>
@@ -81,6 +89,7 @@ export function ConversationComposer({
         placeholder={
           goalMode ? "What should the agent work toward?" : "Ask your agent to build something…"
         }
+        aria-describedby={goalMode ? `${id}-help` : undefined}
         rows={2}
         onKeyDown={(event) => {
           if (
@@ -93,6 +102,12 @@ export function ConversationComposer({
           }
         }}
       />
+      {goalMode && (
+        <p className="goal-create-help muted" id={`${id}-help`}>
+          Continues automatically for up to 20 agent turns, with an extra model call after each turn
+          to check completion. Pauses for approvals.
+        </p>
+      )}
       <div className="composer-toolbar">
         <div className="composer-tools">
           {goal && !goalMode ? (
@@ -105,31 +120,17 @@ export function ConversationComposer({
               onStop={onStopGoal}
               onNewGoal={() => changeMode(true)}
             />
-          ) : (
+          ) : !goalMode ? (
             <button
               className="composer-control"
               type="button"
-              aria-label={goalMode ? "Switch to message" : "Set a goal"}
-              aria-pressed={goalMode}
-              disabled={unfinished || running || connecting}
-              onClick={() => changeMode(!goalMode)}
+              disabled={unfinished || running || connecting || !ready || pendingApproval}
+              onClick={() => changeMode(true)}
             >
-              {goalMode ? (
-                <Target size={15} aria-hidden="true" />
-              ) : (
-                <MessageSquare size={15} aria-hidden="true" />
-              )}
-              {goalMode ? "Goal" : "Message"}
+              <Target size={15} aria-hidden="true" />
+              Create goal
             </button>
-          )}
-          {goalMode && (
-            <ComposerPopover title="How goals work" label="20 rounds">
-              <p>
-                Keeps working for up to 20 rounds. Pauses for approvals. Completion checks use
-                additional model calls.
-              </p>
-            </ComposerPopover>
-          )}
+          ) : null}
         </div>
         <span
           className={`composer-state muted ${!pendingApproval && !connecting && !running && ready ? "composer-shortcut" : ""}`}
@@ -152,9 +153,17 @@ export function ConversationComposer({
           <IconButton label="Stop run" onClick={onStopRun}>
             <Square size={15} />
           </IconButton>
+        ) : goalMode ? (
+          <button
+            type="submit"
+            className="primary goal-start"
+            disabled={!draft.trim() || !ready || connecting || pendingApproval}
+          >
+            Start goal
+          </button>
         ) : (
           <IconButton
-            label={goalMode ? "Start goal" : "Send message"}
+            label="Send message"
             className="primary"
             disabled={!draft.trim() || !ready || connecting || pendingApproval}
             onClick={onSend}

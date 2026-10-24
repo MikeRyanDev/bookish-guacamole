@@ -14,6 +14,8 @@ applyAppearance({ theme: params.get("theme") === "dark" ? "dark" : "light", acce
 function Fixture() {
   const [state, setState] = useState("none");
   const [draft, setDraft] = useState("");
+  const [goalDraft, setGoalDraft] = useState("");
+  const [submittedGoal, setSubmittedGoal] = useState("");
   const [mode, setMode] = useState(false);
   const input = useRef<HTMLTextAreaElement>(null);
   const [items, setItems] = useState(() =>
@@ -28,7 +30,7 @@ function Fixture() {
       : {
           text: params.has("long")
             ? "Verify every project requirement with evidence. ".repeat(85)
-            : "Add keyboard navigation and verify it on mobile.",
+            : submittedGoal || "Add keyboard navigation and verify it on mobile.",
           status: state === "approval" || state === "error" ? "paused" : (state as Goal["status"]),
           round: 3,
           reason: "Keyboard navigation passes. Mobile verification remains.",
@@ -50,48 +52,50 @@ function Fixture() {
         margin: "auto",
       }}
     >
-      <header style={{ display: "flex", gap: 8, padding: 8, flexWrap: "wrap" }}>
-        <label>
-          Fixture state{" "}
-          <select
-            aria-label="Fixture state"
-            value={state}
-            onChange={(event) => setState(event.target.value)}
+      {!params.has("review") && (
+        <header style={{ display: "flex", gap: 8, padding: 8, flexWrap: "wrap" }}>
+          <label>
+            Fixture state{" "}
+            <select
+              aria-label="Fixture state"
+              value={state}
+              onChange={(event) => setState(event.target.value)}
+            >
+              {["none", "active", "paused", "approval", "met", "stopped", "restoring", "error"].map(
+                (value) => (
+                  <option key={value}>{value}</option>
+                ),
+              )}
+            </select>
+          </label>
+          <button
+            onClick={() =>
+              setItems((previous) => [
+                ...previous,
+                {
+                  id: `message-${previous.length}`,
+                  text: `Message ${previous.length}. Streamed output.\n`.repeat(4),
+                },
+              ])
+            }
           >
-            {["none", "active", "paused", "approval", "met", "stopped", "restoring", "error"].map(
-              (value) => (
-                <option key={value}>{value}</option>
-              ),
-            )}
-          </select>
-        </label>
-        <button
-          onClick={() =>
-            setItems((previous) => [
-              ...previous,
-              {
-                id: `message-${previous.length}`,
-                text: `Message ${previous.length}. Streamed output.\n`.repeat(4),
-              },
-            ])
-          }
-        >
-          Append output
-        </button>
-        <button
-          onClick={() =>
-            setItems((previous) =>
-              previous.map((item, index) =>
-                index === previous.length - 1
-                  ? { ...item, text: item.text + "More streamed content.\n".repeat(8) }
-                  : item,
-              ),
-            )
-          }
-        >
-          Stream output
-        </button>
-      </header>
+            Append output
+          </button>
+          <button
+            onClick={() =>
+              setItems((previous) =>
+                previous.map((item, index) =>
+                  index === previous.length - 1
+                    ? { ...item, text: item.text + "More streamed content.\n".repeat(8) }
+                    : item,
+                ),
+              )
+            }
+          >
+            Stream output
+          </button>
+        </header>
+      )}
       <section className="conversation" aria-label="Coding conversation">
         <VirtualTranscript
           items={items}
@@ -129,8 +133,8 @@ function Fixture() {
           }
         />
         <ConversationComposer
-          draft={draft}
-          onDraftChange={setDraft}
+          draft={mode ? goalDraft : draft}
+          onDraftChange={mode ? setGoalDraft : setDraft}
           goalMode={mode}
           onGoalModeChange={setMode}
           input={input}
@@ -140,11 +144,12 @@ function Fixture() {
           ready
           pendingApproval={state === "approval"}
           onSend={() => {
-            setDraft("");
             if (mode) {
+              setSubmittedGoal(goalDraft);
+              setGoalDraft("");
               setState("active");
               setMode(false);
-            }
+            } else setDraft("");
           }}
           onStopRun={() => setState("paused")}
           onResumeGoal={() => setState("active")}

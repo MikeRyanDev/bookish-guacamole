@@ -2010,3 +2010,31 @@ dialog[open] {
 .file-tree-item[data-git-status] button {
   padding-inline-end: 28px;
 }
+
+/* Goal creation is an explicit composer task, with ordinary explanatory text. */
+.goal-create-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.goal-create-heading button {
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 400;
+}
+.goal-create-help {
+  margin: 0;
+  padding: 0 14px 10px;
+  font-size: 12px;
+  line-height: 1.6;
+  max-width: 68ch;
+}
+.goal-start {
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 12px;
+}

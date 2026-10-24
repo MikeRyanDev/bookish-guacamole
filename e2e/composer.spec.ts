@@ -36,7 +36,7 @@ for (const theme of ["light", "dark"]) {
       const position = await transcript.evaluate((node) => node.scrollTop);
       const bounds = await transcript.boundingBox();
       await page.getByLabel("Fixture state").selectOption("paused");
-      const trigger = page.getByRole("button", { name: /Goal · Paused/ });
+      const trigger = page.getByRole("button", { name: /View goal.*Paused/ });
       await trigger.focus();
       await page.keyboard.press("Enter");
       const panel = page.getByRole("dialog", { name: "Session goal" });
@@ -76,33 +76,26 @@ for (const theme of ["light", "dark"]) {
         path: `.impeccable/review/${theme}-${width}-approval.png`,
         fullPage: true,
       });
-      await page.getByRole("button", { name: /Goal · Approval required/ }).click();
+      await page.getByRole("button", { name: /View goal.*Approval required/ }).click();
       await expect(page.getByRole("button", { name: "Resume goal" })).toBeDisabled();
       await expect(page.getByRole("button", { name: "Stop goal", exact: true })).toBeDisabled();
       await expect(page.getByRole("button", { name: "Send message" })).toBeDisabled();
       await page.keyboard.press("Escape");
       await page.getByLabel("Fixture state").selectOption("active");
       await page.getByRole("button", { name: "Stop run" }).click();
-      await page.getByRole("button", { name: /Goal · Paused/ }).click();
+      await page.getByRole("button", { name: /View goal.*Paused/ }).click();
       await page.getByRole("button", { name: "Stop goal", exact: true }).click();
-      await page.getByRole("button", { name: "New goal" }).click();
+      await page.getByRole("button", { name: "Create new goal" }).click();
       const objective = page.getByRole("textbox", { name: "Goal objective" });
-      await expect(objective).toHaveValue("Short draft");
+      await expect(objective).toHaveValue("");
       await expect(objective).toBeFocused();
-      await page.getByRole("button", { name: "20 rounds" }).click();
-      const help = page.getByRole("dialog", { name: "How goals work" });
-      await expect(help).toBeVisible();
-      const helpBounds = await help.boundingBox();
-      expect(helpBounds!.y).toBeGreaterThanOrEqual(12);
-      expect(helpBounds!.y + helpBounds!.height).toBeLessThan(
-        (await page.locator(".composer").boundingBox())!.y,
-      );
+      await expect(page.getByText(/Continues automatically/)).toBeVisible();
+      await expect(page.getByRole("button", { name: "Start goal", exact: true })).toBeDisabled();
       await page.screenshot({
         path: `.impeccable/review/${theme}-${width}-new.png`,
         fullPage: true,
       });
-      await page.keyboard.press("Escape");
-      await page.getByRole("button", { name: "Switch to message" }).click();
+      await page.getByRole("button", { name: "Cancel", exact: true }).click();
       await expect(draft).toHaveValue("Short draft");
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
         true,
@@ -117,7 +110,7 @@ test("long goal details stay within a short mobile viewport and dismiss outside"
   await page.setViewportSize({ width: 390, height: 480 });
   await page.goto(`${fixtureUrl}/composer.html?long`);
   await page.getByLabel("Fixture state").selectOption("error");
-  await page.getByRole("button", { name: /Goal · Paused/ }).click();
+  await page.getByRole("button", { name: /View goal.*Paused/ }).click();
   const panel = page.getByRole("dialog", { name: "Session goal" });
   await expect(panel).toBeInViewport();
   const rect = await panel.boundingBox();
@@ -138,7 +131,7 @@ test("empty, restoring and completed states retain a usable composer", async ({ 
   await expect(page.getByRole("button", { name: "Send message" })).toBeDisabled();
   await page.getByLabel("Fixture state").selectOption("met");
   await expect(page.getByRole("button", { name: "Send message" })).toBeEnabled();
-  await page.getByRole("button", { name: /Goal · Complete · agent assessed/ }).click();
+  await page.getByRole("button", { name: /View goal.*Complete · agent assessed/ }).click();
   await expect(page.getByRole("button", { name: "Resume goal" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "New goal" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Create new goal" })).toBeEnabled();
 });

@@ -62,7 +62,8 @@ export function GoalStatus({
       label={
         <>
           <Target size={15} aria-hidden="true" />
-          <span>Goal · {pendingApproval ? "Approval required" : status}</span>
+          <span>View goal</span>
+          <span className="muted">{pendingApproval ? "Approval required" : status}</span>
         </>
       }
     >
@@ -102,7 +103,7 @@ export function GoalStatus({
               disabled={disabled || running || pendingApproval}
               onClick={onNewGoal}
             >
-              New goal
+              Create new goal
             </button>
           )}
         </div>

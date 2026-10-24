@@ -47,26 +47,31 @@ Goal controls are disabled while that approval is pending; the loop is already p
 Extend the existing Operate surface and its Manrope/mono, warm accent, and neutral
 surface tokens. Add no new card, border, modal, or visual identity.
 
-The composer toolbar switches the draft between Message and Goal without changing
-its height. Goal mode uses an objective placeholder and Start goal action. The
-20 rounds control explains continuation, approval pauses, and additional model
-calls before starting. Command/Control+Enter submits; switching modes keeps the draft.
+The message composer exposes **Create goal** as an explicit action. It opens a
+**New goal** form inside the composer, with a separate objective draft. **Start goal**
+submits it. **Cancel** returns to the unchanged message draft. Reopening creation
+retains an unsubmitted objective. Command/Control+Enter submits the current form.
 
-A persisted goal occupies one toolbar control with its current state. Opening it
-shows the full objective, round count, judge or pause reason, and explicit Resume
-and Stop actions. Completion is labelled as the agent's assessment. These details
-use a non-modal popover above the composer. Escape or an outside click dismisses
-it. Opening details and changing goal state do not resize the transcript.
+Plain explanatory text states that work continues automatically for up to 20 agent
+turns, with extra completion-check calls and approval pauses. The fixed limit is
+not a control. There is no Message toggle or help hidden behind a numeric value.
 
-The draft grows to a bounded height and then scrolls internally. Long goal details
-scroll within the available viewport. Readers stay at their position when inspecting
-older output; Jump to latest restores following. Stop run halts Goal continuation.
-Pending approvals retain the existing approval surface and block new commands.
-Finished or stopped goals offer New goal without discarding an existing draft.
+Once a goal exists, **View goal** opens its full objective, status, round count,
+judge or pause reason, and named **Resume goal** and **Stop goal** actions.
+Completion is labelled as the agent's assessment. The non-modal popover appears
+above the composer. Escape or an outside click closes it. Finished and stopped
+goals expose **Create new goal**. Pending approvals block new goal commands.
 
-This extends the existing Operate surface: Manrope, quiet neutral surfaces, warm
-accents, visible keyboard focus, and no new outlines or enclosing panels. The
-transcript remains the primary reading surface at desktop and mobile sizes.
+Opening creation intentionally expands the composer to explain the new task.
+Persisted goal-state changes and opening goal details never resize the transcript.
+Drafts grow to a bounded height and then scroll internally. Long details scroll
+within the available viewport. Reading position survives inspection; Jump to latest
+restores following. Stop run interrupts active work and pauses continuation.
+
+The interaction follows the existing Operate design system. The quality bar is
+an obvious entry point, truthful control labels, separate drafts, reachable actions,
+and stable transcript reading. The interaction proposal precedes implementation.
+A fresh task-first usability review precedes the visual finish review.
 
 ## Required validation
 
@@ -85,4 +90,5 @@ current design and viewer with an older tree; it is not the local merge target.
 No upstream package, shared deployment, or release-history rewrite is required.
 
 [Goal backend validation](GOALS-VERIFICATION.md).
-[Integrated composer validation](COMPOSER-VERIFICATION.md).
+[Current composer redesign and validation](COMPOSER-REDESIGN.md).
+[Earlier composer validation, superseded after usability rejection](COMPOSER-VERIFICATION.md).

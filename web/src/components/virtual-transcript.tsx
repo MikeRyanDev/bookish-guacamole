@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { observeElementRect, useVirtualizer } from "@tanstack/react-virtual";
 import { ArrowDown } from "lucide-react";
 import { IconButton } from "./icon-button";
 
@@ -23,6 +23,22 @@ export function VirtualTranscript<T extends { id: string }>({
   const virtualizer = useVirtualizer({
     count: items.length + 1,
     getScrollElement: () => scroll.current,
+    observeElementRect: (instance, notify) =>
+      observeElementRect(instance, (rect) => {
+        // Remember the end position before the composer changes viewport height.
+        // Row measurement still belongs to TanStack; readers inspecting older output stay put.
+        const follow =
+          instance.scrollRect !== null &&
+          instance.scrollRect.height !== rect.height &&
+          instance.options.anchorTo === "end" &&
+          instance.scrollElement !== null &&
+          instance.scrollElement.scrollHeight -
+            instance.scrollRect.height -
+            instance.scrollElement.scrollTop <=
+            instance.options.scrollEndThreshold;
+        notify(rect);
+        if (follow) instance.scrollToEnd();
+      }),
     estimateSize: (index) => (index === items.length ? 24 : 160),
     getItemKey: (index) =>
       index === items.length

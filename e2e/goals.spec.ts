@@ -9,14 +9,13 @@ for (const theme of ["light", "dark"] as const) {
     await page.goto("/");
     const message = page.getByRole("textbox", { name: "Message your coding agent" });
     await message.fill("Inspect the project and verify its tests");
-    await page.getByRole("button", { name: "Set a goal", exact: true }).click();
+    await page.getByRole("button", { name: "Create goal", exact: true }).click();
     const objective = page.getByRole("textbox", { name: "Goal objective" });
-    await expect(objective).toHaveValue("Inspect the project and verify its tests");
+    await expect(objective).toHaveValue("");
+    await objective.fill("Verify the project tests");
     await expect(objective).toBeFocused();
     await expect(page.getByRole("button", { name: "Start goal", exact: true })).toBeEnabled();
-    await page.getByRole("button", { name: "20 rounds" }).click();
-    await expect(page.getByText(/Keeps working for up to 20 rounds/)).toBeVisible();
-    await page.keyboard.press("Escape");
+    await expect(page.getByText(/Continues automatically/)).toBeVisible();
     await objective.fill("");
     await expect(page.getByRole("button", { name: "Start goal", exact: true })).toBeDisabled();
     await page.setViewportSize({ width: 390, height: 844 });
@@ -30,8 +29,9 @@ for (const theme of ["light", "dark"] as const) {
           .analyze()
       ).violations,
     ).toEqual([]);
-    await page.getByRole("button", { name: "Switch to message" }).click();
+    await page.getByRole("button", { name: "Cancel", exact: true }).click();
     await expect(message).toBeFocused();
+    await expect(message).toHaveValue("Inspect the project and verify its tests");
     await page.screenshot({ path: `.impeccable/review/app-${theme}-mobile.png`, fullPage: true });
     await page.setViewportSize({ width: 1440, height: 960 });
     await page.screenshot({ path: `.impeccable/review/app-${theme}-desktop.png`, fullPage: true });
@@ -42,7 +42,7 @@ test("live Goal runs with approval and persists its completion and evidence", as
   test.skip(process.env.LIVE_MODEL !== "1", "Opt in to configured model use.");
   test.setTimeout(180_000);
   await page.goto("/");
-  await page.getByRole("button", { name: "Set a goal", exact: true }).click();
+  await page.getByRole("button", { name: "Create goal", exact: true }).click();
   await page
     .getByRole("textbox", { name: "Goal objective" })
     .fill(
@@ -57,7 +57,7 @@ test("live Goal runs with approval and persists its completion and evidence", as
   await expect(page.getByRole("button", { name: "Stop run", exact: true })).toBeHidden({
     timeout: 60_000,
   });
-  await page.getByRole("button", { name: /Goal ·/ }).click();
+  await page.getByRole("button", { name: /View goal/ }).click();
   await page.getByRole("button", { name: "Resume goal", exact: true }).click();
   await expect(page.locator(".composer-control").first()).toContainText(
     "Complete · agent assessed",
