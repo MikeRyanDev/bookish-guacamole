@@ -15,6 +15,13 @@ The browser no longer requests a flat workspace listing. The compatibility endpo
 | `.agents/skills/impeccable/scripts/impeccable detect --json web/src/components/workspace-file-browser.tsx web/src/components/file-tree.tsx web/src/components/inspector.tsx`                                       | No findings. The full browser run also passed the rendered design matrix.                                                                                                  |
 | `git diff --check`                                                                                                                                                                                                 | Passed.                                                                                                                                                                    |
 
+Integration onto main `26a3154` preserved the newer composer. `pnpm check` passed again with 134 tests and 49 declared skips.
+The following combined browser run passed all 14 tests:
+
+```sh
+CI=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4195 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4216 pnpm test:e2e e2e/lazy-files.spec.ts e2e/composer.spec.ts e2e/html-tree.spec.ts e2e/html-tree-integration.spec.ts e2e/workspaces.spec.ts
+```
+
 The new API tests first failed because the requested discovery contract was absent. A later literal-path regression failed before the Git argument fix.
 Current tests page through all 1,105 files in Git and plain folders. Plain-folder search also crosses more than 10,000 entries.
 They cover private paths, symlinks, ignores, forced tracked files, deleted files, aggregate Git status, cursor scope, cancellation, and unusual filenames.
