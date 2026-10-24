@@ -8,7 +8,7 @@ import { projectInstructions } from "@tanstack/ai-harness/plugins/node";
 import { learnedSkills } from "./learned-skills.js";
 import { createCodingAdapter } from "./model.js";
 
-/** Combines official coding plugins with published Intelligence Skill tools. */
+/** Combines official coding plugins with published Intelligence Skills. */
 export function createCodingHarness(options: {
   root: string;
   intelligence: CopilotKitIntelligence;
@@ -18,13 +18,14 @@ export function createCodingHarness(options: {
   const skills = new SkillRegistry({
     client: options.intelligence,
     containerId: options.containerId,
+    freshnessWindowMs: 0,
   });
   return defineHarness({
     name: "starter/coder",
     adapter: options.adapter ?? createCodingAdapter(),
     systemPrompts: [
       "You are a coding agent. Read the project instructions and inspect relevant files before editing.",
-      "The learned Skill catalog is injected automatically. Load and apply relevant Skills with copilotkit_load_skill before editing, and cite their names.",
+      "The learned Skill catalog is injected automatically. Load and apply relevant Skills with load_skill before editing, and cite their names.",
       "Make small changes. Run the relevant tests. Report what changed and the actual test result. Never claim a test ran if it did not.",
     ],
     plugins: () => [

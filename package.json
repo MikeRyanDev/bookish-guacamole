@@ -34,6 +34,7 @@
     "@tanstack/ai-harness": "0.1.0",
     "@tanstack/ai-openai": "1.0.0",
     "@tanstack/ai-persistence": "1.0.0",
+    "@tanstack/ai-skills": "1.0.0",
     "@tanstack/react-query": "5.104.5",
     "@tanstack/react-router": "1.170.46",
     "@tanstack/react-virtual": "3.14.22",
@@ -73,6 +74,7 @@
   "intent": {
     "skills": [
       "@tanstack/ai",
+      "@tanstack/ai-skills",
       "@tanstack/ai-persistence",
       "@tanstack/react-router",
       "@tanstack/router-core"

@@ -11,7 +11,9 @@ flowchart LR
   Harness --> Log[SQLite execution log]
   Intelligence --> Learning[Learning and published Skills]
   Learning --> Registry[SDK SkillRegistry]
-  Registry --> Harness
+  Registry --> Source[Snapshot SkillSource]
+  Source --> Skills[TanStack withSkills]
+  Skills --> Harness
 ```
 
 ## Ownership
@@ -25,14 +27,20 @@ flowchart LR
 | Runtime         | Local HTTP auth, user identity, Learning assignment                | `src/app.ts`                            |
 | Harness         | Model loop, official coding plugins, permissions                   | `src/harness.ts`                        |
 | Bridge          | Outer event IDs, terminal event, cancellation                      | `src/bridge.ts`                         |
-| Skill plugin    | Per-turn verified catalog and load/read tools                      | `src/learned-skills.ts`                 |
+| Skill plugin    | Per-turn verified snapshot and TanStack SkillSource                | `src/learned-skills.ts`                 |
 | SQLite          | Local workspace registry and per-workspace private execution logs  | `src/workspaces.ts`, `src/log-store.ts` |
 
 Intelligence owns durable product runs and Learning evidence. The SQLite execution log does not replace it. Keep `.data/` when restarting the app. New browser threads have distinct private proxy agents; register each before mounting its interrupt hooks.
 
 The harness emits private message snapshots when it pauses. Their IDs differ from the outer conversation. The bridge omits those snapshots and retains streamed message/tool events, so Intelligence preserves one transcript across resume and replay. One outer start precedes all metadata; one terminal event closes the complete tool loop.
 
-The Skill plugin acquires a snapshot before each turn and injects `formatSkillCatalog`. Load/read tools use that same snapshot. A failed refresh clears the old catalog and tells the model not to claim Skill use. The SDK verifies downloaded archives. Its `internal/learned-skills` export is version-sensitive; rerun tests before a CopilotKit upgrade.
+The Skill plugin adapts Intelligence to the portable loader in `@tanstack/ai-skills`. Intelligence owns published Skills and verifies archive checksums, paths, sizes, and manifests. TanStack `withSkills` adds the catalog and `load_skill`. `createResourceTool` adds `read_skill_resource`. This replaces the custom list/load/read tools. TanStack Intent remains separate development guidance.
+
+The coding harness sets the SDK's `freshnessWindowMs` to zero. Before each turn, the plugin clears its previous snapshot and acquires a new snapshot. An unchanged response can reuse verified bytes. A rejected refresh or `registry.status.stale` leaves Skills unavailable for that turn. The model receives a limitation message and must not claim Skill use. The next turn attempts refresh again. The browser's independent Skill inspector retains its own SDK cache policy.
+
+Each session holds its own snapshot reference. The catalog, raw `SKILL.md`, and supporting text all use that reference throughout the turn. Tool calls never fetch a separate revision. The adapter reads raw text through `readSkillFile`, because the SDK's `loadSkill` helper returns a JSON wrapper. Supporting text files can live at the skill root or in subfolders. TanStack rejects unsafe paths and checks the resource inventory before each read. Binary files remain unavailable, as in the previous integration.
+
+Skill instructions do not grant workspace permissions. Existing tools still require approval for controlled actions, including after restart. TanStack lists instructions and resources but does not execute skill scripts. Its default catalog limit is approximately 4,000 tokens. An oversized catalog fails the run rather than silently omitting Skills. The SDK's `internal/learned-skills` export remains version-sensitive. Rerun the Skill and permission tests before a CopilotKit or TanStack upgrade.
 
 ## Workspace and transcript state
 

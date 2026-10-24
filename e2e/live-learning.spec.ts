@@ -34,7 +34,7 @@ test("a newly published Learning Skill reaches the next browser turn without res
   expect(saved.decodeErrorRowIds).toEqual([]);
   expect(saved.truncated).toBe(false);
   const loads = saved.events.filter(
-    (event) => event.type === "TOOL_CALL_START" && event.toolCallName === "copilotkit_load_skill",
+    (event) => event.type === "TOOL_CALL_START" && event.toolCallName === "load_skill",
   );
   expect(loads.length).toBeGreaterThan(0);
   const ids = new Set(loads.map((event) => event.toolCallId));

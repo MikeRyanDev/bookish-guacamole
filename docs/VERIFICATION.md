@@ -1,5 +1,30 @@
 # Verification record
 
+## TanStack Skill loader migration — 2026-10-23
+
+The runtime now uses `@tanstack/ai-skills@1.0.0` through an Intelligence `SkillSource` adapter. The SDK still verifies each archive. The coding harness requests refresh before each turn and rejects the SDK's stale fallback. See [the architecture](ARCHITECTURE.md) for ownership and failure behavior.
+
+Before implementation, `pnpm test tests/skills.test.ts` failed two regressions: the native tools were absent, and three turns made only one snapshot request. After implementation, the focused suite passed:
+
+```sh
+pnpm test tests/skills.test.ts tests/coding.test.ts tests/bridge.test.ts
+pnpm check
+node --test example/greet.test.js
+```
+
+The full check passed lint, both TypeScript checks, 85 tests, and production builds. The 49 persistence tests for unsupported stores remain declared skips. The sample test passed. The focused tests cover raw instruction loading, supporting files, unsafe and missing resources, refresh between turns, network and corrupt-archive fallback, recovery, and permission approval/denial across restart after skill loading.
+
+Live proof used an isolated worktree app at `http://127.0.0.1:4183`, the existing CLI-installed local Intelligence backend, and GPT-6 Luna. The ignored `.data/live.config.ts` imports the normal Playwright configuration and overrides only the app URL and test/output paths. Both commands passed:
+
+```sh
+LIVE_MODEL=1 pnpm exec playwright test e2e/live-model.spec.ts --config .data/live.config.ts
+LIVE_LEARNING=1 LIVE_MODEL=1 pnpm exec playwright test e2e/live-learning.spec.ts --config .data/live.config.ts
+```
+
+The coding thread `0225057a-5e31-4940-b540-ef8d03534101` loaded a published Skill through `load_skill`, completed two approved `npm test` calls, and restored after browser reload without duplicate calls. Intelligence persisted 11 distinct tool calls with no event decode errors or truncation. The Learning thread `599441d8-cae8-4f77-bcbc-76e43d37add4` loaded `regression-only-coverage`, answered without commands or edits, and restored after reload.
+
+These live checks consumed existing published Learning output. They did not generate or publish a new Skill, test automatic Learning scheduling, or claim new Learning quality evidence. Restart and denial coverage used the deterministic real-harness tests. Private events and current screenshots remain in ignored worktree `.data/`. No shared or production environment changed.
+
 For the latest approval, routing, motion, README, and React guidance checks, see [NEW improvements proof](NEW-IMPROVEMENTS-VERIFICATION.md). The records below describe earlier runtime validation.
 
 ## Current browser delivery checks

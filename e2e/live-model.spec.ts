@@ -51,7 +51,7 @@ test("Luna loads a learned Skill, executes approved tests, and restores without 
   expect(saved.decodeErrorRowIds).toEqual([]);
   expect(saved.truncated).toBe(false);
   const calls = saved.events.filter((event) => event.type === "TOOL_CALL_START");
-  expect(calls.filter((event) => event.toolCallName === "copilotkit_load_skill")).toHaveLength(1);
+  expect(calls.filter((event) => event.toolCallName === "load_skill")).toHaveLength(1);
   expect(calls.filter((event) => event.toolCallName === "bash")).toHaveLength(2);
   expect(new Set(calls.map((event) => event.toolCallId)).size).toBe(calls.length);
   expect(saved.events.some((event) => event.type === "MESSAGES_SNAPSHOT")).toBe(false);
