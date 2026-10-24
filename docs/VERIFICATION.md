@@ -38,6 +38,15 @@ The other affected command covered `e2e/file-entry.spec.ts`, `e2e/html-tree.spec
 Before the final entry-label correction, the merged main app also passed `e2e/lazy-files.spec.ts` at port 4173.
 No backend deployment changed; only the local starter app was restarted to load the new endpoints.
 
+Final merge: `e26a405` on main includes the later composer and placeholder changes. The main app on port 4173 passed all nine final checks:
+
+```sh
+CI=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4173 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4216 pnpm test:e2e e2e/file-entry.spec.ts e2e/lazy-files.spec.ts e2e/composer.spec.ts
+```
+
+`pnpm check` passed at the merged source with 134 tests and 49 declared skips. `node --test example/greet.test.js` passed again.
+The final screenshots use that main app. Unrelated worktree changes remained untouched.
+
 The new API tests first failed because the requested discovery contract was absent. A later literal-path regression failed before the Git argument fix.
 Current tests page through all 1,105 files in Git and plain folders. Plain-folder search also crosses more than 10,000 entries.
 They cover private paths, symlinks, ignores, forced tracked files, deleted files, aggregate Git status, cursor scope, cancellation, and unusual filenames.
