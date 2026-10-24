@@ -63,3 +63,14 @@ disposition: fix
 Clear. Ship covers the scored fixes, not the whole surface.
 
 disposition: ship
+
+## Main checkout verification
+
+Merged the worktree into main as `e6a8f71`. The separate, uncommitted SDK preview alignment was restored, including both verification sections; package and lockfile bytes match the pre-merge snapshot.
+
+- `pnpm check`: passed lint, source design checks, types, builds, and 108 tests; 49 declared skips.
+- `node --test example/greet.test.js`: one passed.
+- `TOOL_REPLAY_URL=<existing local conversation on 4173> pnpm test:e2e e2e/tool-stack.spec.ts e2e/tool-replay.spec.ts e2e/tool-renderers.spec.ts e2e/tool-disclosure.spec.ts e2e/tool-approvals.spec.ts e2e/design.spec.ts`: 17 passed, including the real persisted conversation replay and rendered design matrix.
+- `git diff --check`: passed.
+
+The replay did not start a new model run. Repeat-run screenshots were restored to the reviewed captures with provenance metadata.
