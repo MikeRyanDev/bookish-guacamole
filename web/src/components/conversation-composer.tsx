@@ -112,7 +112,6 @@ export function ConversationComposer({
       )}
       <div className="composer-toolbar">
         <div className="composer-tools">
-          {approvals}
           {goal && !goalMode ? (
             <GoalStatus
               goal={goal}
@@ -134,6 +133,7 @@ export function ConversationComposer({
               Create goal
             </button>
           ) : null}
+          {approvals}
         </div>
         <span
           className={`composer-state muted ${!pendingApproval && !connecting && !running && ready ? "composer-shortcut" : ""}`}

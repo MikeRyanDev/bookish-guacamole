@@ -173,8 +173,8 @@ The composer has two permission choices:
 - **Require permissions** allows ordinary file edits. Commands and sensitive paths ask unless a saved rule allows them.
 - **YOLO** bypasses approval requests and permission-rule denials. Separate tool restrictions still apply.
 
-**Plan only** is a separate toggle beside Create goal. It permits inspection but prevents edits and shell commands.
-The permission preference stays selected during planning. Turning Plan only off restores that preference.
+**Plan mode** is a separate toggle beside Create goal. It permits inspection but prevents edits and shell commands.
+The permission preference stays selected during planning. Turning Plan mode off restores that preference.
 Both choices persist per conversation and apply to the next turn. Pending approvals still require a decision.
 
 Interrupts offer **Reject**, **Approve Once**, and **Always Approve**. Both approval buttons use the positive action style.

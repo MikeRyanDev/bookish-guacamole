@@ -38,6 +38,19 @@ export function ApprovalControls({
   const id = useId();
   return (
     <>
+      <button
+        className="composer-control"
+        type="button"
+        aria-label="Plan mode"
+        aria-pressed={planOnly}
+        aria-busy={busy || undefined}
+        disabled={loading || busy}
+        title="Read and propose work without edits or commands. Applies next turn."
+        onClick={() => onPlanOnly(!planOnly)}
+      >
+        <ListChecks size={15} aria-hidden="true" />
+        Plan
+      </button>
       <ComposerPopover
         title="Permissions"
         label={loading ? "Loading…" : modeChoices.find((choice) => choice.value === mode)!.label}
@@ -66,22 +79,6 @@ export function ApprovalControls({
           </button>
         )}
       </ComposerPopover>
-      <button
-        className="composer-control"
-        type="button"
-        aria-pressed={planOnly}
-        disabled={loading || busy}
-        title="Read and propose work without edits or commands. Applies next turn."
-        onClick={() => onPlanOnly(!planOnly)}
-      >
-        <ListChecks size={15} aria-hidden="true" />
-        Plan only
-      </button>
-      {busy && (
-        <span role="status" className="muted">
-          Saving…
-        </span>
-      )}
       {error && <span role="alert">{error}</span>}
     </>
   );

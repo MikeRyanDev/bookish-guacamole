@@ -2,7 +2,7 @@
 
 ## User feedback and revision
 
-The developer found the first interface too wordy. The requested revision removed Review changes, renamed Allow file edits to Require permissions, and separated Plan only.
+The developer found the first interface too wordy. The requested revision removed Review changes, renamed Allow file edits to Require permissions, and separated Plan mode.
 Saved permissions moved from the composer into Settings. Interrupts now offer Reject, Approve Once, and Always Approve.
 Both approval actions use the accent fill. The scope confirmation remains explicit before saving a permission.
 
@@ -15,14 +15,14 @@ The current screenshots and interactive prototype establish implementation truth
 | --- | --- | --- |
 | Require permissions | Ordinary edits run. Commands and sensitive paths ask unless a saved rule allows them. | Conversation |
 | YOLO | The native permissions plugin allows calls, including its explicit denials. Separate tool restrictions remain. | Conversation |
-| Plan only | Permitted reads run. Edits and shell commands cannot run. The permission preference remains selected. | Conversation |
+| Plan mode | Permitted reads run. Edits and shell commands cannot run. The permission preference remains selected. | Conversation |
 | Reject | Refuses the current call. | Current call |
 | Approve Once | Approves the current call. | Current call |
 | Always Approve | Shows exact saved scope before Approve and Save. | Workspace |
 | Settings → Workspace permissions | Shows saved rules and Remove. | Workspace |
 
-Plan only is a separate pressed-state control beside Create goal. It takes precedence over either permission preference.
-Turning Plan only off restores the selected permission preference. That preference survives restart and changes during planning.
+Plan mode is a separate pressed-state control beside Create goal. It takes precedence over either permission preference.
+Turning Plan mode off restores the selected permission preference. That preference survives restart and changes during planning.
 Changes apply to the next turn. Active turns retain their original policy, and pending approvals remain open.
 New conversations use Require permissions. Existing native default conversations retain their stricter policy until the user selects a preference.
 
@@ -32,7 +32,8 @@ Removal waits for active turns and reloads native session plugins. It does not u
 
 ## Component specification
 
-The compact composer toolbar contains the permission selector, Plan only, and Create goal.
+The compact composer toolbar orders the controls Create goal, Plan, then Require permissions. Plan has the accessible name Plan mode.
+Saving keeps the labels and layout unchanged. The Plan button exposes its busy state without visible status text.
 The selector contains two choices with short descriptions. Explanations stay inside the selector.
 Saved rules appear after appearance in Settings. Reopening Settings refreshes the rules.
 

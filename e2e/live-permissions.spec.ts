@@ -44,7 +44,7 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
   await page.getByRole("radio", { name: /YOLO/ }).click();
   await expect(page.getByRole("button", { name: "YOLO" })).toBeVisible();
   await page.keyboard.press("Escape");
-  const plan = page.getByRole("button", { name: "Plan only", exact: true });
+  const plan = page.getByRole("button", { name: "Plan mode", exact: true });
   await plan.click();
   await expect(plan).toHaveAttribute("aria-pressed", "true");
   await page.reload();

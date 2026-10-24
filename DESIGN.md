@@ -304,7 +304,8 @@ Keep the proposed payload and decision footer together without an enclosing pane
 Both approval actions use the accent fill and on-accent text. Reject remains neutral.
 Always Approve opens an inline scope preview. Approve and Save and Cancel replace the footer until the user decides.
 
-The composer has a compact Require permissions / YOLO selector. Plan only is a separate pressed-state toggle beside Create goal.
+Order the composer controls Create goal, Plan, then Require permissions / YOLO. Plan is a pressed-state toggle with the accessible name Plan mode.
+Do not insert visible save-status text into this toolbar. Preserve its dimensions during submission.
 Keep descriptions brief and inside the selector. The selected permission preference remains visible during planning.
 Saved rules belong in Settings, after appearance. They are not a composer action.
 See the [approval study](docs/design/permissions/STUDY.md) for behavior and review evidence.

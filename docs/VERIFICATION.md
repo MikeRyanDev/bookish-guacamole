@@ -452,3 +452,19 @@ The live test used the isolated workspace and CLI-installed Intelligence. Thread
 It saved and reused a permission, entered planning with YOLO selected, reloaded, left planning, ran the YOLO command, and removed the permission.
 An independent agent review passed discovery, keyboard recovery, and mobile layout. It did not claim backend enforcement from the fixture.
 The user's direct critique drove this revision. The [study](design/permissions/STUDY.md) records the revised behavior and screenshots.
+
+## Stable Plan toolbar
+
+Removed the transient Saving text. The toolbar now orders Create goal, Plan, then Require permissions.
+Plan has the accessible name Plan mode and exposes its busy state without extra visible text.
+A failing regression first reproduced the wrong order. The final delayed-save test verifies unchanged labels and toolbar dimensions.
+
+- `pnpm check`: passed lint, design checks, TypeScript, 153 tests, and build; 47 declared skips.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm exec playwright test e2e/permissions.spec.ts e2e/composer.spec.ts`: 17 passed.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm design:browser`: passed 28 rendered scans.
+- `node --test example/greet.test.js`: one passed.
+- `git diff --check`: passed.
+
+No backend behavior changed. This revision did not run another model request.
+A fresh task-first agent review passed keyboard toggling, delayed-save layout stability, permission selection, and mobile recovery.
+The disabled control briefly loses visible focus during saving; the next Tab advances correctly. No task blocker remained.

@@ -15,6 +15,7 @@ applyAppearance({ theme: params.get("theme") === "dark" ? "dark" : "light", acce
 const rule: PermissionRule = { tool: "bash", resource: "pnpm test", decision: "allow" };
 function Prototype() {
   const [mode, setMode] = useState<"acceptEdits" | "bypass">("acceptEdits");
+  const [saving, setSaving] = useState(false);
   const [planOnly, setPlanOnly] = useState(false);
   const settingsDialog = useRef<HTMLDialogElement>(null);
   const [rules, setRules] = useState<PermissionRule[]>([]);
@@ -133,7 +134,16 @@ function Prototype() {
             <ApprovalControls
               mode={mode}
               planOnly={planOnly}
-              onPlanOnly={setPlanOnly}
+              busy={saving}
+              onPlanOnly={(enabled) => {
+                if (params.has("slow")) {
+                  setSaving(true);
+                  setTimeout(() => {
+                    setPlanOnly(enabled);
+                    setSaving(false);
+                  }, 500);
+                } else setPlanOnly(enabled);
+              }}
               error={error}
               onMode={(value) => {
                 if (params.has("fail")) setError("Could not change mode. Try again.");

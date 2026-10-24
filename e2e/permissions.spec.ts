@@ -102,7 +102,7 @@ test("planning stays separate from permission policy and saved rules live in Set
   await expect(page.getByRole("radio", { name: /Plan only|Review changes/ })).toHaveCount(0);
   await page.getByRole("radio", { name: /YOLO/ }).check();
   await page.keyboard.press("Escape");
-  const plan = page.getByRole("button", { name: "Plan only", exact: true });
+  const plan = page.getByRole("button", { name: "Plan mode", exact: true });
   await plan.click();
   await expect(plan).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("button", { name: "YOLO", exact: true })).toBeVisible();
@@ -112,4 +112,22 @@ test("planning stays separate from permission policy and saved rules live in Set
   const footer = page.locator(".permission footer");
   await expect(footer.getByRole("button")).toHaveText(["Reject", "Approve Once", "Always Approve"]);
   await expect(footer.locator("button.primary")).toHaveText(["Approve Once", "Always Approve"]);
+});
+
+test("plan toggle keeps toolbar labels and geometry stable during save", async ({ page }) => {
+  await page.goto(`${fixtureUrl}/permissions.html?slow`);
+  const toolbar = page.locator(".composer-tools");
+  await expect(toolbar.getByRole("button")).toHaveText([
+    "Create goal",
+    "Plan",
+    "Require permissions",
+  ]);
+  const plan = page.getByRole("button", { name: "Plan mode", exact: true });
+  const before = await toolbar.boundingBox();
+  await plan.click();
+  await expect(plan).toBeDisabled();
+  await expect(page.getByText("Saving…", { exact: true })).toHaveCount(0);
+  expect(await toolbar.boundingBox()).toEqual(before);
+  await expect(plan).toHaveAttribute("aria-pressed", "true");
+  await expect(plan).toBeEnabled();
 });
