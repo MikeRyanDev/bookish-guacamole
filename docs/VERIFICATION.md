@@ -27,6 +27,48 @@ The real replay restores an existing six-call local backend conversation and ver
 
 The independent reviewer scored header anchoring, design documentation, and detail-capture overlap resolved. The final ship verdict applies to those fixes. The imagegen state study was retrospective, not an approved pre-build comp; the study and DESIGN.md record that process deviation.
 
+## Active checkout Learning update — 2026-10-23
+
+The existing local stack now runs `0.15.1-validation.7cab78803075` through the published CLI
+`4.30.0-pre.7cab788`. The SDK remains on preview `ba7b11d`. The app was restarted on port 4173.
+The update preserved the stack identity and connection URLs. No backup or separate stack was created.
+
+Before the update, the authenticated Inspector Learning endpoint returned HTTP 503.
+After the update, it returned HTTP 200 with `configuration.state=configured` and both existing Skills.
+A real browser check verified the enabled indicator, the Learning view, and the dashboard link popup
+on `http://cpk.localhost:61995`. The first post-update check used a link selector for an empty registry.
+The corrected selector matches the existing registry and passed without a product code change.
+No new model-driven Learning cycle was started during this update.
+
+The installed schema identity and Kubernetes image matched the preview. The supported command
+`pnpm exec copilotkit local update --json` completed with `step=ready` and no error.
+This replaces the earlier candidate, whose `0.15.0-validation` version sorted before stable `0.15.0`.
+
+Publication evidence:
+
+- [Chart workflow](https://github.com/CopilotKit/Intelligence/actions/runs/40052200493): passed, with staging promotion skipped.
+- [CLI workflow](https://github.com/CopilotKit/Intelligence/actions/runs/40052975511): passed at Intelligence commit `7cab78803075816a27f7ccaa8a753ce828b51628`.
+- The downloaded CLI embeds the exact chart pin and SDK commit. Its checksum is in `alpha-artifacts/cli-archive.json`.
+- Normal Helm selection still returned stable `0.15.0`. The npm `latest` tag still returned CLI `4.30.0`.
+
+Validation commands:
+
+```sh
+pnpm install
+node scripts/pin-alpha-integrity.mjs
+pnpm install --frozen-lockfile
+pnpm check
+node --test example/greet.test.js
+pnpm exec playwright test e2e/learning-status.spec.ts
+pnpm exec playwright test --config .data/learning-update/playwright.config.ts
+git diff --check
+```
+
+The lockfile contains all 16 archive integrities. The required checks and both browser checks passed.
+The live browser check failed on HTTP 503 before the backend update, then passed after it.
+Private browser evidence remains under ignored `.data/learning-update/`.
+No shared or production deployment changed.
+
 ## TanStack Skill loader migration — 2026-10-23
 
 The runtime now uses `@tanstack/ai-skills@1.0.0` through an Intelligence `SkillSource` adapter. The SDK still verifies each archive. The coding harness requests refresh before each turn and rejects the SDK's stale fallback. See [the architecture](ARCHITECTURE.md) for ownership and failure behavior.

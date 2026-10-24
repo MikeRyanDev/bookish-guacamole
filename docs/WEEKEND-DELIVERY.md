@@ -45,6 +45,10 @@ Do not push an unrelated or stale local parent branch.
 11. Pin the exact public downloads in the starter. Regenerate archive records and lockfile integrity before a frozen install.
 12. Complete installed acceptance before committing and publishing the starter update. Update both PR descriptions and the candidate ledger.
 
+For an existing local stack, choose a base version whose candidate sorts after the installed release.
+For example, use `0.15.1-validation.<sha>` to update stable `0.15.0`.
+A different chart pin requires a new Intelligence commit to preserve the previous CLI preview URL.
+
 Candidate chart inputs:
 
 ```text

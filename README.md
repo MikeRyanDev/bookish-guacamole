@@ -6,6 +6,14 @@ Start with a working local workspace: ask the agent to inspect files, review its
 
 ![The coding workspace with a learned Skill](docs/proof/learned-skill-refresh.png)
 
+This checkout pins SDK and CLI development previews. Archive checksums are recorded in
+`docs/alpha-artifacts/` and `pnpm-lock.yaml`. After changing preview URLs and verifying
+their archive records, run `node scripts/pin-alpha-integrity.mjs` and a frozen install.
+
+An existing CLI-managed stack keeps its installed backend release. Updating dependencies
+does not upgrade that stack. Check `pnpm intelligence local status --json` before selecting
+an upgrade or another stack. Preserve existing conversations and Skills when changing connections.
+
 ## What you get
 
 | Part                                | What it does                                                           |

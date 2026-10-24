@@ -1,0 +1,168 @@
+[
+  {
+    "name": "@copilotkit/core",
+    "version": "1.79.1",
+    "url": "https://pkg.pr.new/@copilotkit/core@ba7b11d",
+    "sha256": "b953b347019aebafc0299eadd063c90d80ce2fbdf2ace9a1bf6a80409c9b64e6",
+    "integrity": "sha512-lypfZdWggtmG/ymcqU1ZV2hQKrpg7MmTN0A729D+Xr8ClOeEH9NwvEUX46k9A7HgNEFkMkigE1sRVc94A/d6wQ==",
+    "dependencies": {
+      "@copilotkit/learning": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@ba7b11d",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/react-core",
+    "version": "1.79.1",
+    "url": "https://pkg.pr.new/@copilotkit/react-core@ba7b11d",
+    "sha256": "269077b4fcfca5f60db73fd2650592777d97aa0d48451b9434bc0382961a103e",
+    "integrity": "sha512-s45iyEbLwzquzTjLzMwg6HdhnuPyFPUh4sXvNEeExNlKzdEFk7faOmzM3u5lZUvs8uM9QS8RYosflA7gsqZTOQ==",
+    "dependencies": {
+      "@copilotkit/a2ui-renderer": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@ba7b11d",
+      "@copilotkit/core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d",
+      "@copilotkit/mcp-apps-renderer": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@ba7b11d",
+      "@copilotkit/runtime-client-gql": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@ba7b11d",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d",
+      "@copilotkit/web-components": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@ba7b11d",
+      "@copilotkit/web-inspector": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/runtime",
+    "version": "1.79.1",
+    "url": "https://pkg.pr.new/@copilotkit/runtime@ba7b11d",
+    "sha256": "8c8c5d68072569c1871d6763bb905b96569f0eedc9858122db79bfc9d7989bfd",
+    "integrity": "sha512-FSNcjCeGsZ0w0t6oLeOyY1kRrcTwD/bZCqk47Q0keLTYqSN6lZ4MWaLiFstIWoHsTMftJ7jMaMdNt6cX6HZycg==",
+    "dependencies": {
+      "@copilotkit/channels-core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d",
+      "@copilotkit/channels-intelligence": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@ba7b11d",
+      "@copilotkit/license-verifier": "~0.5.0",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/shared",
+    "version": "1.79.1",
+    "url": "https://pkg.pr.new/@copilotkit/shared@ba7b11d",
+    "sha256": "34f2e9376f08cf2c8443af795ef44045ae66c336b52a482c8069cec80c81a9c5",
+    "integrity": "sha512-3ieo2qQrhKWmMbzJluXT/vvkLFxD1Rtht15IfkiQzPGNEbZiTMAVs/xpTD4wvHPG6ZdiYpCdtIwRwt/+91nOeg==",
+    "dependencies": {
+      "@copilotkit/license-verifier": "~0.5.0"
+    }
+  },
+  {
+    "name": "@copilotkit/web-inspector",
+    "version": "1.79.1",
+    "url": "https://pkg.pr.new/@copilotkit/web-inspector@ba7b11d",
+    "sha256": "17ef2c75d15e3177c3b03362e74b46ef88422ad1836d7c937f8dd8ea442b6659",
+    "integrity": "sha512-7q4nWqgokFbZ3vvXHpl+ucVcIfInpGJxjM4q3HKt+xn520g0BHfm1QG2i0zxtsG3UBYMHMi/75+nkdTpO0F0zA==",
+    "dependencies": {
+      "@copilotkit/core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/runtime-client-gql",
+    "version": "1.79.1",
+    "url": "https://pkg.pr.new/@copilotkit/runtime-client-gql@ba7b11d",
+    "sha256": "4d346eea98334b3b0b27b9263fb1901a8252ad60e3a3657d63f54589e79137f7",
+    "integrity": "sha512-t2fh64KNJixoEOc36i4fKgxtV/8ni/zSO/4MhfQ/0i4rNleOBAdktFUkBkW08GTZZNQEqdWob/TNWJqyo7ep2Q==",
+    "dependencies": {
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/channels-intelligence",
+    "version": "0.11.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@ba7b11d",
+    "sha256": "bc59dd745d64a025f8cc380e0f8235213ededc199bab0d571c8028550ec2e299",
+    "integrity": "sha512-qIgIWdzfPR5t4dR0ZUBoYSY42cJFnDED7hjU4Qy1V5HXq1pyza7hccM9vUMpDLO+LlJuuEQUZMCLBS4v7evVRg==",
+    "dependencies": {
+      "@copilotkit/channels-core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d",
+      "@copilotkit/channels-slack": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@ba7b11d",
+      "@copilotkit/channels-teams": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@ba7b11d",
+      "@copilotkit/channels-ui": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/channels-ui",
+    "version": "0.11.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d",
+    "sha256": "80006ec503a46978f97088a58ecb143b0db2a6c483e7ca46ae675c6089d701e5",
+    "integrity": "sha512-6C2q5372zXSJuFuqOxh5B1YJX30pFX7REXxpQdx0hYxJTG89uthUIN0Ddxcyp4bq7LO0/jX1sIcJ//F8Udu8xQ==",
+    "dependencies": {
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/channels-teams",
+    "version": "0.11.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@ba7b11d",
+    "sha256": "826c2373987efd7b34b7a474f9f2d534d8548bf0a83728d195dd5052d1879eab",
+    "integrity": "sha512-TvM1Crp0NLUfvDG8hpnyM+uNlMQ+shXS0E4uAdtahlv7udlxknGCKOYYnpR6+ahsUb5w0WXiM7ttsVTkfMTnlQ==",
+    "dependencies": {
+      "@copilotkit/channels-core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d",
+      "@copilotkit/channels-ui": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d",
+      "@copilotkit/core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/channels-core",
+    "version": "0.11.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d",
+    "sha256": "86b7c43505cc0ce7874c2f03911a4137e0832a3961543c505b944de4d9f73d96",
+    "integrity": "sha512-GQDK8uf1lSMSMAqynRp9Stf8jahuCOgLs3WdEWfiYk0qsocbpKxL+p4+sn4RhIOBjp2+TnIOYk0gvi1AHQe9wQ==",
+    "dependencies": {
+      "@copilotkit/channels-ui": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d",
+      "@copilotkit/core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/channels-slack",
+    "version": "0.11.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@ba7b11d",
+    "sha256": "a0cde7e0f6d6ceec0a124914f53b20f048ebadb8f9e6d9da77ed524f700a2ac6",
+    "integrity": "sha512-6BnaAmES+Nv62xNVhvH4sO9HJ2UPAD1G5q9JsPnUmLIvmBsiwUqNznGECrKtxPGMMj2Ov3HlHw4+btNKSG95tg==",
+    "dependencies": {
+      "@copilotkit/channels-core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d",
+      "@copilotkit/channels-ui": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d",
+      "@copilotkit/core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/web-components",
+    "version": "1.79.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@ba7b11d",
+    "sha256": "aea51bf982813bd16eb0cd89ca116fadc593e554fa4390a42545d0462273f536",
+    "integrity": "sha512-6fE3n9FYamezF2eRY/q5WuL/b4QN77AWK6sh2PSS2YOPN7s8BxozMH80B9uIKh7gapHWjdA7O1p30urd2QFtUA==",
+    "dependencies": {}
+  },
+  {
+    "name": "@copilotkit/mcp-apps-renderer",
+    "version": "1.79.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@ba7b11d",
+    "sha256": "83d23af166e7a2e583abfd5aca5f82bd90f1a3f4817a920dd3807b8e160cf939",
+    "integrity": "sha512-WHJduGqBcSFyA6ERco45uuz/LjTKGavfVlFRNds0z6aBwwabMTv83uABrgCtZDOcDJR7lla9ngoy6mk639b+lw==",
+    "dependencies": {
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d"
+    }
+  },
+  {
+    "name": "@copilotkit/a2ui-renderer",
+    "version": "1.79.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@ba7b11d",
+    "sha256": "407b5ac14a36c46000bd77ead1aed798d0d4de3dc86f6e7595b77ea6debe2c91",
+    "integrity": "sha512-yPdMoSnZmI436xipHqceQDUqqeeMv0a2RrKFVmGesjD/w/uxKY5AK44pjuxap253LB3MmBzM/gTw2XuVmiZ38A==",
+    "dependencies": {}
+  },
+  {
+    "name": "@copilotkit/learning",
+    "version": "1.79.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@ba7b11d",
+    "sha256": "c16d2b3c7c561e629218f48be4413c20e84fe7da4e49c3c666f9831bc406c4a3",
+    "integrity": "sha512-NtlcJ6T/ZvmL6Lm9b12/gkpT3uaOKNM38hI9apllBLe0DNov8NbAFMem5wZ5P0wgcEORUv1YM7H1sD5XhgXjSg==",
+    "dependencies": {}
+  }
+]
