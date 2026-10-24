@@ -60,4 +60,27 @@ Final review found that malformed absolute request targets could throw before Ho
 received the request. A real HTTP regression reproduced the uncaught URL error.
 The Node boundary now returns 400 and continues to serve valid requests.
 
-Final merge results follow after verification.
+## Merged main
+
+Local main fast-forwarded to implementation commit `5ea7726`.
+From the main checkout, `pnpm install --frozen-lockfile`, `pnpm check` and
+`node --test example/greet.test.js` passed again. The main shell used Node 23.11.0;
+the worktree checks and production acceptance used Node 22.22.0. These runs do not
+replace the separate minimum-version release gate in the Monday checklist.
+
+An isolated main process served the built client on port 4297. It used
+`startApp({ port: 4297, dataDirectory: ".data/backend-main-proof", serve })`,
+with `sirv("dist/client", { single: true })` and the disposable worktree workspace.
+The ignored `.mts` launcher ran with `node --import tsx --env-file=.env`.
+An initial `tsx -e` diagnostic selected CommonJS and could not load the ESM-only
+harness. The explicit ESM launcher resolved that diagnostic issue.
+
+The following command passed all three tests against that merged source:
+
+```sh
+LIVE_MODEL=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4297 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4298 pnpm exec playwright test e2e/live-model.spec.ts e2e/live-permissions.spec.ts e2e/workspaces.spec.ts --output .data/backend-main-results
+```
+
+The checklist's SHA-256 remained unchanged across the merge. Generated captures
+were retained only as ignored evidence. The final follow-up commit changes this
+verification record only; the validated implementation remains `5ea7726`.
