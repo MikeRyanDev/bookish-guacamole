@@ -32,6 +32,7 @@ for (const theme of ["light", "dark"] as const) {
     await page.getByRole("button", { name: "Cancel", exact: true }).click();
     await expect(message).toBeFocused();
     await expect(message).toHaveValue("Inspect the project and verify its tests");
+    await message.fill("");
     await page.screenshot({ path: `.impeccable/review/app-${theme}-mobile.png`, fullPage: true });
     await page.setViewportSize({ width: 1440, height: 960 });
     await page.screenshot({ path: `.impeccable/review/app-${theme}-desktop.png`, fullPage: true });

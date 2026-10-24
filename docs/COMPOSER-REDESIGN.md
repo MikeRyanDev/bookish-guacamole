@@ -61,3 +61,22 @@ No packages, shared deployment, or runtime Goal policy changed.
 The existing virtualizer fixtures still emit ResizeObserver delivery warnings;
 scrolling and disclosure assertions pass. Source detection returned no findings.
 Private captures and backend event evidence remain ignored in the worktree.
+
+## Visual evidence
+
+The finish reviewer inspected 21 current captures: app and fixture states, both
+themes, desktop/mobile, long content, approvals, and replay of the completed live goal.
+It found insufficient placeholder contrast. Explicit theme-aware placeholder color
+fixed the issue; regression tests failed before the change and passed afterward.
+The measured contrast is 5.20:1 in light mode and 7.93:1 in dark mode.
+The reviewer scored that finding resolved and returned `ship` at the fix-review scope.
+Its original review found no other material visual issues.
+
+After the contrast correction, the composer discovery, composer, and app Goal suites
+passed again: 13 passed, one opt-in live test skipped. `pnpm check` passed again.
+`FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4214 pnpm design:browser` passed its rendered tool/approval check.
+Formatting and `git diff --check` passed. Screenshot and backend evidence remain
+under ignored `.impeccable/review/` and `.data/goals/` in the implementation worktree.
+The live evidence contains 173 saved events without truncation or decode errors.
+The documenter confirmed that existing system guidance covers this extension.
+Pre-existing sidecar tool-weight differences remain outside this change.

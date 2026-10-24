@@ -49,3 +49,32 @@ test("opening creation follows the latest output only when already at the end", 
   await page.getByRole("button", { name: "Create goal", exact: true }).click();
   expect(await transcript.evaluate((el) => el.scrollTop)).toBeCloseTo(before, 0);
 });
+
+for (const theme of ["light", "dark"]) {
+  test(`composer placeholders have readable contrast in ${theme}`, async ({ page }) => {
+    await page.goto(`${fixtureUrl}/composer.html?empty&theme=${theme}`);
+    for (const label of ["Message your coding agent", "Goal objective"]) {
+      if (label === "Goal objective")
+        await page.getByRole("button", { name: "Create goal", exact: true }).click();
+      const ratio = await page.getByRole("textbox", { name: label }).evaluate((element) => {
+        const luminance = (color: string) => {
+          const values = color
+            .match(/[\d.]+/g)!
+            .slice(0, 3)
+            .map(Number)
+            .map((value) => {
+              const s = value / 255;
+              return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+            });
+          return values[0]! * 0.2126 + values[1]! * 0.7152 + values[2]! * 0.0722;
+        };
+        const foreground = luminance(getComputedStyle(element, "::placeholder").color);
+        const background = luminance(getComputedStyle(element.closest("form")!).backgroundColor);
+        return (
+          (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05)
+        );
+      });
+      expect(ratio).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+}
