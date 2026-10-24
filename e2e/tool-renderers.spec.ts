@@ -7,11 +7,12 @@ test("coding tools show commands, honest exit status, readable diffs, and number
   await page.goto("http://127.0.0.1:4174/?tools");
   await expect(page.getByText("npm test -- --runInBand", { exact: true })).toBeVisible();
   await expect(page.getByText("Exit 1", { exact: true })).toBeVisible();
-  const patch = page.locator(".tool-call").filter({ hasText: "patch" });
+  const patch = page.getByRole("region", { name: "patch tool call" });
   await expect(patch.locator(".diff-line.removed")).toHaveText("-return `Hello, ${name}`;");
   await expect(patch.locator(".diff-line.added")).toHaveText("+return `Hello, ${name.trim()}`;");
-  const read = page.locator(".tool-call").filter({ hasText: "read_file" });
-  await expect(read.getByText("src/greet.ts", { exact: true })).toBeVisible();
+  const read = page.getByRole("region", { name: "read_file tool call" });
+  await read.locator("summary.tool-header").click();
+  await expect(read.locator(".tool-surface-heading code")).toHaveText("src/greet.ts");
   await expect(read.locator(".line-number").first()).toHaveText("10");
   await expect(read.locator(".code-line").first()).toContainText("export function greet(name)");
   for (const theme of ["light", "dark"]) {

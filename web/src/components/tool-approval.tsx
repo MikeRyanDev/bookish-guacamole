@@ -1,7 +1,17 @@
 import { useState } from "react";
 import type { Message, InterruptRenderProps } from "@copilotkit/react-core/v2";
-import { ShieldCheck } from "lucide-react";
 import { ToolCall } from "./tool-call";
+
+/** Correlates SDK approval metadata with its original transcript call. */
+export function approvalToolCallId(interrupt: InterruptRenderProps["interrupt"]) {
+  const payload = interrupt?.metadata?.["tanstack:interruptPayload"];
+  return typeof payload === "object" &&
+    payload !== null &&
+    "toolCallId" in payload &&
+    typeof payload.toolCallId === "string"
+    ? payload.toolCallId
+    : undefined;
+}
 
 /** Displays exactly the tool arguments the user is being asked to approve. */
 export function Permission({
@@ -11,11 +21,7 @@ export function Permission({
 }: Pick<InterruptRenderProps, "interrupt" | "resolve"> & { messages: Message[] }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const payload = interrupt?.metadata?.["tanstack:interruptPayload"];
-  const id =
-    typeof payload === "object" && payload !== null && "toolCallId" in payload
-      ? payload.toolCallId
-      : undefined;
+  const id = approvalToolCallId(interrupt);
   const call = messages
     .flatMap((message) => (message.role === "assistant" ? (message.toolCalls ?? []) : []))
     .find((tool) => tool.id === id);
@@ -31,10 +37,6 @@ export function Permission({
   }
   return (
     <section className="permission" aria-label="Permission request">
-      <header className="approval-heading">
-        <ShieldCheck size={16} />
-        <span>Review before running</span>
-      </header>
       {call ? (
         <ToolCall
           name={call.function.name}

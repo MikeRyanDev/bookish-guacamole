@@ -33,6 +33,8 @@ test("Luna patch approval previews the exact change, waits for consent, and pers
     timeout: 60000,
   });
   await expect(permission.getByLabel("Proposed patch")).toContainText("-Hello before approval.");
+  await expect(page.getByRole("region", { name: "patch tool call", exact: true })).toHaveCount(1);
+  await expect(permission.getByText("Approval required", { exact: true })).toBeVisible();
   expect(await readFile(filename, "utf8")).toBe("Hello before approval.\n");
   await page.screenshot({ path: "docs/proof/live-patch-approval.png", animations: "disabled" });
   await permission.getByRole("button", { name: "Allow once", exact: true }).click();
@@ -58,6 +60,7 @@ test("Luna patch approval previews the exact change, waits for consent, and pers
   ).toHaveLength(1);
   await page.reload();
   await expect(page.locator(".message.assistant .markdown").last()).toHaveText(finalText);
+  await expect(page.getByRole("region", { name: "patch tool call", exact: true })).toHaveCount(1);
   expect(await readFile(filename, "utf8")).toBe("Hello after approval.\n");
   const replay = await backend.getThreadEvents({ threadId });
   expect(

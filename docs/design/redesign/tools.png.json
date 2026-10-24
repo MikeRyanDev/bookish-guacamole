@@ -1,0 +1,6 @@
+{
+  "tool": "image_gen",
+  "prompt": "Use case: ui-mockup. High-fidelity component design study for a compact developer coding assistant. Show three individual expanded tool presentations on a clean light background, and matching dark versions beside them: Bash execution with command npm test and honest Exit 1 output; patch review for src/greet.ts with subdued red removal and green addition of name.trim(), small file header and +1 -1 count; read-file preview with subtle line numbers and syntax highlighting. Include a compact collapsed activity row above each expanded version. Clean minimalist Claude-inspired progressive disclosure, typography and whitespace instead of stacked bordered boxes. Manrope interface and IBM Plex Mono source. Soft warm gray code surfaces, quiet icons, no colored left borders, no heavy frames, no gradients. Relevant raw arguments under one discreet disclosure, exact tool status, copy icon. One separate permission footer has Reject and moss-green Allow once buttons. Crisp realistic UI at normal readable sizes; no giant headings or marketing decoration. Show hover, running spinner, failed and approval-required states as small details. Native-feeling precision, sophisticated understated craft.",
+  "purpose": "Design study; implementation choice delegated by the user",
+  "approved": false
+}

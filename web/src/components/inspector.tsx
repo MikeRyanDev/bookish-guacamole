@@ -70,7 +70,6 @@ export function Inspector({
         {state.error && <p role="alert">{state.error.message}</p>}
         {panel === "files" ? (
           <>
-            <div className="section-title">Workspace</div>
             {files.data?.files.length === 0 && !files.data.truncated && (
               <p className="muted">No files yet.</p>
             )}
@@ -100,9 +99,6 @@ export function Inspector({
           </>
         ) : (
           <>
-            <div className="section-title">
-              Injected automatically <span>r{skills.data?.revision ?? "—"}</span>
-            </div>
             {skills.data?.skills.length === 0 && <p className="muted">No published Skills yet.</p>}
             {skills.data?.skills.map((skill) => (
               <details className="skill" key={skill.name}>
@@ -119,10 +115,6 @@ export function Inspector({
           </>
         )}
       </div>
-      <footer className="inspector-footer">
-        <span>{config.model}</span>
-        <span>{config.containerId}</span>
-      </footer>
     </aside>
   );
 }

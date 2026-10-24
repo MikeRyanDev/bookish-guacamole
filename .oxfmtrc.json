@@ -10,6 +10,7 @@
     "node_modules/**",
     "dist/**",
     "test-results/**",
-    "playwright-report/**"
+    "playwright-report/**",
+    ".agents/skills/impeccable/**"
   ]
 }

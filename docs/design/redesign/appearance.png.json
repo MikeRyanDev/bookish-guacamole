@@ -1,0 +1,6 @@
+{
+  "tool": "image_gen",
+  "prompt": "Use case: ui-mockup. Create a high-fidelity design study for the Appearance section in a coding workspace's Settings dialog, light and dark versions side by side plus a narrow mobile adaptation. Manrope sans serif labels and IBM Plex Mono code sample. Appearance has a two-choice Light / Dark segmented control and eight tactile but flat circular accent swatches: Moss, Ochre, Apricot, Coral, Rose, Plum, Iris, Denim. Palette inspired by vintage Apple rainbow but softer, warmer, slightly dusty; no literal Apple logo. The selected moss swatch has a clear checkmark and restrained focus ring. Below the swatches show a small native UI preview: a selected file row, a focused input and primary button using the accent. Keep technical Model/Workspace/Learning metadata secondary. Soft white warm-neutral light ground and graphite dark ground. No nested boxes, no left accent borders, no gradients or decorative texture. Detailed accessible selected, hover and focus states, clear close control. Compact, polished, minimalist developer UI, no marketing copy.",
+  "purpose": "Design study; implementation choice delegated by the user",
+  "approved": false
+}

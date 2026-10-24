@@ -2,13 +2,15 @@ import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { VirtualTranscript } from "../../web/src/components/virtual-transcript";
 import "../../web/src/styles.css";
-import "@fontsource-variable/plus-jakarta-sans";
-import "@fontsource-variable/spline-sans-mono";
+import "@fontsource-variable/manrope";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
 import { Permission } from "../../web/src/components/tool-approval";
 import { ToolCall } from "../../web/src/components/tool-call";
 
 function Fixture() {
   const [decision, setDecision] = useState("");
+  const [streamCommand, setStreamCommand] = useState("npm test");
   const [attempts, setAttempts] = useState(0);
   const [items, setItems] = useState(() =>
     Array.from({ length: 1000 }, (_, i) => ({
@@ -17,6 +19,28 @@ function Fixture() {
       lines: (i % 5) + 1,
     })),
   );
+  if (new URLSearchParams(location.search).has("streamcopy"))
+    return (
+      <main>
+        <ToolCall name="bash" args={JSON.stringify({ command: streamCommand })} running />
+        <button onClick={() => setStreamCommand("npm test -- --runInBand")}>
+          Complete arguments
+        </button>
+      </main>
+    );
+  if (new URLSearchParams(location.search).has("states"))
+    return (
+      <main style={{ maxWidth: 760, margin: "24px auto", padding: 20 }}>
+        <ToolCall name="bash" args={'{"command":"npm'} running />
+        <ToolCall name="read_file" args='{"path":"waiting.ts"}' running={false} />
+        <ToolCall
+          name="custom_tool"
+          args='{"value":"<img src=x onerror=alert(1)>"}'
+          result="Error: <script>unexpected</script>"
+          running={false}
+        />
+      </main>
+    );
   const approval = new URLSearchParams(location.search).get("approval");
   if (approval) {
     const name = approval === "patch" ? "patch" : "bash";

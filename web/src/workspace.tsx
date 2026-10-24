@@ -21,6 +21,8 @@ import {
   RefreshCw,
   ExternalLink,
 } from "lucide-react";
+import { useAppearance } from "./appearance";
+import { AppearanceSettings } from "./components/appearance-settings";
 import { workspaceRoute } from "./router";
 import { configQuery, type AppConfig } from "./api";
 import { IconButton } from "./components/icon-button";
@@ -99,17 +101,11 @@ function Shell({ config }: { config: AppConfig }) {
   const [filter, setFilter] = useState("");
   const [busy, setBusy] = useState(false);
   const onBusy = useCallback((value: boolean) => setBusy(value), []);
-  const [theme, setTheme] = useState<"light" | "dark">(() =>
-    localStorage.getItem("starter-theme") === "dark" ? "dark" : "light",
-  );
+  const { theme, accent, setTheme, setAccent } = useAppearance();
   const dialog = useRef<HTMLDialogElement>(null);
   const [modal, setModal] = useState<"commands" | "settings">("commands");
   const threads = useThreads({ agentId: config.agentId, limit: 30 });
   const current = threads.threads.find((thread) => thread.id === threadId);
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("starter-theme", theme);
-  }, [theme]);
   function showModal(kind: "commands" | "settings") {
     setModal(kind);
     dialog.current?.showModal();
@@ -157,12 +153,6 @@ function Shell({ config }: { config: AppConfig }) {
                 }),
               })
             }
-          />
-          <span
-            className="connection-dot"
-            role="img"
-            title="Local runtime connected"
-            aria-label="Local runtime connected"
           />
         </div>
         <div className="header-actions">
@@ -235,33 +225,10 @@ function Shell({ config }: { config: AppConfig }) {
             </Link>
           )}
         />
-        <footer className="sidebar-footer">
-          <span>
-            CopilotKit <span className="muted">×</span> TanStack AI
-          </span>
-          <a
-            href="https://tanstack.com/ai/latest/docs/harness/overview"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Open harness documentation"
-          >
-            <ExternalLink size={14} />
-          </a>
-        </footer>
       </aside>
       <main id="main" className="main-pane">
         <header className="conversation-header">
           <h1>{current?.name ?? "New session"}</h1>
-          <span className="run-status" role="status">
-            {busy ? (
-              <>
-                <span className="spinner" />
-                Running
-              </>
-            ) : (
-              "Ready"
-            )}
-          </span>
         </header>
         <CopilotChatConfigurationProvider
           agentId={`${config.agentId}-${threadId}`}
@@ -296,6 +263,14 @@ function Shell({ config }: { config: AppConfig }) {
         </header>
         {modal === "commands" ? (
           <div className="command-list">
+            <a
+              href="https://tanstack.com/ai/latest/docs/harness/overview"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <ExternalLink size={16} />
+              Harness documentation
+            </a>
             <button disabled={busy} onClick={newThread}>
               <Plus size={16} />
               New session
@@ -329,20 +304,14 @@ function Shell({ config }: { config: AppConfig }) {
             </button>
           </div>
         ) : (
-          <dl className="settings">
-            <dt>Model</dt>
-            <dd>{config.model}</dd>
-            <dt>Workspace</dt>
-            <dd>{config.workspace}</dd>
-            <dt>Learning</dt>
-            <dd>{config.containerId}</dd>
-            <dt>Theme</dt>
-            <dd>
-              <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
-                {theme}
-              </button>
-            </dd>
-          </dl>
+          <div className="settings-content">
+            <AppearanceSettings
+              theme={theme}
+              accent={accent}
+              setTheme={setTheme}
+              setAccent={setAccent}
+            />
+          </div>
         )}
       </dialog>
     </div>

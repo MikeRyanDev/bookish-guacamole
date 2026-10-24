@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/pbakaus/impeccable",
+  "commit": "2bb6563e570ffc266d1fccec24a778745c143e52",
+  "path": ".agents/skills/impeccable",
+  "version": "4.7.0",
+  "engineVersion": "0.1.16",
+  "installedWith": "skill-installer/install-skill-from-github.py",
+  "license": "Apache-2.0"
+}

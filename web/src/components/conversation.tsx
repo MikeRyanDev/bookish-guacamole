@@ -8,12 +8,12 @@ import {
   contentToText,
 } from "@copilotkit/react-core/v2";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowUp, Square, Terminal, Copy, ChevronRight } from "lucide-react";
+import { ArrowUp, Square, Copy, ChevronRight } from "lucide-react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { IconButton } from "./icon-button";
 import { ToolCall } from "./tool-call";
-import { Permission } from "./tool-approval";
+import { Permission, approvalToolCallId } from "./tool-approval";
 import { PendingStatus } from "./pending-status";
 import { VirtualTranscript } from "./virtual-transcript";
 
@@ -113,21 +113,27 @@ function ActiveConversation({
       .filter((message) => message.role === "tool")
       .map((message) => [message.toolCallId, message]),
   );
+  const pendingCallIds = new Set(agent.pendingInterrupts.map(approvalToolCallId));
   return (
     <section className="conversation" aria-label="Coding conversation">
       <VirtualTranscript
-        items={agent.messages.filter(
-          (message) => message.role === "user" || message.role === "assistant",
-        )}
+        items={agent.messages
+          .filter((message) => message.role === "user" || message.role === "assistant")
+          .filter((message) => {
+            if (message.role === "user") return true;
+            if (message.role !== "assistant") return false;
+            // The permission surface owns pending calls, including their otherwise empty row.
+            return (
+              contentToText(message.content) ||
+              !message.toolCalls?.length ||
+              message.toolCalls.some((call) => !pendingCallIds.has(call.id))
+            );
+          })}
         busy={connecting}
         empty={
           !connecting && (
             <div className="empty">
-              <div className="empty-mark">
-                <Terminal size={25} />
-              </div>
               <h1>What are we building?</h1>
-              <p>A workspace for your coding agent.</p>
               <button
                 className="suggestion"
                 onClick={() => {
@@ -160,7 +166,6 @@ function ActiveConversation({
               aria-label={message.role === "user" ? "Your message" : "Agent response"}
             >
               <div className="message-label">
-                {message.role === "user" ? "You" : "Agent"}
                 {text && (
                   <IconButton
                     label="Copy message"
@@ -180,11 +185,13 @@ function ActiveConversation({
                 </div>
               )}
               {message.role === "assistant" &&
-                message.toolCalls?.map((call) => (
-                  <Fragment key={call.id}>
-                    {renderToolCall({ toolCall: call, toolMessage: results.get(call.id) })}
-                  </Fragment>
-                ))}
+                message.toolCalls
+                  ?.filter((call) => !pendingCallIds.has(call.id))
+                  .map((call) => (
+                    <Fragment key={call.id}>
+                      {renderToolCall({ toolCall: call, toolMessage: results.get(call.id) })}
+                    </Fragment>
+                  ))}
             </article>
           );
         }}

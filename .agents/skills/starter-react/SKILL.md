@@ -10,3 +10,7 @@ TanStack Router owns thread, panel, and file selections. TanStack Query owns wor
 Read `../react-practices/SKILL.md` for React state, effects, identity, and performance guidance drawn from React’s official documentation. This is a Vite SPA; use React.lazy and TanStack Query with the installed package APIs.
 
 Use IconButton for named, focus-visible actions. Retain text for permission decisions and errors. Preserve keyboard access, reduced motion, light/dark contrast, mobile side panels, and honest disabled/loading/error states. Test browser behavior with `pnpm test:e2e`; run axe in both themes and inspect screenshots. Never use a mock transcript as real model proof.
+
+For visual design work, also read `../impeccable/SKILL.md`, root `PRODUCT.md`, and root `DESIGN.md`. Preserve the incumbent compact workspace and use `pnpm design:check` plus rendered browser verification.
+
+Start without borders, dividers, or card wrappers. Use spacing and alignment first; add a rule only for a concrete usability need that cannot otherwise be met. Keep keyboard focus visible. Avoid persistent framework branding, model/container metadata, redundant status, and repeated headings. Dark neutral surfaces have only a trace of blue and no green cast; accent colors do not tint the neutral palette.

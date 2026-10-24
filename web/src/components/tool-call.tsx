@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { IconButton } from "./icon-button";
 import {
   Terminal,
   Check,
@@ -6,7 +8,35 @@ import {
   FileDiff,
   CircleAlert,
   ShieldCheck,
+  Copy,
 } from "lucide-react";
+
+function CopyToolText({ text, label }: { text: string; label: string }) {
+  const [feedback, setFeedback] = useState<{ text: string; status: "copied" | "error" }>();
+  const status = feedback?.text === text ? feedback.status : "idle";
+  return (
+    <>
+      <IconButton
+        label={status === "copied" ? "Copied" : label}
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(text);
+            setFeedback({ text, status: "copied" });
+          } catch {
+            setFeedback({ text, status: "error" });
+          }
+        }}
+      >
+        {status === "copied" ? <Check size={14} /> : <Copy size={14} />}
+      </IconButton>
+      {status === "error" && (
+        <span className="tool-copy-error" role="status">
+          Copy failed. Select the text to copy it.
+        </span>
+      )}
+    </>
+  );
+}
 
 /** Reads complete tool arguments; partial streaming JSON stays available in the raw view. */
 function argumentsOf(value: string): Record<string, unknown> {
@@ -58,10 +88,13 @@ function SourceText({ text }: { text: string }) {
 }
 /** Shows a proposed patch verbatim, with explicit addition/removal signs as well as color. */
 function Patch({ patch }: { patch: string }) {
+  const fileCount = [...patch.matchAll(/^\*\*\* (?:Update|Add|Delete) File:/gm)].length;
   return (
     <pre className="patch-preview" aria-label="Proposed patch">
       <code>
         {patch.split("\n").map((line, index) => {
+          if (/^\*\*\* (?:Begin|End) Patch$/.test(line) || line === "@@") return null;
+          if (fileCount === 1 && /^\*\*\* (?:Update|Add|Delete) File:/.test(line)) return null;
           const kind =
             line.startsWith("+") && !line.startsWith("+++")
               ? "added"
@@ -154,7 +187,19 @@ export function ToolCall({
           : "No result";
   const Icon =
     name === "read_file" ? FileCode : patch || name === "write_file" ? FileDiff : Terminal;
-  const detailed = Boolean(command || patch || name === "read_file");
+  const filePath =
+    path ?? (patch ? /^\*\*\* (?:Update|Add|Delete) File: (.+)$/m.exec(patch)?.[1] : undefined);
+  const title =
+    name === "bash"
+      ? "Run command"
+      : name === "read_file"
+        ? "Read file"
+        : patch
+          ? "Edit file"
+          : name === "write_file"
+            ? "Write file"
+            : name.replaceAll("_", " ");
+  const hasPreview = Boolean(command || patch || name === "read_file" || name === "write_file");
   const additions =
     patch?.split("\n").filter((line) => line.startsWith("+") && !line.startsWith("+++")).length ??
     0;
@@ -166,58 +211,112 @@ export function ToolCall({
       className={`tool-call ${failed ? "tool-failed" : ""}`}
       aria-label={`${name} tool call`}
     >
-      <header className="tool-header">
-        <Icon size={14} />
-        <strong>{name}</strong>
-        {path && (
-          <code className="tool-path" title={path}>
-            {path}
-          </code>
-        )}
-        {patch && (
-          <span
-            className="diff-count"
-            aria-label={`${additions} lines added, ${removals} lines removed`}
-          >
-            <span>+{additions}</span>
-            <span>−{removals}</span>
-          </span>
-        )}
-        <span className="tool-status" title={status}>
-          {awaitingApproval ? (
-            <ShieldCheck size={14} />
-          ) : failed ? (
-            <CircleAlert size={14} />
-          ) : running && output === undefined ? (
-            <span className="spinner" />
-          ) : output !== undefined ? (
-            <Check size={14} />
-          ) : (
-            <ChevronRight size={14} />
+      <details
+        className="tool-details"
+        open={awaitingApproval || failed || running || Boolean(patch) || undefined}
+      >
+        <summary className="tool-header">
+          <ChevronRight size={14} className="tool-chevron" />
+          <Icon size={14} />
+          <strong>{title}</strong>
+          {filePath && (
+            <code className="tool-path" title={filePath}>
+              {filePath}
+            </code>
           )}
-          <span>{status}</span>
-        </span>
-      </header>
-      {command && (
-        <div className="shell-command">
-          <span aria-hidden="true">$</span>
-          <code>{command}</code>
+          {patch && (
+            <span
+              className="diff-count"
+              aria-label={`${additions} lines added, ${removals} lines removed`}
+            >
+              <span>+{additions}</span>
+              <span>−{removals}</span>
+            </span>
+          )}
+          <span className="tool-status" title={status}>
+            {awaitingApproval ? (
+              <ShieldCheck size={14} />
+            ) : failed ? (
+              <CircleAlert size={14} />
+            ) : running && output === undefined ? (
+              <span className="spinner" />
+            ) : output !== undefined ? (
+              <Check size={14} />
+            ) : (
+              <ChevronRight size={14} />
+            )}
+            <span>{status}</span>
+          </span>
+        </summary>
+        <div className="tool-body">
+          {command && (
+            <div className="tool-surface">
+              <div className="shell-command">
+                <span aria-hidden="true">$</span>
+                <code>{command}</code>
+                <CopyToolText text={command} label="Copy command" />
+              </div>
+              {output !== undefined && (
+                <details className="tool-result" open={failed || undefined}>
+                  <summary>
+                    <ChevronRight size={12} />
+                    {failed ? "Error output" : "Output"}
+                  </summary>
+                  <pre className="tool-output">{output}</pre>
+                </details>
+              )}
+            </div>
+          )}
+          {patch && (
+            <div className="tool-surface">
+              <div className="tool-surface-heading">
+                <FileDiff size={14} />
+                <code>{filePath ?? "Proposed changes"}</code>
+                <CopyToolText text={patch} label="Copy patch" />
+              </div>
+              <Patch patch={patch} />
+            </div>
+          )}
+          {name === "read_file" && output !== undefined && (
+            <div className="tool-surface">
+              <div className="tool-surface-heading">
+                <FileCode size={14} />
+                <code>{filePath ?? "File contents"}</code>
+                <CopyToolText text={output} label="Copy file output" />
+              </div>
+              <FileContents content={output} />
+            </div>
+          )}
+          {name === "write_file" && typeof parameters.content === "string" && (
+            <div className="tool-surface">
+              <div className="tool-surface-heading">
+                <FileCode size={14} />
+                <code>{filePath ?? "File contents"}</code>
+                <CopyToolText text={parameters.content} label="Copy file content" />
+              </div>
+              <FileContents content={parameters.content} />
+            </div>
+          )}
+          {!command && name !== "read_file" && output !== undefined && (
+            <details className="tool-result" open={failed || undefined}>
+              <summary>
+                <ChevronRight size={12} />
+                {failed ? "Error output" : "Output"}
+              </summary>
+              <pre className="tool-output">{output}</pre>
+            </details>
+          )}
+          <details
+            className="tool-arguments"
+            open={(!hasPreview && output === undefined) || undefined}
+          >
+            <summary>
+              <ChevronRight size={12} />
+              Raw details
+            </summary>
+            <pre>{args}</pre>
+          </details>
         </div>
-      )}
-      {patch && <Patch patch={patch} />}
-      {name === "read_file" && output !== undefined && <FileContents content={output} />}
-      {awaitingApproval && name === "write_file" && typeof parameters.content === "string" && (
-        <FileContents content={parameters.content} />
-      )}
-      {name !== "read_file" && output !== undefined && (
-        <details className="tool-result" open={failed || undefined}>
-          <summary>{failed ? "Error output" : "Output"}</summary>
-          <pre className="tool-output">{output}</pre>
-        </details>
-      )}
-      <details className="tool-arguments" open={(!detailed && output === undefined) || undefined}>
-        <summary>Arguments</summary>
-        <pre>{args}</pre>
       </details>
     </section>
   );

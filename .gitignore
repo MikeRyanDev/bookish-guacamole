@@ -11,3 +11,16 @@ coverage/
 
 test-results/
 playwright-report/
+
+# Impeccable local sessions and detector state
+.impeccable/*
+!.impeccable/config.json
+!.impeccable/live/
+.impeccable/live/*
+!.impeccable/live/config.json
+
+# Shared design-system context (keep runtime state ignored)
+!.impeccable/design.json
+!.impeccable/surfaces/
+.impeccable/surfaces/*
+!.impeccable/surfaces/*.md

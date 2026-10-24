@@ -25,6 +25,60 @@ The coding thread `0225057a-5e31-4940-b540-ef8d03534101` loaded a published Skil
 
 These live checks consumed existing published Learning output. They did not generate or publish a new Skill, test automatic Learning scheduling, or claim new Learning quality evidence. Restart and denial coverage used the deterministic real-harness tests. Private events and current screenshots remain in ignored worktree `.data/`. No shared or production environment changed.
 
+## Quiet UI refinement — 2026-10-23
+
+The latest pass replaces green-tinted dark surfaces with deeper charcoal and a trace of blue.
+It removes persistent branding/runtime metadata, repeated status/headings, pane and dialog rules, control outlines, and the enclosing approval panel.
+The composer keeps one shared focus ring. Accessible names, active status, errors, approval scope, and decision controls remain.
+`AGENTS.md`, the starter React skill, `PRODUCT.md`, and the design system now require a concrete usability reason for any border or divider.
+
+The new `e2e/quiet-ui.spec.ts` checks first failed against the previous UI. Both themes now pass: no idle metadata or decorative shell borders, a visible shared focus indicator, all appearance choices, and documentation access through the command menu.
+
+| Command                                             | Result                                                                                                                                                            |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm check`                                        | Passed lint, design checks, both TypeScript projects, 91 tests, and builds; 49 declared store checks skipped.                                                     |
+| `node --test example/greet.test.js`                 | One passed.                                                                                                                                                       |
+| `pnpm test:e2e`                                     | 26 passed, six model tests skipped; includes all 16 appearance combinations, axe, mobile panels, workspace management, tool approvals, and rendered design scans. |
+| `pnpm test:e2e e2e/quiet-ui.spec.ts`                | Two passed after the final shared-focus refinement.                                                                                                               |
+| `LIVE_MODEL=1 pnpm test:e2e e2e/live-patch.spec.ts` | One passed against real Luna: exact patch preview, approval, persisted result, and reload.                                                                        |
+| `pnpm format:check` and `git diff --check`          | Passed.                                                                                                                                                           |
+
+Live patch thread: `6e6ee2ad-0db0-457d-bf7a-ad088726338b`, 40 persisted events, no decode errors or truncation.
+Only local test files were changed by that model run. No backend, production, or shared-environment configuration changed.
+The existing large-chunk build warning remains.
+
+Current captures: [dark workspace](proof/quiet-workspace-dark.png), [light workspace](proof/quiet-workspace-light.png), [dark approval](proof/approval-patch-dark.png), and [mobile Settings](proof/appearance-mobile.png).
+A fresh finish review returned **ship** with no material fixes for this refinement, covering palette, text, framing, functional clarity, and responsive captures.
+Earlier sections record historical verification and do not override this visual direction.
+
+## Redesign verification — 2026-10-23
+
+The [design study](DESIGN-STUDY.md) records public harness research, generated concepts, and the selected direction.
+`DESIGN.md` and `.impeccable/design.json` record the implemented typography, themes, eight accents, and component rules.
+
+| Command                                                                       | Observed result                                                                                                                                                                                                 |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm check`                                                                  | Lint, design gate, both TypeScript projects, 91 tests, and builds passed; 49 declared persistence-store checks skipped.                                                                                         |
+| `node --test example/greet.test.js`                                           | One test passed.                                                                                                                                                                                                |
+| `pnpm test:e2e`                                                               | 24 passed; six live-model checks skipped in this command. Includes all 16 mode/accent combinations, persistence, keyboard controls, mobile, axe, tool disclosure/copy/error states, and rendered design checks. |
+| `LIVE_MODEL=1 pnpm test:e2e e2e/live-patch.spec.ts e2e/live-controls.spec.ts` | Three real Luna tests passed: patch approval, rejected write, and cancellation; persisted outcomes checked after reload.                                                                                        |
+| `pnpm format:check` and `git diff --check`                                    | Passed.                                                                                                                                                                                                         |
+| `pnpm exec impeccable embed-prompt --scan docs/design/redesign`               | Three generated studies; no missing provenance.                                                                                                                                                                 |
+
+Regression checks first reproduced two patch previews for one pending call and stale copy feedback after a streaming command changed.
+The pending call now appears only in its permission surface. Its completed result remains in the SDK transcript after resolution and reload.
+Copy feedback refers to the exact payload copied. The misleading inert Settings preview was removed.
+
+Latest live patch thread: `ad4d09a5-7d2d-4dc4-8297-7b83ddfc75f8`, with 43 persisted events, no decode errors, and no truncation.
+The file stayed unchanged before approval, changed after approval, and remained correct after reload. One patch call was persisted.
+Raw logs, model-created files, and traces remain ignored. No production or shared environment was changed.
+
+Rendered evidence: [live approval](proof/live-patch-approval.png), [light tools](proof/tool-cards-light.png), [dark tools](proof/tool-cards-dark.png), [light settings](proof/appearance-light.png), [dark settings](proof/appearance-dark.png), and [mobile settings](proof/appearance-mobile.png).
+The finish reviewer returned **ship** for the three scored fixes: duplicate approval rendering, misleading Settings preview, and stale design documentation.
+The final build retains the existing large-chunk warning. The design gate has no failures; two advisories identify legacy workspace-dialog radii outside the core scale.
+
+For Impeccable installation, detector regressions, and typography checks, see [Impeccable verification](IMPECCABLE.md#verification-on-2026-10-23).
+
 For the latest approval, routing, motion, README, and React guidance checks, see [NEW improvements proof](NEW-IMPROVEMENTS-VERIFICATION.md). The records below describe earlier runtime validation.
 
 ## Current browser delivery checks

@@ -79,13 +79,15 @@ then run the tests again and report the actual result.
 
 ## Work with the agent
 
-Review each approval card before choosing **Allow once** or **Reject**. Bash cards show the exact command. Patch cards show added and removed lines. Approval applies only to that tool call. If submitting a decision fails, retry it from the same card.
+Review each approval card before choosing **Allow once** or **Reject**. Expandable tool rows show the action and its outcome. Bash previews show the exact command; patch previews show added and removed lines.
+Use the copy controls for exact payloads and **Raw details** for original arguments. Successful file reads start collapsed. Approval applies only to that tool call. If submitting a decision fails, retry it from the same card.
 
 Use the stop control to cancel a run. Click a session name to reopen its conversation; browser Back and Forward restore your selection. The transcript follows new output while you are at the bottom. Scroll up to read without being pulled down, then use **Jump to latest** when ready.
 
 The workspace picker opens existing folders or creates named workspaces. Switch, rename, or remove entries there. Removing an entry keeps its files and conversations; opening the same folder restores its identity. Files and sessions stay scoped to the selected workspace.
 
-The right panel previews files and published Skills. Use the header controls for light/dark mode, panels, and settings. Press **⌘K** or **Ctrl+K** for the command menu. CopilotKit's Inspector is enabled in local development. Motion respects your system's reduced-motion setting.
+The right panel previews files and published Skills. Use the header controls for panels and settings.
+In **Settings → Appearance**, choose light/dark mode and one of eight warm accent colors. Both choices persist on this browser. Press **⌘K** or **Ctrl+K** for the command menu. CopilotKit's Inspector is enabled in local development. Motion respects your system's reduced-motion setting.
 
 ## Teach it a reusable lesson
 
@@ -109,6 +111,15 @@ The catalog is refreshed through the SDK before each turn. Skills are not copied
 
 Read [AGENTS.md](AGENTS.md) and [architecture](docs/ARCHITECTURE.md) before changing ownership boundaries. Keep CopilotKit React imports on `/v2`: CopilotKit owns messages, Router owns URL selections, and Query owns server reads. [Agent guidance sources](docs/AGENT-SKILLS.md) explains the installed TanStack and React skills.
 
+## Design with Impeccable
+
+The template includes Impeccable 4.7.0 for design reviews, typography, layout, accessibility, and browser iteration.
+Ask your coding assistant to use `$impeccable audit` or `$impeccable polish` on the UI you are changing.
+`PRODUCT.md` and `DESIGN.md` keep those changes aligned with this starter's compact developer workspace.
+
+Run `pnpm design:check` for source checks and `pnpm design:browser` for rendered tool and approval checks.
+The source check also runs inside `pnpm check`. [Impeccable setup and investigation](docs/IMPECCABLE.md) covers hooks, live mode, and upgrades.
+
 ## Check and build
 
 ```sh
@@ -118,7 +129,7 @@ node --test example/greet.test.js
 pnpm test:e2e
 ```
 
-Start the app before browser tests. `pnpm check` runs lint, both TypeScript checks, unit tests, and production builds. Live model tests are opt-in because they use your OpenAI account; see [verification](docs/VERIFICATION.md) for their prerequisites and commands.
+Start the app before browser tests. `pnpm check` runs lint, the design source check, both TypeScript checks, unit tests, and production builds. Live model tests are opt-in because they use your OpenAI account; see [verification](docs/VERIFICATION.md) for their prerequisites and commands.
 
 ```sh
 pnpm build
