@@ -106,8 +106,7 @@ export function ConversationComposer({
       />
       {goalMode && (
         <p className="goal-create-help muted" id={`${id}-help`}>
-          Continues automatically for up to 20 agent turns, with an extra model call after each turn
-          to check completion. Pauses for approvals.
+          Continues automatically for up to 20 turns.
         </p>
       )}
       <div className="composer-toolbar">

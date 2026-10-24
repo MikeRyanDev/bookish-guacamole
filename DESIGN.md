@@ -306,7 +306,8 @@ Always Approve opens an inline scope preview. Approve and Save and Cancel replac
 
 Order the composer controls Create goal, Plan, then Require permissions / YOLO. Plan is a pressed-state toggle with the accessible name Plan mode.
 Do not insert visible save-status text into this toolbar. Preserve its dimensions during submission.
-Keep descriptions brief and inside the selector. The selected permission preference remains visible during planning.
+The permission selector shows choice labels only. Put short explanations in hover text. Keep timing and persistence rules in documentation.
+The selected permission preference remains visible during planning.
 Saved rules belong in Settings, after appearance. They are not a composer action.
 See the [approval study](docs/design/permissions/STUDY.md) for behavior and review evidence.
 

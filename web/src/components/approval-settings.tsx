@@ -45,7 +45,7 @@ export function ApprovalControls({
         aria-pressed={planOnly}
         aria-busy={busy || undefined}
         disabled={loading || busy}
-        title="Read and propose work without edits or commands. Applies next turn."
+        title="Plan without changing files or running commands"
         onClick={() => onPlanOnly(!planOnly)}
       >
         <ListChecks size={15} aria-hidden="true" />
@@ -58,7 +58,7 @@ export function ApprovalControls({
         <fieldset className="approval-mode-list" disabled={loading || busy}>
           <legend className="sr-only">Permissions</legend>
           {modeChoices.map((choice) => (
-            <label key={choice.value} className="approval-mode-choice">
+            <label key={choice.value} className="approval-mode-choice" title={choice.description}>
               <input
                 type="radio"
                 name={id}
@@ -67,12 +67,10 @@ export function ApprovalControls({
               />
               <span>
                 <strong>{choice.label}</strong>
-                <span className="muted">{choice.description}</span>
               </span>
             </label>
           ))}
         </fieldset>
-        <p className="muted">Applies next turn. Pending approvals stay open.</p>
         {loading && (
           <button type="button" onClick={onRefresh}>
             Retry
@@ -103,7 +101,6 @@ export function SavedPermissions({
   return (
     <section className="workspace-permissions" aria-label="Workspace permissions">
       <h3>Workspace permissions</h3>
-      <p className="muted">Saved for all conversations in this workspace.</p>
       {loading ? (
         <p role="status">Loading permissions…</p>
       ) : rules.length === 0 ? (

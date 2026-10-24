@@ -18,9 +18,7 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
   await expect(permission).toBeVisible({ timeout: 60000 });
   await expect(permission.locator(".shell-command code")).toHaveText("npm test");
   await permission.getByRole("button", { name: "Always Approve" }).click();
-  await expect(
-    permission.getByText("All conversations in this workspace can use this permission."),
-  ).toBeVisible();
+  await expect(permission.getByText("Allow in all workspace conversations:")).toBeVisible();
   await permission.getByRole("button", { name: "Approve and Save" }).click();
   await expect(permission).toBeHidden({ timeout: 60000 });
   await expect(page.getByRole("button", { name: "Stop run" })).toBeHidden({ timeout: 60000 });

@@ -9,13 +9,13 @@ for (const theme of ["light", "dark"])
       await page.getByRole("button", { name: "Require permissions" }).click();
       await page.getByRole("radio", { name: /YOLO/ }).check();
       await expect(page.getByRole("button", { name: "YOLO" })).toBeVisible();
-      await expect(page.getByText("Run without permission prompts.")).toBeVisible();
+      await expect(
+        page.getByRole("dialog", { name: "Permissions", exact: true }).locator("p"),
+      ).toHaveCount(0);
       expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
       await page.keyboard.press("Escape");
       await page.getByRole("button", { name: "Always Approve" }).click();
-      await expect(
-        page.getByText("All conversations in this workspace can use this permission."),
-      ).toBeVisible();
+      await expect(page.getByText("Allow in all workspace conversations:")).toBeVisible();
       expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
       await page.getByRole("button", { name: "Approve and Save" }).click();
       await expect(page.getByRole("textbox")).toBeFocused();
@@ -43,6 +43,8 @@ test("permission errors preserve decisions and mode; double clicks submit once",
   await expect(page.getByRole("button", { name: "Require permissions" })).toBeVisible();
   await page.goto(`${fixtureUrl}/permissions.html?slow`);
   await page.getByRole("button", { name: "Approve Once" }).dblclick();
+  await expect(page.getByRole("button", { name: "Approve Once", exact: true })).toBeDisabled();
+  await expect(page.getByText("Submitting…", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Submissions: 1")).toBeVisible();
 });
 

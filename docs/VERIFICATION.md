@@ -468,3 +468,18 @@ A failing regression first reproduced the wrong order. The final delayed-save te
 No backend behavior changed. This revision did not run another model request.
 A fresh task-first agent review passed keyboard toggling, delayed-save layout stability, permission selection, and mobile recovery.
 The disabled control briefly loses visible focus during saving; the next Tab advances correctly. No task blocker remained.
+
+## Control copy audit
+
+Removed permanent permission timing guidance and repeated workspace explanations. Permission choices now show labels, with explanations on hover.
+The approval scope appears once beside the exact rules. Goal creation states automatic continuation and its 20-turn limit.
+Approve Once keeps its label during submission. A failing regression reproduced the old label flash before this change.
+
+- `pnpm check`: passed lint, design checks, TypeScript, 153 tests, and build; 47 declared skips.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm exec playwright test e2e/permissions.spec.ts e2e/composer.spec.ts e2e/composer-discovery.spec.ts e2e/goals.spec.ts e2e/tool-approvals.spec.ts --output .data/control-copy-browser-results`: 28 passed, one opt-in model test skipped.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm design:browser`: 28 rendered scans passed.
+- `node --test example/greet.test.js`: one passed.
+- `git diff --check`: passed.
+
+An initial concurrent browser run lost a trace artifact. The rerun used an isolated output directory and passed.
+An independent fixed-data usability review passed command approval, saved scope, Settings discovery, and mobile readability. No new model calls were required.

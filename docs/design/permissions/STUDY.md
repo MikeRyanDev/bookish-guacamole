@@ -34,7 +34,7 @@ Removal waits for active turns and reloads native session plugins. It does not u
 
 The compact composer toolbar orders the controls Create goal, Plan, then Require permissions. Plan has the accessible name Plan mode.
 Saving keeps the labels and layout unchanged. The Plan button exposes its busy state without visible status text.
-The selector contains two choices with short descriptions. Explanations stay inside the selector.
+The selector contains two choice labels. Short explanations appear on hover. It has no permanent timing or pending-approval note.
 Saved rules appear after appearance in Settings. Reopening Settings refreshes the rules.
 
 Interrupt buttons appear in this order: Reject, Approve Once, Always Approve.
@@ -65,3 +65,11 @@ This review is agent-based. The user's direct feedback supplied the human critiq
 ## Verification
 
 See [verification](../../VERIFICATION.md#simpler-permissions-and-separate-planning) for current commands and results.
+
+## Control copy audit
+
+Removed permanent timing guidance from the permission popup and Plan tooltip. Choice explanations moved to hover text.
+Removed the repeated workspace-scope sentence from Settings. The save confirmation now names scope once, beside the exact rules.
+Shortened goal creation help to its automatic behavior and 20-turn limit. Errors and conditional partial-scope information remain.
+Approval buttons retain their labels during submission. Busy state uses disabled controls and accessibility attributes.
+Goal progress, explicit completion state, and recovery actions remain because they describe current work.

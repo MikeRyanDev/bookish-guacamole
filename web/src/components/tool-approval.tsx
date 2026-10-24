@@ -78,7 +78,7 @@ export function Permission({
     }
   }
   return (
-    <section className="permission" aria-label="Permission request">
+    <section className="permission" aria-label="Permission request" aria-busy={busy || undefined}>
       {call ? (
         <ToolCall
           name={call.function.name}
@@ -92,7 +92,7 @@ export function Permission({
       {error && <p role="alert">{error}</p>}
       {remember && preview && (
         <div className="permission-scope">
-          <p>Save these permissions for this workspace?</p>
+          <p>Allow in all workspace conversations:</p>
           <ul>
             {preview.rules.map((rule) => (
               <li key={JSON.stringify(rule)}>
@@ -101,8 +101,7 @@ export function Permission({
               </li>
             ))}
           </ul>
-          <p>All conversations in this workspace can use this permission.</p>
-          {preview.partial && <p>Some parts cannot be remembered. Those parts will ask again.</p>}
+          {preview.partial && <p>Other parts will still require approval.</p>}
           <button
             ref={saveButton}
             className="primary"
@@ -135,7 +134,7 @@ export function Permission({
               decide("once");
             }}
           >
-            {busy ? "Submitting…" : "Approve Once"}
+            Approve Once
           </button>
           {preview && preview.rules.length > 0 && (
             <button
