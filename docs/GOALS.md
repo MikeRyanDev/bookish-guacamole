@@ -5,6 +5,7 @@
 The pinned `@tanstack/ai-harness@0.1.0` already exports `goal`, `selectGoal`,
 and `GoalMet` from `@tanstack/ai-harness/plugins`. Its source is
 `src/first-party/goal.ts` in the installed package. This delivery reuses it.
+The [upstream plugin source](https://github.com/TanStack/ai/blob/main/packages/ai-harness/src/first-party/goal.ts) documents the same lifecycle.
 The [TanStack 1.0 announcement](https://tanstack.com/blog/tanstack-ai-1-0)
 describes the experimental harness and its durable sessions.
 
@@ -70,6 +71,9 @@ mobile layout, and both themes. Run `pnpm check`, `pnpm design:check`,
 `pnpm design:browser`, affected browser tests, and the example test.
 Record live model/Intelligence proof separately from deterministic fixtures.
 
-Work is based on local main `3f995a5`. Remote alpha main `a248492` replaces the
+Work started on local main `3f995a5` and was integrated with local main `7891bf5`,
+preserving its grouped tool activity. Remote alpha main `a248492` replaces the
 current design and viewer with an older tree; it is not the local merge target.
 No upstream package, shared deployment, or release-history rewrite is required.
+
+[Validation record](GOALS-VERIFICATION.md).

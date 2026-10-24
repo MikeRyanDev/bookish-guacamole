@@ -82,8 +82,14 @@ test("live Goal runs with approval and persists its completion and evidence", as
   ).toBe(true);
   await mkdir(".data/goals", { recursive: true });
   await writeFile(".data/goals/live-proof.json", JSON.stringify({ threadId, url, events: saved }));
+  await page.emulateMedia({ reducedMotion: "reduce" });
   for (const theme of ["light", "dark"]) {
-    await page.evaluate((value) => (document.documentElement.dataset.theme = value), theme);
+    if ((await page.locator("html").getAttribute("data-theme")) !== theme)
+      await page.getByRole("button", { name: `Use ${theme} theme` }).click();
+    await expect(page.locator(".composer .primary")).toHaveCSS(
+      "background-color",
+      theme === "light" ? "rgb(65, 100, 71)" : "rgb(172, 197, 156)",
+    );
     await page.screenshot({ path: `.data/goals/${theme}-desktop.png`, fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({ path: `.data/goals/${theme}-mobile.png`, fullPage: true });
