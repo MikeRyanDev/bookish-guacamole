@@ -178,3 +178,17 @@ Run `pnpm design:check` for source changes and `pnpm design:browser` for rendere
 Codex and Claude edit hooks provide feedback where supported. The explicit check in `pnpm check` remains required.
 Use `pnpm exec impeccable` for the pinned CLI. Live iteration is opt-in through the skill and targets `web/index.html`.
 See `docs/IMPECCABLE.md` for investigation, commands, limits, and upgrades. These tools do not inject repository skills into the runtime agent.
+
+## Temporary weekend stacks and previews
+
+Before delivering a fix during the weekend alpha period, read [docs/WEEKEND-DELIVERY.md](docs/WEEKEND-DELIVERY.md).
+Follow its native-stack, exact-commit preview publication, installed acceptance, and candidate-ledger requirements.
+Read [MONDAY_CUTOVER_CHECKLIST.md](MONDAY_CUTOVER_CHECKLIST.md) before selecting a parent or publishing a candidate.
+Verify the current remote stack tip instead of copying historical branch or artifact identities.
+Keep upstream PRs unmerged and shared deployments unchanged during weekend delivery.
+
+The final published starter requires a complete Git history rewrite from a reviewed, clean release tree.
+Temporary weekend guidance, plans, preview artifacts, and development evidence must not appear anywhere in that final history.
+The Monday checklist owns removal, external evidence archival, and the clean-history publication gate.
+Do not rewrite history now. Follow the runbook's cutover approval boundary before a force-push or repository replacement.
+Remove this temporary section and its runbook before final publication.

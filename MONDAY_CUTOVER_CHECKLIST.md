@@ -1,0 +1,56 @@
+# Monday cutover checklist — 2026-10-26
+
+**Keep stable publication blocked until the required release gates pass.** Weekend alphas are evaluation builds, not proof that the stable release is ready.
+
+Start from [the Learning stacked-alpha plan](LEARNING_KNOB_PLAN.md). Add each weekend layer to the ledger as soon as its PR exists. Leave unchecked items open until evidence proves completion.
+
+## Candidate ledger
+
+| Layer                                    | PR / stack                                                                                                                                                                 | Exact source and artifacts                                                                                                                                                                                                                                                                                            | Installed evidence                                                                                                                                                                                                   | Stable status                                                      |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Native providers and preview publication | [Intelligence #2041](https://github.com/CopilotKit/Intelligence/pull/2041); native stack #2064, position 1                                                                 | Intelligence `3dad371e80dc17f3e184a46a582073c3e433b6b0`; chart `0.15.0-validation.3dad371e80dc`; CLI `4.30.0-pre.3dad371`                                                                                                                                                                                             | [Alpha verification](https://github.com/MikeRyanDev/bookish-guacamole/blob/c71bec0dbbb91b32dd2b4093019b2bbc1220b888/docs/ALPHA-VERIFICATION.md)                                                                      | PR open; stable release pending                                    |
+| Learning status and dashboard URL policy | [Intelligence #2063](https://github.com/CopilotKit/Intelligence/pull/2063), stack #2064 position 2; [CopilotKit #7966](https://github.com/CopilotKit/CopilotKit/pull/7966) | Intelligence `87d97336399820c167a3504d81049b5fc589385f`; SDK `ba7b11d624915d75df8bf377f10be6f9bfeac84a`; chart `0.15.0-validation.87d973363998`; CLI `4.30.0-pre.87d9733`; [artifact records](https://github.com/MikeRyanDev/bookish-guacamole/blob/5727a34ad022cf97c91e103ac1d12019a4c0706b/docs/alpha-release.json) | [Installed alpha proof](https://github.com/MikeRyanDev/bookish-guacamole/blob/5727a34ad022cf97c91e103ac1d12019a4c0706b/docs/ALPHA-VERIFICATION.md): status/retry, Luna, Learning, Skill delivery, restart, recycling | Draft PRs open; local ARM64 acceptance passed; stable gates remain |
+| Later weekend fixes                      | Add one row per focused stack layer                                                                                                                                        | Record each new artifact set; never overwrite a prior candidate                                                                                                                                                                                                                                                       | Link exact-head results                                                                                                                                                                                              | Pending                                                            |
+
+## Review and merge readiness
+
+- [ ] Freeze the intended cutover scope and record each repository's native stack ID, ordered PRs, owners, and exact heads.
+- [ ] Resolve review threads and obtain required approvals for every included layer. Confirm trunk protections and required CI pass at the current heads.
+- [ ] Review the complete result across Intelligence, CopilotKit, and the starter. Check API compatibility, dependency/license changes, migrations, and absence of secrets.
+- [ ] Rebase dependent layers when needed and rerun affected checks. Replace acceptance evidence that refers to an older head or artifact set.
+- [ ] Select the approved stack or prefix for GitHub's native stack merge flow. Coordinate companion repository merges; do not merge only one side of the Learning contract.
+
+## Stable release preparation
+
+- [ ] Choose the stable Intelligence, CLI, and SDK versions. Prepare release notes, package metadata, and the package compatibility matrix from the final merged commits.
+- [ ] **use production builds**: replace preview package URLs and candidate chart/image pins with published stable releases. Build and run the starter's production output, and verify the released containers. Production login endpoints or `NODE_ENV=production` alone do not make a preview a stable release.
+- [ ] Prove a data-preserving upgrade from the installed alpha and supported older stacks. Review schema compatibility before populating `compatibleFrom`; the current alpha declares none. Verify backups and the recovery procedure without deleting existing data.
+- [ ] Complete Intelligence's local-evaluation release gate for every advertised platform and supported scenario. Include AMD64 runtime evidence; image-index checks alone do not cover it. Run the required offline/lifecycle checks before making those guarantees.
+- [ ] Resolve or explicitly narrow supported behavior for known alpha limits, including local model URL rewriting on Docker Desktop. Retest native Luna and any advertised compatible endpoints.
+
+## End-to-end acceptance with production artifacts
+
+- [ ] Install the final public starter from scratch using only public downloads. Verify package integrity, chart checksum, image digests, licensing, setup, connection, and generated private configuration.
+- [ ] Verify Learning status and retry states, the Inspector, Learning tab, and dashboard links on `cpk.localhost`, an older `localhost` stack, and remote HTTPS. Confirm the rejection cases remain secure.
+- [ ] Run real Luna coding with approvals and rejection/cancellation checks. Verify transcript reload and continuation after app and stack restarts without duplicate tool execution.
+- [ ] Run real Learning from those conversations. Review its cited evidence, approve a supported Skill, and verify delivery on the next browser turn without restarting the app.
+- [ ] Verify Learning runtime recycling and service readiness with the exact production image. Run starter lint, type checks, tests, production build/start, and affected browser/accessibility checks.
+
+## Release and cutover
+
+- [ ] Name the release operator, deployment window, observers, and rollback criteria. Review the exact normal-release workflow inputs and their staging/production effects before dispatch.
+- [ ] Publish the approved stable artifacts through the normal release workflows. Verify registry availability, signatures/provenance where supplied, architecture coverage, and package compatibility before changing consumers.
+- [ ] Update the public starter's dependency pins and lockfile to stable builds. Remove alpha-only configuration and documentation after stable acceptance passes. Archive weekend provenance outside the final starter history. Keep only stable-release recovery instructions in the final tree.
+- [ ] Verify the public README's installation commands from the published commit. Remove stale preview/workaround guidance and scan tracked files for credentials, private paths, and local build references.
+- [ ] Observe the cutover, record final versions and smoke results, and confirm rollback remains possible. Retire weekend stacks and previews only after the observation period and data-retention decision.
+
+## Remove temporary guidance and replace starter history
+
+- [ ] Inventory all temporary weekend material before cleanup. Include the temporary section in `AGENTS.md`, `docs/WEEKEND-DELIVERY.md`, `LEARNING_KNOB_PLAN.md`, and this checklist.
+- [ ] Remove all weekend stack and dev-preview instructions from agent entry points, skills, README links, and repository documentation. Preserve permanent engineering guidance.
+- [ ] Remove alpha-only manifests, archive records, preview-integrity scripts/tests, temporary image workarounds, and development-only screenshots or evidence. Retain functional product regression tests and required licenses/notices.
+- [ ] Export the necessary candidate ledger, acceptance evidence, provenance, and rollback records to an approved archive outside the final starter history. Transfer any unfinished release gates there before removing this checklist.
+- [ ] Review the sanitized final tree and rerun installation, production build, and required acceptance checks using stable artifacts.
+- [ ] Prepare a complete starter Git history rewrite from that tree with a fresh root and no development ancestry. Deleting files in a cleanup commit is insufficient.
+- [ ] Review the final repository destination, every published branch/tag, retained hosting refs, external archive, and rollback procedure. Obtain explicit approval before force-pushing or replacing the repository. Do not rewrite the upstream Intelligence or CopilotKit repositories.
+- [ ] Publish the clean history, using a clean replacement repository when necessary. Verify from a fresh clone that all final branches/tags contain no temporary material or old development ancestry. Do not claim removal from existing clones, forks, caches, or retained PR refs.
