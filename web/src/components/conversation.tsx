@@ -78,7 +78,13 @@ function ActiveConversation({
     agentId,
     renderInChat: false,
     render: (props) => (
-      <Permission key={props.interrupt?.id} {...props} messages={agent.messages} state={agent.state} onResolved={() => input.current?.focus()} />
+      <Permission
+        key={props.interrupt?.id}
+        {...props}
+        messages={agent.messages}
+        state={agent.state}
+        onResolved={() => input.current?.focus()}
+      />
     ),
   });
   useEffect(() => {
@@ -185,7 +191,7 @@ function ActiveConversation({
         }
       />
       <ConversationComposer
-        approvals={<ConversationApprovals config={config} threadId={threadId}/>}
+        approvals={<ConversationApprovals config={config} threadId={threadId} />}
         draft={goalMode ? goalDraft : draft}
         onDraftChange={goalMode ? setGoalDraft : setDraft}
         goalMode={goalMode}

@@ -65,7 +65,12 @@ Verdict: usability pass for the fixture tasks. This was an independent agent wal
 It does not establish backend correctness or broad user comprehension. Backend and visual evidence remain separate.
 
 The visual pass identified competing primary actions in the save state. The final design replaces the original footer during confirmation.
-A second task walkthrough checks cancellation, save, and removal after that change.
+The follow-up walkthrough found focus loss. The final controls focus Save and allow on entry and restore Remember this permission on Cancel.
+Save returns focus to the composer. Remove moves focus to Refresh permissions.
+A final independent keyboard walkthrough passed these tasks at 390px. No task defects or horizontal overflow remained.
+
+Rendered evidence: [light modes](modes-light.png), [dark modes](modes-dark.png), [mobile modes](modes-mobile.png), [light scope](scope-light.png), [dark scope](scope-dark.png), [light rules](rules-light.png), and [dark rules](rules-dark.png).
+The rendered scan covers seven surfaces in both themes at 1440px and 390px. The permission browser tests also run axe on mode, scope, and removal states.
 
 ## Verification record
 

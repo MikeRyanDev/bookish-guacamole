@@ -12,16 +12,20 @@ for (const theme of ["light", "dark"])
       await expect(
         page.getByText("Run tools without approval. Ignore permission rules."),
       ).toBeVisible();
+      expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
       await page.keyboard.press("Escape");
       await page.getByRole("button", { name: "Remember this permission" }).click();
       await expect(
         page.getByText("All conversations in this workspace can use this permission."),
       ).toBeVisible();
+      expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
       await page.getByRole("button", { name: "Save and allow" }).click();
+      await expect(page.getByRole("textbox")).toBeFocused();
       await expect(page.getByText("Decision: always")).toBeVisible();
       await page.getByRole("button", { name: "Workspace permissions", exact: true }).click();
       await page.getByRole("button", { name: "Remove permission for bash pnpm test" }).click();
       await expect(page.getByText("No saved permissions.")).toBeVisible();
+      await expect(page.getByRole("button", { name: "Refresh permissions" })).toBeFocused();
       expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
         true,
@@ -58,3 +62,27 @@ test("scope confirmation keeps keyboard focus and cancel preserves the pending d
   await expect(remember).toBeFocused();
   await expect(page.getByText("Submissions: 0")).toBeVisible();
 });
+
+for (const scenario of ["command", "patch"]) {
+  test(`long ${scenario} preserves transcript position when modes open`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 900 });
+    await page.goto(`${fixtureUrl}/permissions.html?long&theme=dark`);
+    await page.getByLabel("Scenario").selectOption(scenario);
+    const transcript = page.locator(".transcript");
+    const before = await transcript.evaluate((element) => ({
+      top: element.scrollTop,
+      height: element.clientHeight,
+    }));
+    await page.getByRole("button", { name: "Approval mode: Allow file edits" }).click();
+    await expect(page.getByRole("radio", { name: /YOLO/ })).toBeVisible();
+    expect(
+      await transcript.evaluate((element) => ({
+        top: element.scrollTop,
+        height: element.clientHeight,
+      })),
+    ).toEqual(before);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+  });
+}

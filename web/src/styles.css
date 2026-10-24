@@ -2061,6 +2061,9 @@ dialog[open] {
   flex-wrap: wrap;
   padding: 0 8px 4px;
 }
+.approval-controls .composer-control {
+  padding-inline: 8px;
+}
 .approval-mode-list {
   border: 0;
   margin: 12px 0;

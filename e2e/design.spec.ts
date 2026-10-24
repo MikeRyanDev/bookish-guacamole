@@ -9,7 +9,7 @@ const execute = promisify(execFile);
 import { fixtureUrl } from "./fixture-url";
 
 test("Impeccable scans rendered tools and approvals in both themes and sizes", async ({}, testInfo) => {
-  test.setTimeout(120_000);
+  test.setTimeout(240_000);
   const profile = await mkdtemp(join(tmpdir(), "starter-design-"));
   const context = await chromium.launchPersistentContext(profile, {
     headless: true,
@@ -18,16 +18,41 @@ test("Impeccable scans rendered tools and approvals in both themes and sizes", a
   try {
     const port = (await readFile(join(profile, "DevToolsActivePort"), "utf8")).split("\n")[0]!;
     const page = context.pages()[0]!;
-    for (const target of ["tools", "activity", "approval=bash", "approval=patch"]) {
-      await page.goto(`${fixtureUrl}/?${target}`);
-      if (target === "activity") await page.getByRole("button", { name: /8 tool calls/ }).click();
-      await expect(page.locator(".tool-call").first()).toBeVisible();
-      for (const summary of await page.locator(".tool-details > summary").all()) {
-        if (!(await summary.evaluate((element) => element.parentElement?.hasAttribute("open"))))
-          await summary.click();
-      }
-      await page.evaluate(() => document.fonts.ready);
+    for (const target of [
+      "tools",
+      "activity",
+      "approval=bash",
+      "approval=patch",
+      "permission-scope",
+      "permission-modes",
+      "permission-list",
+    ]) {
       for (const theme of ["light", "dark"]) {
+        await page.goto(
+          target.startsWith("permission-")
+            ? `${fixtureUrl}/permissions.html?theme=${theme}`
+            : `${fixtureUrl}/?${target}`,
+        );
+        if (target === "permission-scope" || target === "permission-list") {
+          await page.getByRole("button", { name: "Remember this permission" }).click();
+        }
+        if (target === "permission-modes")
+          await page.getByRole("button", { name: "Approval mode: Allow file edits" }).click();
+        if (target === "permission-list") {
+          await page.getByRole("button", { name: "Save and allow" }).click();
+          await page.getByRole("button", { name: "Workspace permissions", exact: true }).click();
+          await expect(
+            page.getByRole("button", { name: "Remove permission for bash pnpm test" }),
+          ).toBeVisible();
+        }
+        if (target === "activity") await page.getByRole("button", { name: /8 tool calls/ }).click();
+        if (target !== "permission-list")
+          await expect(page.locator(".tool-call").first()).toBeVisible();
+        for (const summary of await page.locator(".tool-details > summary").all()) {
+          if (!(await summary.evaluate((element) => element.parentElement?.hasAttribute("open"))))
+            await summary.click();
+        }
+        await page.evaluate(() => document.fonts.ready);
         await page.evaluate((value) => (document.documentElement.dataset.theme = value), theme);
         for (const width of [1440, 390]) {
           await page.setViewportSize({ width, height: 960 });

@@ -414,3 +414,18 @@ Pre-integration checks: `pnpm check` passed 152 tests with 47 declared skips, li
 The affected permission, composer, tool approval, and motion browser suite passed 20 tests.
 A broader run found an old mobile inspector overlap and one transient patch retry failure during UI edits. The focused patch retry passed afterward.
 Main advanced during this work with composer and mobile file-entry changes. Final integrated results follow this record.
+
+
+Final integrated checks include main through `2b8caa3`:
+
+- `pnpm check`: passed lint, design checks, TypeScript, 152 tests, and build. The persistence suite declared 47 skips.
+- `node --test example/greet.test.js`: one test passed.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm test:e2e`: 86 passed, 9 opt-in tests skipped.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm design:browser`: passed 28 rendered scans across seven surfaces, two themes, and two widths.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm exec playwright test e2e/permissions.spec.ts`: eight tests passed. These include focus recovery, axe, long commands, long patches, and transcript position.
+- `git diff --check`: passed. Design-study artifact links resolve.
+
+The expanded visual scan found insufficient control padding. The final controls use eight pixels of horizontal padding.
+The scan also exposed an invalid fixture theme switch that retained light accent colors. Each permission scenario now loads its actual theme.
+The final independent keyboard review passed save, cancel, and removal. Human participant feedback remains pending.
+No dependency versions, SDK code, Intelligence code, or shared deployments changed. The local main checklist edit remains outside this feature.
