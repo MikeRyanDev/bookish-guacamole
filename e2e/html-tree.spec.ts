@@ -1,24 +1,13 @@
+import { mockFileDiscovery } from "./mock-file-discovery";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 const origin = process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174";
 test.beforeEach(async ({ page }) => {
   await page.route("**/api/skills", (route) => route.fulfill({ json: { skills: [] } }));
-  await page.route("**/api/workspace/files?*", (route) =>
-    route.fulfill({
-      json: {
-        files: ["z.txt", "a.html", "src/z.ts", "src/nested/a.ts", "assets/icon.png", "gone.ts"],
-        truncated: false,
-        git: {
-          available: true,
-          entries: {
-            "src/z.ts": " M",
-            "src/nested/a.ts": "A ",
-            "assets/icon.png": "??",
-            "gone.ts": "D ",
-          },
-        },
-      },
-    }),
+  await mockFileDiscovery(
+    page,
+    ["z.txt", "a.html", "src/z.ts", "src/nested/a.ts", "assets/icon.png", "gone.ts"],
+    () => ({ "src/z.ts": " M", "src/nested/a.ts": "A ", "assets/icon.png": "??", "gone.ts": "D " }),
   );
 });
 test("nested tree sorts folders first, starts collapsed, and supports keyboard and search", async ({
@@ -135,15 +124,7 @@ test("tree bounds mounted rows, reaches the last file with the keyboard, and kee
     { length: 1000 },
     (_, index) => `file-${String(index).padStart(4, "0")}.ts`,
   );
-  await page.route("**/api/workspace/files?*", (route) =>
-    route.fulfill({
-      json: {
-        files,
-        truncated: true,
-        git: { available: true, entries: { "file-0999.ts": status } },
-      },
-    }),
-  );
+  await mockFileDiscovery(page, files, () => ({ "file-0999.ts": status }));
   await page.route("**/api/workspace/file?*", (route) =>
     route.fulfill({ json: { path: "file-0999.ts", content: "last file" } }),
   );
@@ -151,6 +132,13 @@ test("tree bounds mounted rows, reaches the last file with the keyboard, and kee
   const tree = page.getByRole("tree");
   await expect.poll(() => tree.getByRole("treeitem").count()).toBeLessThan(80);
   await tree.focus();
+  for (let index = 0; index < 9; index++) {
+    await page.keyboard.press("End");
+    await page.getByRole("button", { name: "Load more in workspace" }).click();
+    await expect(tree.getByRole("treeitem").filter({ hasText: "Loading workspace" })).toHaveCount(
+      0,
+    );
+  }
   await page.keyboard.press("End");
   const last = tree.locator('[data-path="file-0999.ts"]');
   await expect(last).toBeVisible();
@@ -161,4 +149,49 @@ test("tree bounds mounted rows, reaches the last file with the keyboard, and kee
   await tree.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("region", { name: "File contents" })).toContainText("last file");
+});
+
+test("directory and search errors retry locally, and obsolete search results cannot replace the current query", async ({
+  page,
+}) => {
+  let failDirectory = true;
+  await page.route("**/api/workspace/directory?*", async (route) => {
+    if (new URL(route.request().url()).searchParams.get("path") === "src" && failDirectory) {
+      failDirectory = false;
+      return route.fulfill({ status: 503, json: { error: "fixture" } });
+    }
+    return route.fallback();
+  });
+  await page.goto(`${origin}/inspector.html`);
+  await page.getByRole("button", { name: "Expand src", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("Could not load files");
+  await page.getByRole("button", { name: "Retry src", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Open src/z.ts", exact: true })).toBeVisible();
+  let failSearch = true;
+  await page.route("**/api/workspace/search?*", async (route) => {
+    const query = new URL(route.request().url()).searchParams.get("q");
+    if (query === "missing" && failSearch) {
+      failSearch = false;
+      return route.fulfill({ status: 503, json: { error: "fixture" } });
+    }
+    if (query === "slow") {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      return route.fulfill({ json: { files: ["slow.ts"] } }).catch(() => {});
+    }
+    return route.fallback();
+  });
+  const input = page.getByRole("textbox", { name: "Search files" });
+  await input.fill("missing");
+  await page.getByRole("button", { name: "Retry search", exact: true }).click();
+  await expect(page.getByText("No files match “missing”.", { exact: true })).toBeVisible();
+  await input.fill("slow");
+  await page.waitForRequest((request) => new URL(request.url()).searchParams.get("q") === "slow");
+  await input.fill("icon");
+  await expect(
+    page.getByRole("button", { name: "Open assets/icon.png", exact: true }),
+  ).toBeVisible();
+  await page.waitForTimeout(650);
+  await expect(page.getByRole("button", { name: "Open slow.ts", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Clear file search" }).click();
+  await expect(page.getByRole("button", { name: "Collapse src", exact: true })).toBeVisible();
 });

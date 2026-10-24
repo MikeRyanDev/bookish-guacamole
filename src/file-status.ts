@@ -2,6 +2,8 @@
 export interface WorkspaceGitStatus {
   available: boolean;
   entries: Record<string, string>;
+  /** Distinct descendant status codes for returned directory rows. */
+  directories?: Record<string, string[]>;
 }
 
 /** Parses NUL-delimited porcelain v1, consuming rename/copy source records separately. */

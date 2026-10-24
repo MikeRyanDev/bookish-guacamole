@@ -1,12 +1,9 @@
+import { mockFileDiscovery } from "./mock-file-discovery";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 test.beforeEach(async ({ page }) => {
-  await page.route("**/api/workspace/files?*", (route) =>
-    route.fulfill({
-      json: { files: ["README.md", "src/greet.ts", "src/empty.ts"], truncated: false },
-    }),
-  );
+  await mockFileDiscovery(page, ["README.md", "src/greet.ts", "src/empty.ts"]);
   await page.route("**/api/skills", (route) => route.fulfill({ json: { skills: [] } }));
   await page.route("**/api/workspace/file?*", (route) => {
     const path = new URL(route.request().url()).searchParams.get("path");

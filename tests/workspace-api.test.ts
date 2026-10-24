@@ -44,7 +44,7 @@ test("folders without Git list source files without walking private paths or dep
   }
 });
 
-test("plain-folder discovery caps its response and reports omitted files", async () => {
+test("legacy plain-folder discovery no longer omits files", async () => {
   const root = await mkdtemp(join(tmpdir(), "workspace-limit-"));
   try {
     await Promise.all(
@@ -53,8 +53,8 @@ test("plain-folder discovery caps its response and reports omitted files", async
       ),
     );
     const result = await listWorkspaceFiles(root);
-    expect(result.files).toHaveLength(1000);
-    expect(result.truncated).toBe(true);
+    expect(result.files).toHaveLength(1001);
+    expect(result.truncated).toBe(false);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

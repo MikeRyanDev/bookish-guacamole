@@ -2,6 +2,7 @@ import { useId, useMemo, useRef, useState } from "react";
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronRight, FileCode2, Folder, FolderOpen } from "lucide-react";
 import { buildFileTree, visibleFileRows, gitLabels, gitBadges } from "../file-tree";
+import type { FileTreeNode } from "../file-tree";
 import type { WorkspaceGitStatus } from "../../../src/file-status";
 
 /** Virtualized ARIA tree: one tab stop, stable path identities, and collapsed initial folders. */
@@ -11,20 +12,29 @@ export function FileTree({
   filter,
   selected,
   onFile,
+  nodes,
+  expandedPaths,
+  onToggle,
+  onAction,
 }: {
-  paths: string[];
+  paths?: string[];
+  nodes?: FileTreeNode[];
+  expandedPaths?: ReadonlySet<string>;
+  onToggle?: (path: string) => void;
+  onAction?: (path: string) => void;
   git?: WorkspaceGitStatus;
   filter: string;
   selected?: string;
   onFile: (path: string) => void;
 }) {
-  const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set());
+  const [localExpanded, setExpanded] = useState<ReadonlySet<string>>(new Set());
+  const expanded = expandedPaths ?? localExpanded;
   const [activePath, setActivePath] = useState<string>();
   const scroll = useRef<HTMLDivElement>(null);
   const id = useId();
   const roots = useMemo(
-    () => buildFileTree(paths, git?.available ? git.entries : undefined),
-    [paths, git],
+    () => nodes ?? buildFileTree(paths ?? [], git?.available ? git.entries : undefined),
+    [nodes, paths, git],
   );
   const rows = useMemo(() => visibleFileRows(roots, expanded, filter), [roots, expanded, filter]);
   const active = Math.max(
@@ -50,6 +60,10 @@ export function FileTree({
     virtual.scrollToIndex(index, { align: "auto" });
   }
   function toggle(path: string) {
+    if (onToggle) {
+      onToggle(path);
+      return;
+    }
     setExpanded((previous) => {
       const next = new Set(previous);
       if (next.has(path)) next.delete(path);
@@ -60,6 +74,10 @@ export function FileTree({
   function activate(index: number) {
     const row = rows[index];
     if (!row) return;
+    if (row.node.action) {
+      onAction?.(row.node.path);
+      return;
+    }
     if (row.node.folder) toggle(row.node.path);
     else if (!(row.node.code?.includes("D") && !row.node.changes.includes("conflict")))
       onFile(row.node.path);
@@ -70,6 +88,7 @@ export function FileTree({
       className="file-tree"
       role="tree"
       aria-label="Workspace files"
+      aria-busy={rows.some((row) => row.node.action === "loading") || undefined}
       tabIndex={0}
       aria-activedescendant={rows.length ? `${id}-${active}` : undefined}
       onKeyDown={(event) => {
@@ -127,7 +146,9 @@ export function FileTree({
           const change = node.changes[0];
           const description = node.changes.map((status) => gitLabels[status]).join(", ");
           const disabled =
-            !node.folder && node.code?.includes("D") && !node.changes.includes("conflict");
+            node.action === "loading" ||
+            node.action === "empty" ||
+            (!node.folder && node.code?.includes("D") && !node.changes.includes("conflict"));
           const Icon = node.folder ? (row.expanded ? FolderOpen : Folder) : FileCode2;
           return (
             <div
@@ -155,11 +176,17 @@ export function FileTree({
                 onFocus={() => setActivePath(node.path)}
                 disabled={disabled || undefined}
                 aria-label={
-                  node.folder
-                    ? `${row.expanded ? "Collapse" : "Expand"} ${node.path}`
-                    : `Open ${node.path}`
+                  node.action
+                    ? node.name
+                    : node.folder
+                      ? `${row.expanded ? "Collapse" : "Expand"} ${node.path}`
+                      : `Open ${node.path}`
                 }
-                title={`${node.path}${description ? ` — ${node.folder ? "Contains: " : ""}${description}` : ""}${node.code ? ` (${node.code})` : ""}`}
+                title={
+                  node.action
+                    ? node.name
+                    : `${node.path}${description ? ` — ${node.folder ? "Contains: " : ""}${description}` : ""}${node.code ? ` (${node.code})` : ""}`
+                }
                 onClick={() => {
                   setActivePath(node.path);
                   scroll.current?.focus();
@@ -175,7 +202,7 @@ export function FileTree({
                 ) : (
                   <span className="tree-icon-spacer" />
                 )}
-                <Icon size={14} aria-hidden="true" />
+                {!node.action && <Icon size={14} aria-hidden="true" />}
                 <span className="tree-name">{node.name}</span>
               </button>
               {change && (

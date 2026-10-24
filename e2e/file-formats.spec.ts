@@ -1,3 +1,4 @@
+import { mockFileDiscovery } from "./mock-file-discovery";
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { officeFixture } from "../tests/fixtures/office";
@@ -74,9 +75,7 @@ function pdfFixture(width = 400, height = 500) {
   return pdf;
 }
 test.beforeEach(async ({ page }) => {
-  await page.route("**/api/workspace/files?*", (route) =>
-    route.fulfill({ json: { files, truncated: false } }),
-  );
+  await mockFileDiscovery(page, files);
   await page.route("**/api/skills", (route) => route.fulfill({ json: { skills: [] } }));
   await page.route("**/api/workspace/file?*", (route) =>
     route.fulfill({

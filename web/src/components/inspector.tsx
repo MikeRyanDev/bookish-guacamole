@@ -1,5 +1,5 @@
 import { lazy, Suspense, useRef, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useIsFetching } from "@tanstack/react-query";
 import {
   FileCode2,
   BookOpen,
@@ -12,9 +12,9 @@ import {
   X,
 } from "lucide-react";
 import Markdown from "react-markdown";
-import { type AppConfig, filesQuery, skillsQuery, request } from "../api";
+import { type AppConfig, skillsQuery, request } from "../api";
 import { IconButton } from "./icon-button";
-import { FileTree } from "./file-tree";
+import { WorkspaceFileBrowser } from "./workspace-file-browser";
 import { FileViewer } from "./file-viewer";
 import { viewerKind } from "../viewers/registry";
 const AssetViewer = lazy(() =>
@@ -41,7 +41,7 @@ function WorkspaceInspector({
   const [expanded, setExpanded] = useState(false);
   const [copyStatus, setCopyStatus] = useState<{ path: string; text: string }>();
   const searchInput = useRef<HTMLInputElement>(null);
-  const files = useQuery(filesQuery(config.token, config.workspaceId));
+  const filesFetching = useIsFetching({ queryKey: ["files", config.workspaceId] });
   const skills = useQuery(skillsQuery(config.token));
   const preview = useQuery({
     queryKey: ["file", config.workspaceId, file],
@@ -54,10 +54,6 @@ function WorkspaceInspector({
     enabled: panel === "files" && Boolean(file) && kind === "text",
     staleTime: 1000,
   });
-  const state = panel === "files" ? files : skills;
-  const paths = (files.data?.files ?? []).filter((path) =>
-    path.toLowerCase().includes(filter.toLowerCase()),
-  );
   async function copyPath() {
     if (!file) return;
     try {
@@ -102,9 +98,11 @@ function WorkspaceInspector({
           )}
           <IconButton
             label="Refresh inspector"
-            disabled={state.isFetching}
+            disabled={panel === "files" ? filesFetching > 0 : skills.isFetching}
             onClick={() => {
-              void state.refetch();
+              if (panel === "files")
+                void queryClient.invalidateQueries({ queryKey: ["files", config.workspaceId] });
+              else void skills.refetch();
               if (panel === "files" && file) {
                 if (kind === "text") void preview.refetch();
                 else
@@ -145,43 +143,13 @@ function WorkspaceInspector({
                   </IconButton>
                 )}
               </div>
-              {files.isLoading && (
-                <p role="status" className="muted">
-                  Loading files…
-                </p>
-              )}
-              {files.error && (
-                <div role="alert">
-                  <p>Could not load files. {files.error.message}</p>
-                  <button onClick={() => void files.refetch()}>Retry file list</button>
-                </div>
-              )}
               <div className="file-list">
-                {files.data?.files.length === 0 && !files.data.truncated && (
-                  <p className="muted">No files yet.</p>
-                )}
-                {filter && files.data && !paths.length && (
-                  <p className="muted">No files match “{filter}”.</p>
-                )}
-                {files.data && files.data.files.length > 0 && (
-                  <FileTree
-                    paths={files.data.files}
-                    git={files.data.git}
-                    filter={filter}
-                    selected={file}
-                    onFile={onFile}
-                  />
-                )}
-                {files.data?.git?.available === false && (
-                  <p className="muted" role="status">
-                    Git status unavailable. Refresh to retry.
-                  </p>
-                )}
-                {files.data?.truncated && (
-                  <p className="muted">
-                    File listing limited. Search covers only the listed files.
-                  </p>
-                )}
+                <WorkspaceFileBrowser
+                  config={config}
+                  filter={filter}
+                  selected={file}
+                  onFile={onFile}
+                />
               </div>
             </nav>
             {file ? (

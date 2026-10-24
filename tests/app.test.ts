@@ -44,6 +44,30 @@ test("local browser bootstrap refuses cross-origin access and protects workspace
     });
     expect(wrongHost).toBe(403);
     expect((await fetch(origin + "/api/workspace/files")).status).toBe(401);
+    for (const path of ["directory?path=", "search?q=example"]) {
+      expect((await fetch(origin + "/api/workspace/" + path)).status).toBe(401);
+      expect(
+        (
+          await fetch(origin + "/api/workspace/" + path, {
+            headers: { authorization: `Bearer ${app.token}`, origin: "https://untrusted.example" },
+          })
+        ).status,
+      ).toBe(403);
+    }
+    for (const path of [
+      "directory?path=../",
+      "directory?path=.git",
+      "directory?cursor=invalid",
+      "search?q=x&cursor=invalid",
+    ]) {
+      expect(
+        (
+          await fetch(origin + "/api/workspace/" + path, {
+            headers: { authorization: `Bearer ${app.token}` },
+          })
+        ).status,
+      ).toBe(400);
+    }
     const asset = origin + "/api/workspace/asset?path=example.png";
     await writeFile(join(app.root, "example.png"), Buffer.from([137, 80, 78, 71, 0, 255]));
     expect((await fetch(asset)).status).toBe(401);
@@ -112,6 +136,22 @@ test("workspace APIs create isolated identities and preserve files when an entry
       truncated: false,
       git: { available: true, entries: {} },
     });
+    await writeFile(join(workspace.path, "unique.ts"), "scoped");
+    const directoryPage = await (
+      await fetch(origin + `/api/workspace/directory?workspace=${workspace.id}`, { headers })
+    ).json();
+    expect(directoryPage.entries).toContainEqual({ path: "unique.ts", kind: "file" });
+    const searchPage = await (
+      await fetch(origin + `/api/workspace/search?workspace=${workspace.id}&q=unique`, { headers })
+    ).json();
+    expect(searchPage.files).toEqual(["unique.ts"]);
+    expect(
+      (
+        await (
+          await fetch(origin + "/api/workspace/search?workspace=default&q=unique", { headers })
+        ).json()
+      ).files,
+    ).toEqual([]);
     expect(
       (await fetch(origin + `/api/workspaces/${workspace.id}`, { method: "DELETE", headers }))
         .status,

@@ -1,3 +1,4 @@
+import { browseWorkspace, searchWorkspace, FileDiscoveryError } from "./workspace-discovery.js";
 import { openWorkspaceRegistry, WorkspaceError, type WorkspaceEntry } from "./workspaces.js";
 import { CODING_MODEL } from "./model.js";
 import { randomBytes } from "node:crypto";
@@ -203,6 +204,31 @@ export async function startApp(
         return;
       }
     }
+    if (
+      ["/api/workspace/directory", "/api/workspace/search"].includes(url.pathname) &&
+      request.method === "GET"
+    ) {
+      const controller = new AbortController();
+      const abort = () => controller.abort();
+      response.once("close", abort);
+      try {
+        const root = selectedWorkspace(url).path;
+        const options = {
+          cursor: url.searchParams.get("cursor") ?? undefined,
+          signal: controller.signal,
+        };
+        const result = url.pathname.endsWith("/directory")
+          ? await browseWorkspace(root, {
+              ...options,
+              directory: url.searchParams.get("path") ?? "",
+            })
+          : await searchWorkspace(root, { ...options, query: url.searchParams.get("q") ?? "" });
+        if (!response.destroyed) json(response, result);
+      } finally {
+        response.off("close", abort);
+      }
+      return;
+    }
     if (url.pathname === "/api/workspace/files" && request.method === "GET") {
       json(response, await listWorkspaceFiles(selectedWorkspace(url).path));
       return;
@@ -257,7 +283,7 @@ export async function startApp(
   }
   const server = createServer((request, response) => {
     handle(request, response).catch((error) => {
-      if (error instanceof WorkspaceError) {
+      if (error instanceof WorkspaceError || error instanceof FileDiscoveryError) {
         json(response, { error: error.message }, error.status);
         return;
       }

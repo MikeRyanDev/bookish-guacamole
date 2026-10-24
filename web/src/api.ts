@@ -88,3 +88,40 @@ export async function changeWorkspace<T>(
     );
   return result as T;
 }
+
+/** Directory and search pages share the files prefix for post-run invalidation. */
+export const directoryQuery = (
+  token: string,
+  workspace: string,
+  directory: string,
+  cursor?: string,
+) =>
+  queryOptions({
+    queryKey: ["files", workspace, "directory", directory, cursor],
+    queryFn: ({ signal }) =>
+      request<import("../../src/workspace-discovery").DirectoryPage>(
+        `/api/workspace/directory?${new URLSearchParams({ workspace, path: directory, ...(cursor ? { cursor } : {}) })}`,
+        token,
+        signal,
+      ),
+    staleTime: 2000,
+    retry: false,
+  });
+
+export const searchFilesQuery = (
+  token: string,
+  workspace: string,
+  query: string,
+  cursor?: string,
+) =>
+  queryOptions({
+    queryKey: ["files", workspace, "search", query, cursor],
+    queryFn: ({ signal }) =>
+      request<import("../../src/workspace-discovery").SearchPage>(
+        `/api/workspace/search?${new URLSearchParams({ workspace, q: query, ...(cursor ? { cursor } : {}) })}`,
+        token,
+        signal,
+      ),
+    staleTime: 2000,
+    retry: false,
+  });

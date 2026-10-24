@@ -33,6 +33,7 @@ export interface FileTreeNode {
   children: FileTreeNode[];
   changes: GitChange[];
   code?: string;
+  action?: "more" | "loading" | "error" | "empty";
 }
 export interface FileTreeRow {
   node: FileTreeNode;
