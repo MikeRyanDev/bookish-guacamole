@@ -483,3 +483,21 @@ Approve Once keeps its label during submission. A failing regression reproduced 
 
 An initial concurrent browser run lost a trace artifact. The rerun used an isolated output directory and passed.
 An independent fixed-data usability review passed command approval, saved scope, Settings discovery, and mobile readability. No new model calls were required.
+
+## Thread-specific plan and permission selectors
+
+The audit found that both selectors already use the selected thread. No global-setting leak reproduced, and no runtime behavior changed.
+Native session settings use the thread's execution log. The planning preference uses the thread ID as its metadata key.
+The UI query key includes workspace and thread IDs, and the conversation remounts for a different thread.
+
+New deterministic tests cover three independent threads across restart. A shell-side-effect test uses the same command in all three:
+YOLO runs it once, Plan denies it, and Require permissions pauses for approval. Neither other thread repeats the side effect.
+The browser test creates three real backend threads without model calls. It covers selector changes, sidebar navigation, reloads, delayed saves during navigation, and new-thread defaults.
+
+- `pnpm check`: passed lint, design checks, TypeScript, 155 tests, and build; 47 declared persistence skips.
+- `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm exec playwright test e2e/thread-permissions.spec.ts e2e/thread-navigation.spec.ts e2e/permissions.spec.ts --output .data/thread-scope-results`: 12 passed.
+- `node --test example/greet.test.js`: one passed.
+- `git diff --check`: passed.
+
+The initial browser test used Playwright's immediate `check()` assertion on a server-confirmed radio. It now clicks and waits for the confirmed selection.
+Saved approval rules remain workspace-scoped; that does not make the conversation's Plan or permission selector global.

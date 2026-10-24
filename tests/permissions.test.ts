@@ -461,3 +461,57 @@ test("planning is independent of permissions and restores the selected preferenc
     await f.close();
   }
 });
+
+test("three threads retain independent permission and planning settings across restart", async () => {
+  const f = await codingFixture();
+  try {
+    const threads = [f.agent().threadId, f.agent().threadId, f.agent().threadId];
+    const [yolo, plan, review] = threads as [string, string, string];
+    await f.settings.setPermissions(yolo, "bypass");
+    await f.settings.setPlanOnly(plan, true);
+    await f.settings.setPermissions(review, "acceptEdits");
+    const expected = [
+      { mode: "bypass", permissionMode: "bypass", planOnly: false },
+      { mode: "plan", permissionMode: "acceptEdits", planOnly: true },
+      { mode: "acceptEdits", permissionMode: "acceptEdits", planOnly: false },
+    ];
+    for (const [index, thread] of threads.entries())
+      expect(await f.settings.read(thread)).toMatchObject(expected[index]!);
+    await f.restart();
+    for (const [index, thread] of threads.entries())
+      expect(await f.settings.read(thread)).toMatchObject(expected[index]!);
+    await f.settings.setPermissions(plan, "bypass");
+    await f.settings.setPlanOnly(plan, false);
+    expect(await f.settings.read(review)).toMatchObject(expected[2]!);
+    expect(await f.settings.read(yolo)).toMatchObject(expected[0]!);
+  } finally {
+    await f.close();
+  }
+});
+
+test("the same command runs, is denied, or asks according to its thread", async () => {
+  const f = await codingFixture();
+  try {
+    const yolo = f.agent();
+    const plan = f.agent();
+    const required = f.agent();
+    await f.settings.setPermissions(yolo.threadId, "bypass");
+    await f.settings.setPlanOnly(plan.threadId, true);
+    await f.settings.setPermissions(required.threadId, "acceptEdits");
+    const command = { command: "printf x >> thread-count.txt" };
+    f.tool("bash", command);
+    await send(yolo);
+    expect(yolo.pendingInterrupts).toHaveLength(0);
+    expect(await readFile(join(f.root, "thread-count.txt"), "utf8")).toBe("x");
+    f.tool("bash", command);
+    await send(plan);
+    expect(plan.pendingInterrupts).toHaveLength(0);
+    expect(await readFile(join(f.root, "thread-count.txt"), "utf8")).toBe("x");
+    f.tool("bash", command);
+    await send(required);
+    expect(required.pendingInterrupts).toHaveLength(1);
+    expect(await readFile(join(f.root, "thread-count.txt"), "utf8")).toBe("x");
+  } finally {
+    await f.close();
+  }
+});

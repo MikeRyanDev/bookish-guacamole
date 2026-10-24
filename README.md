@@ -175,7 +175,8 @@ The composer has two permission choices:
 
 **Plan mode** is a separate toggle beside Create goal. It permits inspection but prevents edits and shell commands.
 The permission preference stays selected during planning. Turning Plan mode off restores that preference.
-Both choices persist per conversation and apply to the next turn. Pending approvals still require a decision.
+Both choices belong to the selected thread and survive reloads. One thread can use YOLO while another uses Plan mode and a third requires permissions.
+New threads start with Plan off and Require permissions. Changes apply to the next turn. Pending approvals still require a decision.
 
 Interrupts offer **Reject**, **Approve Once**, and **Always Approve**. Both approval buttons use the positive action style.
 Always Approve shows the exact scope before **Approve and Save** submits it. Saved permissions apply across conversations in the workspace.
