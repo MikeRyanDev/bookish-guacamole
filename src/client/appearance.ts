@@ -57,6 +57,7 @@ export function applyAppearance({ theme, accent }: Appearance) {
 
 export function useAppearance() {
   const [appearance, setAppearance] = useState(readAppearance);
+  const [storageError, setStorageError] = useState(false);
   useEffect(() => {
     applyAppearance(appearance);
     const media = matchMedia("(prefers-color-scheme: dark)");
@@ -65,13 +66,16 @@ export function useAppearance() {
     try {
       localStorage.setItem("starter-theme", appearance.theme);
       localStorage.setItem("starter-accent", appearance.accent);
+      setStorageError(false);
     } catch {
-      // Private/restricted storage must not prevent changing appearance this session.
+      setStorageError(true);
     }
     return () => media.removeEventListener("change", update);
   }, [appearance]);
   return {
     ...appearance,
+    storageError,
+    retryStorage: () => setAppearance((previous) => ({ ...previous })),
     setTheme: (theme: Theme) => setAppearance((previous) => ({ ...previous, theme })),
     setAccent: (accent: Accent) => setAppearance((previous) => ({ ...previous, accent })),
   };

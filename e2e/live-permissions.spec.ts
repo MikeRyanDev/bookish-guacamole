@@ -27,6 +27,7 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
   await expect(permission).toBeHidden({ timeout: 60000 });
   await expect(page.getByRole("button", { name: "Stop run" })).toBeHidden({ timeout: 60000 });
   await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("tab", { name: "Permissions", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Remove permission for bash npm test" }),
   ).toBeVisible();
@@ -66,8 +67,9 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
   await expect(page.getByRole("button", { name: "Require permissions" })).toBeVisible();
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("tab", { name: "Permissions", exact: true }).click();
   await page.getByRole("button", { name: "Remove permission for bash npm test" }).click();
-  await expect(page.getByText("No saved permissions.")).toBeVisible({ timeout: 15000 });
+  await expect(page.getByText("No saved rules.")).toBeVisible({ timeout: 15000 });
   await page.keyboard.press("Escape");
   process.loadEnvFile(".env");
   const intelligence = new CopilotKitIntelligence({

@@ -1,6 +1,6 @@
-import { useId, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ListChecks } from "lucide-react";
+import { ListChecks, LoaderCircle, RefreshCw, Trash2 } from "lucide-react";
 import type { PermissionRule } from "@tanstack/ai-harness/plugins";
 import type { ApprovalSettings } from "../../shared/permissions";
 import { request, changeWorkspace, type AppConfig } from "../api";
@@ -89,6 +89,8 @@ export function SavedPermissions({
   removing,
   onRemove,
   onRefresh,
+  refreshing,
+  onRetry,
 }: {
   rules: PermissionRule[];
   loading?: boolean;
@@ -96,43 +98,86 @@ export function SavedPermissions({
   removing?: boolean;
   onRemove: (rule: PermissionRule) => void;
   onRefresh: () => void;
+  refreshing?: boolean;
+  onRetry?: () => void;
 }) {
   const refresh = useRef<HTMLButtonElement>(null);
+  const wasRemoving = useRef(false);
+  useEffect(() => {
+    if (
+      wasRemoving.current &&
+      !removing &&
+      !refresh.current?.closest("[hidden]") &&
+      (document.activeElement === document.body || document.activeElement === refresh.current)
+    )
+      refresh.current?.focus();
+    wasRemoving.current = !!removing;
+  }, [removing]);
   return (
     <section className="workspace-permissions" aria-label="Workspace permissions">
-      <h3>Workspace permissions</h3>
+      <div className="saved-rules-heading">
+        <h3>Saved rules</h3>
+        <button
+          ref={refresh}
+          type="button"
+          className="settings-icon-action"
+          aria-label="Refresh permissions"
+          title="Refresh permissions"
+          disabled={loading || refreshing || removing}
+          onClick={onRefresh}
+        >
+          {refreshing ? (
+            <LoaderCircle size={15} className="settings-spinner" />
+          ) : (
+            <RefreshCw size={15} />
+          )}
+        </button>
+      </div>
       {loading ? (
-        <p role="status">Loading permissions…</p>
-      ) : rules.length === 0 ? (
-        <p>No saved permissions.</p>
-      ) : (
+        <div className="settings-rule-skeleton" role="status" aria-label="Loading saved rules">
+          <span />
+          <span />
+        </div>
+      ) : rules.length ? (
         <ul className="saved-permissions">
           {rules.map((rule) => (
             <li key={JSON.stringify(rule)}>
               <span>
                 <strong>{rule.tool}</strong>
-                <code>{rule.resource ?? "Every call of this tool"}</code>
+                <code>{rule.resource ?? "All calls"}</code>
               </span>
               <button
                 type="button"
-                disabled={removing}
+                className="settings-icon-action"
+                disabled={removing || refreshing}
+                title="Remove rule"
                 aria-label={`Remove permission for ${rule.tool} ${rule.resource ?? "all calls"}`}
                 onClick={() => {
                   onRemove(rule);
                   refresh.current?.focus();
                 }}
               >
-                Remove
+                <Trash2 size={15} />
               </button>
             </li>
           ))}
         </ul>
+      ) : (
+        !error && <p className="settings-empty">No saved rules.</p>
       )}
-      {removing && <p role="status">Removing permission after active turns finish…</p>}
-      {error && <p role="alert">{error}</p>}
-      <button ref={refresh} type="button" onClick={onRefresh}>
-        Refresh permissions
-      </button>
+      {removing && (
+        <p className="settings-pending" role="status">
+          <LoaderCircle size={14} className="settings-spinner" /> Removing…
+        </p>
+      )}
+      {error && (
+        <div className="settings-inline-error" role="alert">
+          <span>{rules.length ? "Couldn’t update rules." : "Couldn’t load rules."}</span>
+          <button disabled={loading || refreshing || removing} onClick={onRetry ?? onRefresh}>
+            Retry
+          </button>
+        </div>
+      )}
     </section>
   );
 }
@@ -143,6 +188,7 @@ export function WorkspacePermissions({ config }: { config: AppConfig }) {
   const rules = useQuery({
     queryKey: key,
     queryFn: ({ signal }) => request<PermissionRule[]>(url, config.token, signal),
+    retry: false,
   });
   const remove = useMutation({
     mutationFn: (rule: PermissionRule) =>
@@ -153,10 +199,16 @@ export function WorkspacePermissions({ config }: { config: AppConfig }) {
     <SavedPermissions
       rules={rules.data ?? []}
       loading={rules.isPending}
+      refreshing={rules.isFetching && !rules.isPending}
       error={remove.error?.message ?? rules.error?.message}
       removing={remove.isPending}
       onRemove={(rule) => remove.mutate(rule)}
+      onRetry={() => {
+        if (remove.error && remove.variables) remove.mutate(remove.variables);
+        else void rules.refetch();
+      }}
       onRefresh={() => {
+        remove.reset();
         void rules.refetch();
       }}
     />

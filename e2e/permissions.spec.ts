@@ -22,7 +22,7 @@ for (const theme of ["light", "dark"])
       await expect(page.getByText("Decision: always")).toBeVisible();
       await page.getByRole("button", { name: "Settings", exact: true }).click();
       await page.getByRole("button", { name: "Remove permission for bash pnpm test" }).click();
-      await expect(page.getByText("No saved permissions.")).toBeVisible();
+      await expect(page.getByText("No saved rules.")).toBeVisible();
       await expect(page.getByRole("button", { name: "Refresh permissions" })).toBeFocused();
       expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
