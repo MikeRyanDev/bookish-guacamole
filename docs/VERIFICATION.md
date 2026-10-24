@@ -501,3 +501,10 @@ The browser test creates three real backend threads without model calls. It cove
 
 The initial browser test used Playwright's immediate `check()` assertion on a server-confirmed radio. It now clicks and waits for the confirmed selection.
 Saved approval rules remain workspace-scoped; that does not make the conversation's Plan or permission selector global.
+
+## Goal popover copy removal
+
+Removed the automatic resume note and the repeated status/round line from the goal popover. Goal text, result/reason, and action buttons remain.
+`pnpm check` passed (155 tests, 47 declared skips). `node --test example/greet.test.js` passed.
+With `FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274`, `pnpm exec playwright test e2e/composer.spec.ts e2e/goals.spec.ts --output .data/goal-copy-results` passed nine tests with one opt-in skip, and `pnpm design:browser --output .data/goal-copy-design-results` passed.
+A direct mobile preview check confirmed that the removed text is absent and pending-approval buttons remain disabled. `git diff --check` passed.

@@ -70,19 +70,7 @@ export function GoalStatus({
       <div className="goal-status">
         <p className="goal-objective">{goal.text}</p>
         {goal.reason && <p>{goal.reason}</p>}
-        {goal.note && (
-          <p>
-            {goal.note.replace(
-              /Run \/goal resume[^.]*\.?|run \/goal resume\.?/gi,
-              "Use Resume goal to continue.",
-            )}
-          </p>
-        )}
-
         <div className="goal-actions">
-          <span className="muted" role="status">
-            {status} · Round {goal.round}/20
-          </span>
           {!running && goal.status !== "met" && (
             <button type="button" disabled={disabled || pendingApproval} onClick={onResume}>
               Resume goal
