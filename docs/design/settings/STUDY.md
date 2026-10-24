@@ -43,3 +43,21 @@ The built-in image generator produced the concept before UI implementation. The 
 The settings browser suite covers live OS theme changes, persistence, validation, format switching, custom removal, both themes at 1440px and 390px, axe, and Escape. The isolated application test uses the real Hono API, native harness settings and SQLite metadata: browser changes survive reload, new threads inherit both defaults, and existing threads retain their settings. Unit tests additionally reopen the store, exercise concurrent initialization/updates, and verify custom accent contrast. HTTP tests cover authentication, strict input and workspace isolation.
 
 Fixtures use synthetic model labels. The isolated application intentionally has no Intelligence connection, so its background session list reports unavailable. No model or Learning calls were made. This is local settings persistence and rendering evidence, not live model or Learning proof. Captures and raw logs are ignored. One initial parallel Playwright invocation failed because separate runs shared the output directory; isolated output paths fixed the verification harness.
+
+## Merged-tree verification
+
+Merged implementation: `36948fb` on local `main` (feature commit `6de1b16`).
+The following commands ran against that merged source:
+
+```sh
+pnpm check
+node --test example/greet.test.js
+SETTINGS_APP_URL=http://127.0.0.1:4205 FILE_VIEWER_APP_URL=http://127.0.0.1:4205 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4207 pnpm test:e2e e2e/settings.spec.ts e2e/appearance.spec.ts --output=.data/settings-merged-browser
+git diff --check
+```
+
+Results: all check stages passed, 177 unit tests passed with 47 declared skips, the greeting passed, and all four browser scenarios passed. The final documentation commit changes no tested application source.
+
+`pnpm format:check` reports existing formatting issues in `MONDAY_CUTOVER_CHECKLIST.md`, `docs/VERIFICATION.md`, and `docs/design/permissions/STUDY.md`. This delivery did not edit those files. Formatting checks pass for all changed files. The unrelated local Monday checklist edit remains untouched.
+
+No dependency, upstream stack, preview artifact, shared deployment, or live model changed. Weekend preview publication and installed Learning acceptance were therefore not exercised. The running development server needs a restart to load the new server routes; UI hot reload alone does not reload Hono.
