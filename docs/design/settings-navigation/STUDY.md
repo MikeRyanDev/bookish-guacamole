@@ -67,3 +67,16 @@ Regressions first failed for the absent tabs and lost focus after swatch removal
 The application integration uses real local HTTP/native settings with an isolated backend configuration. Model/permission persistence and new-thread inheritance pass through the new navigation. No model or Learning calls were made; live model suites are not required for these UI-only changes. The live-permission test path was updated for the new category and empty label but was not executed. Existing production/shared environments and dependency previews are unchanged.
 
 PRODUCT.md, DESIGN.md and the related sidecar narrative now describe the new category structure and states. Unrelated pre-existing sidecar specimens were preserved. Repository-wide formatting has pre-existing issues in the Monday checklist and older verification studies; changed-file formatting is checked separately.
+
+## Merged-tree verification
+
+Implementation merged to local `main` as `360f970` (feature `f03b1c0`). Against that merged source:
+
+```sh
+pnpm check
+node --test example/greet.test.js
+SETTINGS_APP_URL=http://127.0.0.1:4215 FILE_VIEWER_APP_URL=http://127.0.0.1:4215 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4217 pnpm test:e2e e2e/settings-navigation.spec.ts e2e/settings.spec.ts e2e/appearance.spec.ts --output=.data/settings-navigation-merged-browser
+git diff --check
+```
+
+All check stages passed, with 177 unit tests and 47 declared skips. The greeting and all 10 merged-tree browser scenarios passed. The final documentation commit changes no application source. The unrelated local Monday checklist edit remains untouched. Temporary review servers were stopped; the user's running development server was not interrupted.
