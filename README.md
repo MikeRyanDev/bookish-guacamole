@@ -165,3 +165,19 @@ Stop the app with Ctrl-C. The backend remains available until you run `pnpm inte
 | Need to undo the temporary image      | Run `pnpm intelligence:image:restore` and follow the [retirement checklist](docs/TEMPORARY-INTELLIGENCE.md#retire-the-workaround-after-release) |
 
 The app accepts only local Intelligence URLs. Private dot paths and outside symlinks are excluded from file previews and downloads. Large frontend chunks remain a build warning. For the exact checks, real Learning runs, screenshots, and limits, read the [latest UI proof](docs/NEW-IMPROVEMENTS-VERIFICATION.md) and [runtime verification record](docs/VERIFICATION.md).
+
+## Approval modes
+
+Use **Approval mode** beside the composer to select how the agent works:
+
+- **Review changes** applies the permission rules. Ordinary edits and commands ask unless a rule allows them.
+- **Allow file edits** allows ordinary edits. Commands and sensitive paths still ask unless a rule allows them.
+- **Plan only** allows permitted reads. It blocks edits and shell commands.
+- **YOLO** runs tools without approval from the permissions plugin, even when its rules deny them. Separate tool restrictions still apply.
+
+New conversations start in Allow file edits. Existing harness conversations retain their mode. Changes apply to the next turn, including the next goal round. Pending approvals still require a decision.
+
+**Allow once** applies only to the proposed call. **Remember this permission** shows the exact scope before **Save and allow** submits it.
+Saved permissions apply to all conversations in the workspace and survive restart. Some shell expressions cannot be remembered.
+**Workspace permissions** lists saved rules and provides a Remove action. Removal takes effect after active turns finish. It does not undo a submitted approval.
+YOLO does not change saved rules. Leaving YOLO restores the selected mode's rules.

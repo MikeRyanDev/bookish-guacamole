@@ -1,3 +1,5 @@
+import { createPermissionSettings } from "./permission-settings.js";
+import { z } from "zod";
 import { browseWorkspace, searchWorkspace, FileDiscoveryError } from "./workspace-discovery.js";
 import { openWorkspaceRegistry, WorkspaceError, type WorkspaceEntry } from "./workspaces.js";
 import { CODING_MODEL } from "./model.js";
@@ -75,17 +77,31 @@ export async function startApp(
       ),
     );
     const host = createHarnessHost({
-      persistence: defineAIPersistence({ stores: { log: store.log } }),
+      persistence: defineAIPersistence({ stores: { log: store.log, metadata: store.metadata } }),
     });
     const harness = createCodingHarness({ root: workspace.path, intelligence, containerId });
+    const approvalSettings = createPermissionSettings({
+      host,
+      harness,
+      store,
+      root: workspace.path,
+    });
     const runtime = new CopilotRuntime({
-      agents: { [agentId]: createHarnessAgent({ host, harness, agentId }) },
+      agents: {
+        [agentId]: createHarnessAgent({
+          host,
+          harness,
+          agentId,
+          initialize: approvalSettings.initialize,
+        }),
+      },
       intelligence,
       identifyUser: () => ({ id: "local-developer", name: "Local developer" }),
     });
     return {
       agentId,
       basePath,
+      approvalSettings,
       listener: createCopilotNodeListener({ runtime, basePath }),
       close: async () => {
         await host.close();
@@ -172,6 +188,44 @@ export async function startApp(
     if (request.headers.authorization !== `Bearer ${token}`) {
       json(response, { error: "Unauthorized" }, 401);
       return;
+    }
+    if (url.pathname === "/api/approval-mode") {
+      const settings = runtimeFor(selectedWorkspace(url)).approvalSettings;
+      const thread = url.searchParams.get("thread") ?? "";
+      if (request.method === "GET") {
+        json(response, await settings.read(thread));
+        return;
+      }
+      if (request.method === "PUT") {
+        const input = z
+          .object({ mode: z.string() })
+          .strict()
+          .safeParse(await readJson(request));
+        if (!input.success) throw new WorkspaceError("Send an approval mode.");
+        json(response, await settings.set(thread, input.data.mode));
+        return;
+      }
+    }
+    if (url.pathname === "/api/permissions") {
+      const settings = runtimeFor(selectedWorkspace(url)).approvalSettings;
+      if (request.method === "GET") {
+        json(response, await settings.list());
+        return;
+      }
+      if (request.method === "DELETE") {
+        const rule = z
+          .object({
+            tool: z.string().min(1),
+            resource: z.string().optional(),
+            decision: z.literal("allow"),
+            kind: z.enum(["read", "edit", "execute"]).optional(),
+          })
+          .strict()
+          .safeParse(await readJson(request));
+        if (!rule.success) throw new WorkspaceError("Send a saved permission.");
+        json(response, await settings.remove(rule.data));
+        return;
+      }
     }
     if (url.pathname === "/api/workspaces") {
       if (request.method === "GET") {

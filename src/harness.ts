@@ -1,3 +1,4 @@
+import { permissionPreview } from "./permission-preview.js";
 import { SkillRegistry } from "@copilotkit/runtime/internal/learned-skills";
 import type { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 import { type AnyTextAdapter } from "@tanstack/ai";
@@ -37,6 +38,7 @@ export function createCodingHarness(options: {
         bashTimeoutMs: 30_000,
       }),
       projectInstructions({ root: options.root, env: false }),
+      permissionPreview(options.root),
       permissions({ root: options.root }),
       todos(),
       goal({ judge: options.adapter ?? createCodingAdapter(), maxRounds: 20 }),

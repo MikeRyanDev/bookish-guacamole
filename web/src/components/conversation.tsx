@@ -1,3 +1,5 @@
+import type { AppConfig } from "../api";
+import { ConversationApprovals } from "./approval-settings";
 import { useEffect, useRef, useState } from "react";
 import {
   useAgent,
@@ -17,6 +19,7 @@ import { goalFromState } from "./goal-status";
 import { ConversationComposer } from "./conversation-composer";
 
 type ConversationProps = {
+  config: AppConfig;
   threadId: string;
   runtimeAgentId: string;
   existing: boolean;
@@ -34,6 +37,7 @@ export function Conversation(props: ConversationProps) {
 }
 /** Renders the SDK transcript without a second message store. */
 function ActiveConversation({
+  config,
   threadId,
   runtimeAgentId,
   existing,
@@ -74,7 +78,7 @@ function ActiveConversation({
     agentId,
     renderInChat: false,
     render: (props) => (
-      <Permission key={props.interrupt?.id} {...props} messages={agent.messages} />
+      <Permission key={props.interrupt?.id} {...props} messages={agent.messages} state={agent.state} onResolved={() => input.current?.focus()} />
     ),
   });
   useEffect(() => {
@@ -181,6 +185,7 @@ function ActiveConversation({
         }
       />
       <ConversationComposer
+        approvals={<ConversationApprovals config={config} threadId={threadId}/>}
         draft={goalMode ? goalDraft : draft}
         onDraftChange={goalMode ? setGoalDraft : setDraft}
         goalMode={goalMode}

@@ -1,10 +1,11 @@
-import { useId, useLayoutEffect, type RefObject } from "react";
+import { useId, useLayoutEffect, type ReactNode, type RefObject } from "react";
 import type { Goal } from "@tanstack/ai-harness/plugins";
 import { ArrowUp, Square, Target } from "lucide-react";
 import { IconButton } from "./icon-button";
 import { GoalStatus } from "./goal-status";
 
 type ComposerProps = {
+  approvals?: ReactNode;
   draft: string;
   onDraftChange: (draft: string) => void;
   goalMode: boolean;
@@ -22,6 +23,7 @@ type ComposerProps = {
 };
 /** Owns composer geometry; draft growth and explicit goal creation change its height, never persisted goal state. */
 export function ConversationComposer({
+  approvals,
   draft,
   onDraftChange,
   goalMode,
@@ -108,6 +110,7 @@ export function ConversationComposer({
           to check completion. Pauses for approvals.
         </p>
       )}
+      {approvals}
       <div className="composer-toolbar">
         <div className="composer-tools">
           {goal && !goalMode ? (

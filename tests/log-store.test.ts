@@ -18,9 +18,9 @@ runPersistenceConformance(
   () => {
     const directory = mkdtempSync(join(tmpdir(), "tanstack-log-"));
     const path = join(directory, "harness.sqlite");
-    const { log, close } = openLogStore(path);
+    const { log, metadata, close } = openLogStore(path);
     resources.push({ directory, close });
-    const persistence = defineAIPersistence({ stores: { log } });
+    const persistence = defineAIPersistence({ stores: { log, metadata } });
     paths.set(persistence, path);
     return persistence;
   },
@@ -29,7 +29,6 @@ runPersistenceConformance(
       "messages",
       "runs",
       "interrupts",
-      "metadata",
       "activities",
       "artifacts",
       "blobs",
@@ -39,9 +38,9 @@ runPersistenceConformance(
     twin: (persistence) => {
       const path = paths.get(persistence);
       if (!path) throw new Error("Missing test database");
-      const { log, close } = openLogStore(path);
+      const { log, metadata, close } = openLogStore(path);
       resources.push({ directory: "", close });
-      return defineAIPersistence({ stores: { log } });
+      return defineAIPersistence({ stores: { log, metadata } });
     },
   },
 );

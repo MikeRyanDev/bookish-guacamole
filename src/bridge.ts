@@ -122,14 +122,22 @@ export function createHarnessAgent(options: {
   host: HarnessHost;
   harness: AnyHarness;
   agentId?: string;
+  initialize?: (threadId: string) => Promise<void>;
 }): HttpAgent {
   const handler = createHarnessHandler({
     ...options,
     openAccess: true,
     media: { secret: randomBytes(32).toString("hex") },
   });
+  const goalHandler = withGoalCommands(handler, options.host, options.harness);
   return new HarnessAgent(
-    withGoalCommands(handler, options.host, options.harness),
+    async (request) => {
+      if (options.initialize && new URL(request.url).pathname.endsWith("/run")) {
+        const body = await request.clone().json();
+        await options.initialize(body.threadId);
+      }
+      return goalHandler(request);
+    },
     async (threadId) => {
       const session = await options.host.open(options.harness, { threadId });
       try {

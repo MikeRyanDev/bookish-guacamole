@@ -1,3 +1,5 @@
+import { sqliteMetadata } from "./metadata-store.js";
+import type { MetadataStore } from "@tanstack/ai";
 import { DatabaseSync } from "node:sqlite";
 import {
   LogConflictError,
@@ -71,6 +73,7 @@ function fence(row: StoredLog, logId: string, epoch: number, owned = false): voi
  */
 export function openLogStore(path: string): {
   log: LogStore;
+  metadata: MetadataStore;
   close: () => void;
 } {
   const db = new DatabaseSync(path);
@@ -325,6 +328,7 @@ export function openLogStore(path: string): {
   };
   return {
     log,
+    metadata: sqliteMetadata(db),
     close: () => {
       for (const timer of timers) clearInterval(timer);
       db.close();

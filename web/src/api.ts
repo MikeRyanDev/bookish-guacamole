@@ -71,7 +71,7 @@ export const workspacesQuery = (token: string) =>
 export async function changeWorkspace<T>(
   path: string,
   token: string,
-  method: "POST" | "PATCH" | "DELETE",
+  method: "POST" | "PATCH" | "DELETE" | "PUT",
   body?: unknown,
 ): Promise<T> {
   const response = await fetch(path, {

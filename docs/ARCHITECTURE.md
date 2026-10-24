@@ -106,3 +106,20 @@ See [Goal design and limits](GOALS.md) for the lifecycle and verification contra
 The text reader previews HTML directly in an iframe with `sandbox="allow-scripts"` and no same-origin grant. It does not parse or rewrite the document. Scripts run in the preview, but cannot access the parent document or its storage. Forms, popups, downloads, and top-level navigation remain sandboxed. Network requests remain possible; the preview does not serve relative workspace resources.
 
 Workspace file responses add optional Git metadata from bounded, NUL-delimited porcelain reads. TanStack Query owns that data. Directory pages include aggregated folder status; search pages include matching file status. A pure tree model derives search ancestry. TanStack Virtual renders visible rows and retains the active row for keyboard access. React owns expansion and tree focus; Router still owns the selected file. See [the HTML and tree verification record](HTML-TREE-VERIFICATION.md) for the contract, constraints, and evidence.
+
+## Approval settings and saved permissions
+
+The authenticated local API exposes `/api/approval-mode` and `/api/permissions`. Both resolve workspace IDs through the registry and use the existing host, origin, and bearer checks.
+Mode updates accept only the four native values. The browser cannot configure arbitrary plugins or submit permission rules for creation.
+TanStack owns mode enforcement, approval resolution, and saved rules. CopilotKit v2 owns interrupts and the transcript. Query owns settings reads.
+The server initializes only a new harness log to `acceptEdits`. Existing logs retain their native settings. Initialization runs before ordinary and Goal requests, even without the browser controls.
+Native `setPluginSetting` persists changes in the log and applies them at the next turn. The active turn retains its settings snapshot.
+
+SQLite now stores private harness metadata as well as execution logs. This is not an alternative transcript store.
+The metadata adapter implements atomic compare-and-set with unique revisions. Native permissions use these revisions to save and remove workspace rules.
+Removal calls `deleteSavedPermission` and `host.reload`. Reload discards native in-memory copies after active turns finish and before later turns start.
+The removal response waits for this boundary. An error leaves the UI available for retry.
+
+The preview plugin reads `PermissionResources` from the installed native coding plugins. It describes the exact rule pairs that native `always` saves.
+The preview is descriptive only. Native permissions still inspect resources and enforce the submitted decision.
+Its regression tests must accompany TanStack upgrades because native saved-rule derivation is version-sensitive.

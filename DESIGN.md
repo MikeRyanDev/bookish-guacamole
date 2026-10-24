@@ -300,8 +300,14 @@ Patch previews omit redundant transport framing for a single file while retainin
 
 ### Permissions
 
-Keep the proposed payload and the per-call decision footer together through spacing, without an enclosing panel. Use explicit Allow once and Reject labels.
+Keep the proposed payload and the per-call decision footer together through spacing, without an enclosing panel. Use explicit Allow once, Remember this permission, and Reject labels.
 Approval required appears in the tool row. The footer aligns with the source payload, with 34px-minimum decision buttons. Per-call scope and decisions remain readable beside the change; do not repeat an approval heading or nest bordered cards.
+
+The composer includes an Approval mode selector and a Workspace permissions action. All four modes, including YOLO, remain visible in the selector.
+The non-modal mode panel uses native radio inputs and complete effect descriptions. Its selected label reflects the server response.
+Remember this permission opens an inline scope confirmation. Save and allow and Cancel replace the original footer until the user decides.
+Saved rules identify the tool and exact resource. Removal feedback states the next-turn boundary.
+See the [approval study](docs/design/permissions/STUDY.md) for the behavior contract, concepts, prototype, and usability evidence.
 
 ### Appearance
 

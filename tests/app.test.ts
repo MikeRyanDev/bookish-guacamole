@@ -166,3 +166,61 @@ test("workspace APIs create isolated identities and preserve files when an entry
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test("approval settings require local authentication and preserve conversation scope", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "approval-http-"));
+  for (const [key, value] of Object.entries({
+    OPENAI_API_KEY: "test",
+    CPK_INTELLIGENCE_API_KEY: "test",
+    INTELLIGENCE_API_URL: "http://localhost:9",
+    INTELLIGENCE_GATEWAY_WS_URL: "ws://localhost:9",
+    CODING_WORKSPACE: join(directory, "workspace"),
+  }))
+    vi.stubEnv(key, value);
+  const app = await startApp({ dataDirectory: join(directory, "data") });
+  const origin = new URL(app.runtimeUrl).origin;
+  const headers = { authorization: `Bearer ${app.token}`, "content-type": "application/json" };
+  try {
+    for (const path of ["/api/approval-mode?thread=one", "/api/permissions"])
+      expect((await fetch(origin + path)).status).toBe(401);
+    const url = origin + "/api/approval-mode?workspace=default&thread=one";
+    expect(await (await fetch(url, { headers })).json()).toMatchObject({ mode: "acceptEdits" });
+    expect(
+      (
+        await fetch(url, {
+          method: "PUT",
+          headers: { ...headers, origin: "https://other.example" },
+          body: JSON.stringify({ mode: "bypass" }),
+        })
+      ).status,
+    ).toBe(403);
+    expect(
+      (await fetch(url, { method: "PUT", headers, body: JSON.stringify({ mode: "anything" }) }))
+        .status,
+    ).toBe(400);
+    expect(
+      await (
+        await fetch(url, { method: "PUT", headers, body: JSON.stringify({ mode: "bypass" }) })
+      ).json(),
+    ).toMatchObject({ mode: "bypass" });
+    expect(
+      await (await fetch(origin + "/api/approval-mode?thread=two", { headers })).json(),
+    ).toMatchObject({ mode: "acceptEdits" });
+    expect(
+      (await fetch(origin + "/api/approval-mode?workspace=missing&thread=one", { headers })).status,
+    ).toBe(404);
+    expect(
+      (
+        await fetch(origin + "/api/permissions", {
+          method: "DELETE",
+          headers,
+          body: JSON.stringify({ tool: "bash", decision: "deny" }),
+        })
+      ).status,
+    ).toBe(400);
+  } finally {
+    await app.close();
+    vi.unstubAllEnvs();
+    await rm(directory, { recursive: true, force: true });
+  }
+});

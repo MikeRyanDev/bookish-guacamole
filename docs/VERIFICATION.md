@@ -393,3 +393,24 @@ node --test workspace/greet.test.js
 The fresh install reused the local pnpm package store. pnpm reported skipped dependency build scripts; checks and sample creation still passed. This was a clean app setup check, not a second backend installation.
 
 The guide's dashboard controls were checked in the installed 0.15.0 browser UI. Relative Markdown links and `git diff --check` passed. This standalone repository has no `docs:check` script or Nx targets. No hosted deployment, automatic-scheduler run, multi-user concurrency test, or long-term Learning-quality benchmark was performed.
+
+## Approval modes and saved permissions
+
+Implementation worktree: `feat/approval-modes`. The [design study](design/permissions/STUDY.md) records two concepts, the prototype, behavior contract, and usability findings.
+
+The initial native tests failed before the settings service and metadata adapter existed. Native tests now cover all modes, command and sensitive-file approval, concurrent-turn mode changes, multiple approvals, exact saved scope, restart, and duplicate resolution.
+A patch fixture initially selected the wrong native edit style. Selecting the native patch style made the test exercise the actual patch tool.
+
+The isolated prototype passed a fresh task-first agent review at desktop and 390px widths. A second review found focus loss in the confirmation flow.
+The correction focuses Save and allow on entry and restores Remember this permission on Cancel. A browser regression covers the sequence.
+This is agent-based usability evidence, not a human participant study.
+
+Real model evidence: `LIVE_MODEL=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4273 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4274 pnpm exec playwright test e2e/live-permissions.spec.ts` passed in 21.8 seconds.
+It used the configured Luna model and CLI-installed local Intelligence with an isolated sample workspace. Thread `5d39db74-4564-448e-ac06-866968fe8d91` contains 71 persisted events and exactly three shell calls.
+The test saved `npm test`, reused that permission, ran `printf permissions-yolo` in YOLO, restored Review changes, removed the rule, and reloaded without duplicate calls.
+Raw evidence and private settings remain ignored in `.data/` and `.env`.
+
+Pre-integration checks: `pnpm check` passed 152 tests with 47 declared skips, lint, design scan, type checks, and build. `node --test example/greet.test.js` passed.
+The affected permission, composer, tool approval, and motion browser suite passed 20 tests.
+A broader run found an old mobile inspector overlap and one transient patch retry failure during UI edits. The focused patch retry passed afterward.
+Main advanced during this work with composer and mobile file-entry changes. Final integrated results follow this record.

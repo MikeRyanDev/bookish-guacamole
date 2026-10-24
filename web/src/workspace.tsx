@@ -243,6 +243,7 @@ function Shell({ config }: { config: AppConfig }) {
           hasExplicitThreadId={Boolean(search.thread)}
         >
           <Conversation
+            config={config}
             key={threadId}
             threadId={threadId}
             runtimeAgentId={config.agentId}
