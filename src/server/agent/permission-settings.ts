@@ -1,3 +1,4 @@
+import type { ConversationDefaults } from "../../shared/settings.js";
 import { logIdOf, type AnyHarness, type HarnessHost } from "@tanstack/ai-harness";
 import {
   listSavedPermissions,
@@ -24,11 +25,13 @@ export function createPermissionSettings({
   harness,
   store,
   root,
+  defaults,
 }: {
   host: HarnessHost;
   harness: AnyHarness;
   store: ReturnType<typeof openLogStore>;
   root: string;
+  defaults?: () => Promise<ConversationDefaults>;
 }) {
   const initializing = new Map<string, Promise<void>>();
   async function initialize(threadId: string) {
@@ -39,8 +42,19 @@ export function createPermissionSettings({
       const entries = await store.log.read({ logId: logIdOf({ logId: threadId }), limit: 1 });
       const session = await host.open(harness, { threadId });
       try {
-        if (!entries.length && session.pluginSettings().mode) {
-          const receipt = await session.setPluginSetting({ key: "mode", value: "acceptEdits" });
+        if (!entries.length) {
+          const preferences = await defaults?.();
+          if (preferences) {
+            const modelReceipt = await session.updateThreadSettings({
+              settings: { model: preferences.modelId },
+            });
+            if (modelReceipt.status === "rejected") throw new Error("Could not initialize model.");
+          }
+          if (!session.pluginSettings().mode) return;
+          const receipt = await session.setPluginSetting({
+            key: "mode",
+            value: preferences?.permissions ?? "acceptEdits",
+          });
           if (receipt.status === "rejected") throw new Error("Could not initialize approval mode.");
         }
       } finally {

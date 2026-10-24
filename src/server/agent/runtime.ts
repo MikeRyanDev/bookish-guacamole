@@ -1,3 +1,4 @@
+import { createConversationDefaults } from "./conversation-defaults.js";
 import { resolve } from "node:path";
 import { CopilotRuntime, type CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 import { createCopilotHonoHandler } from "@copilotkit/runtime/v2/hono";
@@ -39,17 +40,24 @@ export function createWorkspaceRuntime(
     containerId,
     models,
   });
-  const modelSettings = createModelSettings({
-    host,
-    harness,
-    defaultModel: models.defaultModel,
+  const defaults = createConversationDefaults({
+    metadata: store.metadata,
     models: models.adapters,
+    defaultModel: models.defaultModel,
   });
   const approvalSettings = createPermissionSettings({
     host,
     harness,
     store,
     root: workspace.path,
+    defaults: defaults.read,
+  });
+  const modelSettings = createModelSettings({
+    host,
+    harness,
+    defaultModel: models.defaultModel,
+    models: models.adapters,
+    initialize: approvalSettings.initialize,
   });
   const runtime = new CopilotRuntime({
     agents: {
@@ -66,6 +74,7 @@ export function createWorkspaceRuntime(
   return {
     agentId,
     basePath,
+    defaults,
     approvalSettings,
     modelSettings,
     handler: createCopilotHonoHandler({ runtime, basePath }),

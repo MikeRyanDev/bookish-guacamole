@@ -24,10 +24,11 @@ Approved shell commands can access the host. The workspace is not a sandbox.
 
 Keep the experience compact, minimal, and suited to frequent developer use.
 Use short, direct labels. Keep explicit text for approvals, destructive choices, errors, and ambiguous actions.
-Keep framework branding and runtime identifiers out of the working UI. Show status where an active task requires it, without idle or repeated labels.
+Keep framework branding and decorative runtime identifiers out of the working UI. Task-specific model choices belong in Settings. Show status where an active task requires it, without idle or repeated labels.
 Use spacing and alignment before containers. Borders and dividers require a specific usability reason; ordinary panes, dialogs, and controls do not need outlines.
 Support keyboard navigation, narrow screens, reduced motion, and light and dark themes.
-Developers can select one of eight warm vintage-rainbow accents in Settings. Appearance choices persist in this browser.
+Settings offers Light, Dark, and System appearance modes, eight warm vintage-rainbow presets, and saved custom colors entered as RGBA, HSV, CMYK, or HEX. Appearance choices and custom colors persist in this browser. Custom swatches retain opacity; the interface derives readable accent shades for each theme.
+Settings also saves default permissions and a configured default model for new conversations in each workspace. Existing conversations retain their settings.
 State tool outcomes accurately. A failed command must never look successful.
 
 CopilotKit v2 owns messages and interrupts. TanStack Router owns URL selections. TanStack Query owns server reads.

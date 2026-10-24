@@ -51,3 +51,19 @@ scope and performance limits. Removing a workspace never deletes its files.
 Add route contracts here when extending `src/server/http/`. Keep input schemas
 executable and shared with a service when that service also accepts untrusted
 input. Browser-safe output types belong under `src/shared/`.
+
+## Conversation defaults
+
+`GET /api/defaults?workspace=<id>` reads `{ modelId, permissions }` for the selected workspace.
+`PATCH /api/defaults?workspace=<id>` updates one or both fields and returns the confirmed pair.
+Both routes require the local bearer token and existing Host/Origin protections.
+PATCH accepts a strict nonempty JSON object with `modelId` (a configured model ID)
+and/or `permissions` (`acceptEdits` or `bypass`). Management bodies are limited to 16 KiB.
+Errors retain `{ error: string }`: 400 invalid input or unknown model, 401 missing/invalid bearer,
+403 untrusted Host/Origin, 404 unknown workspace, 413 oversized body, 415 non-JSON body.
+
+Defaults use workspace metadata and persist across restarts. Concurrent field updates
+are serialized and merged. New conversation initialization copies the current defaults
+into native thread settings once; existing logs, planning state and pending approvals remain unchanged.
+If a saved default model is no longer configured, reads use the configured default.
+The initial values are the configured model and `acceptEdits`.

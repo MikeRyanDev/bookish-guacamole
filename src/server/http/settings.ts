@@ -6,6 +6,25 @@ import { managementJson } from "./validation.js";
 /** Per-thread settings and workspace permission rules; services enforce native policy. */
 export function settingsRoutes({ runtimeFor, selectedWorkspace }: ApiDependencies) {
   const app = new Hono();
+  app.get("/defaults", async (c) =>
+    c.json(await runtimeFor(selectedWorkspace(new URL(c.req.url))).defaults.read()),
+  );
+  app.patch(
+    "/defaults",
+    ...managementJson(
+      z
+        .object({
+          modelId: z.string().min(1).optional(),
+          permissions: z.enum(["acceptEdits", "bypass"]).optional(),
+        })
+        .strict()
+        .refine((value) => Object.keys(value).length > 0),
+    ),
+    async (c) =>
+      c.json(
+        await runtimeFor(selectedWorkspace(new URL(c.req.url))).defaults.set(c.req.valid("json")),
+      ),
+  );
   app.get("/model", async (c) => {
     const selected = runtimeFor(selectedWorkspace(new URL(c.req.url)));
     return c.json(await selected.modelSettings.read(c.req.query("thread") ?? ""));

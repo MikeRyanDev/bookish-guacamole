@@ -28,11 +28,13 @@ export function createModelSettings({
   harness,
   defaultModel,
   models,
+  initialize,
 }: {
   host: HarnessHost;
   harness: AnyHarness;
   defaultModel: string;
   models: Record<string, AnyTextAdapter>;
+  initialize?: (threadId: string) => Promise<void>;
 }) {
   function validateThread(threadId: string) {
     if (!threadId || threadId.length > 200) throw new WorkspaceError("Invalid conversation.");
@@ -40,6 +42,7 @@ export function createModelSettings({
   return {
     async read(threadId: string) {
       validateThread(threadId);
+      await initialize?.(threadId);
       const session = await host.open(harness, { threadId });
       try {
         const snapshot = session.snapshot();
@@ -54,6 +57,7 @@ export function createModelSettings({
     },
     async set(threadId: string, modelId: string) {
       validateThread(threadId);
+      await initialize?.(threadId);
       if (!Object.hasOwn(models, modelId)) throw new WorkspaceError("Choose a configured model.");
       const session = await host.open(harness, { threadId });
       try {

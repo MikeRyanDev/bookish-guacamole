@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useAppearance } from "./appearance";
 import { WorkspacePermissions } from "./components/approval-settings";
+import { ConversationDefaults } from "./components/conversation-defaults";
 import { AppearanceSettings } from "./components/appearance-settings";
 import { workspaceRoute } from "./router";
 import { configQuery, type AppConfig } from "./api";
@@ -325,6 +326,7 @@ function Shell({ config }: { config: AppConfig }) {
               setTheme={setTheme}
               setAccent={setAccent}
             />
+            <ConversationDefaults config={config} />
             <WorkspacePermissions config={config} />
           </div>
         )}

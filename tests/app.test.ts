@@ -56,6 +56,52 @@ test("local browser bootstrap refuses cross-origin access and protects workspace
         await fetch(origin + "/api/approval-mode?thread=model-first", { headers: newThreadHeaders })
       ).json(),
     ).toMatchObject({ mode: "acceptEdits" });
+    const defaultsUrl = origin + "/api/defaults?workspace=default";
+    expect((await fetch(defaultsUrl)).status).toBe(401);
+    expect(await (await fetch(defaultsUrl, { headers: newThreadHeaders })).json()).toEqual({
+      modelId: "test",
+      permissions: "acceptEdits",
+    });
+    for (const body of [
+      { modelId: "missing", permissions: "bypass" },
+      { modelId: "test", permissions: "plan" },
+      { modelId: "test", permissions: "bypass", extra: true },
+    ]) {
+      expect(
+        (
+          await fetch(defaultsUrl, {
+            method: "PATCH",
+            headers: newThreadHeaders,
+            body: JSON.stringify(body),
+          })
+        ).status,
+      ).toBe(400);
+    }
+    expect(
+      (
+        await fetch(defaultsUrl, {
+          method: "PATCH",
+          headers: newThreadHeaders,
+          body: JSON.stringify({ modelId: "test", permissions: "bypass" }),
+        })
+      ).status,
+    ).toBe(200);
+    expect(
+      (await fetch(origin + "/api/defaults?workspace=missing", { headers: newThreadHeaders }))
+        .status,
+    ).toBe(404);
+    expect(
+      await (
+        await fetch(origin + "/api/approval-mode?thread=default-inherited", {
+          headers: newThreadHeaders,
+        })
+      ).json(),
+    ).toMatchObject({ permissionMode: "bypass" });
+    await fetch(defaultsUrl, {
+      method: "PATCH",
+      headers: newThreadHeaders,
+      body: JSON.stringify({ modelId: "test", permissions: "acceptEdits" }),
+    });
     const modelUrl = origin + "/api/model?thread=model-api-test";
     expect((await fetch(modelUrl)).status).toBe(401);
     const modelHeaders = {
@@ -224,6 +270,17 @@ test("workspace APIs create isolated identities and preserve files when an entry
     expect(config.agentId).toBe(`coder-${workspace.id}`);
     expect(config.workspace).toBe(workspace.path);
     expect(config.runtimeUrl).toBe(`/api/workspaces/${workspace.id}/copilotkit`);
+    await fetch(origin + `/api/defaults?workspace=${workspace.id}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ permissions: "bypass" }),
+    });
+    expect(
+      await (await fetch(origin + `/api/defaults?workspace=${workspace.id}`, { headers })).json(),
+    ).toMatchObject({ permissions: "bypass" });
+    expect(
+      await (await fetch(origin + "/api/defaults?workspace=default", { headers })).json(),
+    ).toMatchObject({ permissions: "acceptEdits" });
     const renamed = await fetch(origin + `/api/workspaces/${workspace.id}`, {
       method: "PATCH",
       headers,

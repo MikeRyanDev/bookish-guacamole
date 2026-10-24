@@ -1,4 +1,5 @@
-import { Check, Moon, Sun } from "lucide-react";
+import { Check, Monitor, Moon, Sun } from "lucide-react";
+import { CustomColors } from "./custom-colors";
 import { ACCENTS, type Accent, type Theme } from "../appearance";
 
 export function AppearanceSettings({
@@ -17,7 +18,7 @@ export function AppearanceSettings({
       <fieldset className="appearance-mode">
         <legend>Appearance</legend>
         <div className="mode-options">
-          {(["light", "dark"] as const).map((mode) => (
+          {(["light", "dark", "system"] as const).map((mode) => (
             <label key={mode}>
               <input
                 type="radio"
@@ -27,8 +28,14 @@ export function AppearanceSettings({
                 onChange={() => setTheme(mode)}
               />
               <span>
-                {mode === "light" ? <Sun size={16} /> : <Moon size={16} />}
-                {mode === "light" ? "Light" : "Dark"}
+                {mode === "light" ? (
+                  <Sun size={16} />
+                ) : mode === "dark" ? (
+                  <Moon size={16} />
+                ) : (
+                  <Monitor size={16} />
+                )}
+                {mode === "light" ? "Light" : mode === "dark" ? "Dark" : "System"}
               </span>
             </label>
           ))}
@@ -36,7 +43,11 @@ export function AppearanceSettings({
       </fieldset>
       <fieldset className="appearance-accent">
         <legend>
-          Accent <span>{ACCENTS.find((entry) => entry.id === accent)?.name}</span>
+          Accent{" "}
+          <span>
+            {ACCENTS.find((entry) => entry.id === accent)?.name ??
+              (accent.startsWith("#") ? accent.toUpperCase() : "")}
+          </span>
         </legend>
         <div className="accent-options">
           {ACCENTS.map((entry) => (
@@ -56,6 +67,7 @@ export function AppearanceSettings({
           ))}
         </div>
       </fieldset>
+      <CustomColors accent={accent} onSelect={setAccent} />
     </section>
   );
 }

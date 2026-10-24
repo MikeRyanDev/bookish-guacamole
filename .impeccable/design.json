@@ -964,9 +964,9 @@
   ],
   "narrative": {
     "northStar": "The coding workspace",
-    "overview": "A compact, plain, minimal, clean, and elegant interface for sophisticated developers. Linear informs density, restrained hierarchy, coherent controls, and precise feedback. Tool activity is easy to scan and changes are easy to inspect without enclosing every event in a card.",
+    "overview": "A compact, plain, minimal, clean, and elegant interface for sophisticated developers. Linear informs density, restrained hierarchy, coherent controls, and precise feedback. Tool activity is easy to scan and changes are easy to inspect without enclosing every event in a card. Settings offers Light, Dark, and System modes, eight presets, and browser-saved custom RGBA, HSV, CMYK, or HEX colors. Saved swatches retain opacity; interface accents use derived readable shades. Labeled default-permission and configured-model choices apply to new conversations in the selected workspace; existing conversations retain their settings.",
     "keyCharacteristics": [
-      "Soft neutral surfaces with eight warm vintage-rainbow accents.",
+      "Soft neutral surfaces with eight warm vintage-rainbow presets and saved custom accents.",
       "Manrope interface text and IBM Plex Mono source text.",
       "Flat activity rows, quiet code surfaces, and explicit outcomes.",
       "Equal attention to light, dark, keyboard, and narrow-screen use."
@@ -1007,13 +1007,13 @@
       "Do use spacing and alignment before any line or wrapper; justify functional exceptions.",
       "Do keep accessible names on icon controls and keyboard access on every action.",
       "Do use explicit text for approvals, destructive choices, errors, and ambiguous actions.",
-      "Do verify both themes, all eight accents, narrow screens, reduced motion, and meaningful loading and error states.",
+      "Do verify both themes, System mode, all eight presets, custom colors and opacity, narrow screens, reduced motion, and meaningful loading and error states.",
       "Do preserve CopilotKit v2 message ownership, Router URL ownership, and Query read ownership.",
       "Do treat screenshots under docs/proof/ as historical evidence until checked against current code."
     ],
     "donts": [
       "Don't tint dark neutral surfaces green or turn the subtle blue trace into a blue theme.",
-      "Don't display branding, model/container identifiers, idle status, or repeated headings in the working UI.",
+      "Don't display branding, decorative model/container identifiers, idle status, or repeated headings in the working UI. Keep model choices where they serve a task.",
       "Don't add decorative left accent stripes, gradients, or shadows to ordinary tool results.",
       "Don't frame every event or region as a card, or add explanatory labels to every control.",
       "Don't use oversized whitespace or marketing typography in workspace panels.",

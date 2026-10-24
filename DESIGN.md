@@ -189,7 +189,7 @@ Treat hover, focus, pressed, disabled, loading, empty, error, and success states
 Make motion thoughtful without delaying input, distracting from reading, or causing navigation flicker.
 Commands, patches, files, and permission decisions deserve the same care as the shell.
 Default to no borders, dividers, or enclosing cards. A line must solve a specific usability problem that spacing, alignment, and subtle surface changes cannot solve.
-Keep persistent text tied to a task or decision. Omit framework branding, model/container identifiers, idle status, repeated headings, and decorative connection indicators.
+Keep persistent text tied to a task or decision. Omit framework branding, decorative model/container identifiers, idle status, repeated headings, and decorative connection indicators. Task-specific model choices remain appropriate in Settings.
 Dark neutral surfaces must be deeper charcoal with only a trace of blue, never green-tinted gray. Warm accents stay separate from the neutral palette.
 
 ### Change authority and design process
@@ -206,7 +206,7 @@ Generated labels, data, and status indicators are not product facts. The user br
 
 **Key Characteristics:**
 
-- Soft neutral surfaces with eight warm vintage-rainbow accents.
+- Soft neutral surfaces with eight warm vintage-rainbow presets and saved custom accents.
 - Manrope interface text and IBM Plex Mono source text.
 - Flat activity rows, quiet code surfaces, and explicit outcomes.
 - Equal attention to light, dark, keyboard, and narrow-screen use.
@@ -219,7 +219,8 @@ Warm neutral light surfaces and deeper charcoal dark surfaces support a muted vi
 
 Moss is the default. Settings also offers Ochre, Apricot, Coral, Rose, Plum, Iris, and Denim.
 Each has a display swatch plus separate light and dark foreground values in the frontmatter.
-The selected mode value drives the runtime accent for links, focus, primary actions, and selection.
+The resolved light or dark mode drives the runtime accent for links, focus, primary actions, and selection. System mode follows the operating system.
+Custom colors preserve the entered sRGB color and opacity in their saved swatches. The interface derives opaque light and dark accent shades for readable foregrounds and buttons; custom colors do not redefine the preset or neutral tokens.
 Soft selection backgrounds mix that accent with the current background; swatch colors are not substitutes for accessible foreground values.
 
 ### Neutral and semantic roles
@@ -248,7 +249,7 @@ The desktop workspace has session navigation, a central transcript and anchored 
 Its grid is 224px / flexible (minimum 320px) / 290px beneath a 48px header. At 1100px, side panes narrow to 200px and 250px.
 At 850px, panes occupy one shared content area and navigation selects the visible pane; icon hit areas grow from 32px to 40px.
 When the development Inspector is present, the header reserves 72px at its end for the floating badge. Workspace names truncate before app controls overlap it.
-The conversation uses compact grouped spacing and contained scrolling. Tool headers wrap below 600px. Eight accent choices form one row, then two four-item rows below 480px.
+The conversation uses compact grouped spacing and contained scrolling. Tool headers wrap below 600px. Eight preset accent choices form one row, then two four-item rows below 480px. The inline custom-color editor places numeric entry below its color field on narrow screens; Settings scrolls when needed.
 
 The virtual transcript follows streaming only while the reader remains near its end. User-triggered disclosure preserves the clicked control's viewport position while row heights settle; streaming then resumes following only at the end. Saved session rows stay mounted during navigation.
 Do not animate virtual rows on remount. User-opened tool and group disclosures reveal in place over 180ms with a decelerating clip; their layout height settles immediately so inspection anchoring stays authoritative. Content remains at full contrast throughout. Restored nested disclosures do not replay the reveal. Reduced motion skips it. Short local motion explains disclosure, focus, press, panel, and dialog state; reduced-motion preferences disable it.
@@ -308,14 +309,21 @@ Order the composer controls Create goal, Plan, then Require permissions / YOLO. 
 Do not insert visible save-status text into this toolbar. Preserve its dimensions during submission.
 The permission selector shows choice labels only. Put short explanations in hover text. Keep timing and persistence rules in documentation.
 The selected permission preference remains visible during planning.
-Saved rules belong in Settings, after appearance. They are not a composer action.
+Saved rules belong in Settings, after appearance and new-conversation defaults. They are not a composer action.
 See the [approval study](docs/design/permissions/STUDY.md) for behavior and review evidence.
 
 ### Appearance
 
-Settings has native radio groups for Light/Dark and the eight accents. Selected accent has a checkmark, outline, and visible name; keyboard selection remains available.
-Settings contains appearance choices and saved workspace permissions, without model or container metadata. Harness documentation remains accessible from the command menu.
-Mode and accent persist locally and apply before React mounts. Restricted storage still permits changes within the current session. The fallback is light mode with Moss.
+Settings has native radio groups for Light, Dark, and System modes and the eight preset accents. Selected accents have a checkmark, outline, and visible name; keyboard selection remains available. System listens for operating-system appearance changes.
+Add color expands an inline editor with HEX selected. RGBA, HSV, CMYK, and HEX edit the same color; opacity remains available in every format. Labeled hue, saturation, and brightness sliders provide keyboard alternatives to the color plane. A checkerboard reveals transparency. Invalid or incomplete input stays visible with an error and disables Add color. Cancel discards the draft.
+Saving selects the custom accent and retains its swatch in this browser. Up to 24 custom colors can be saved; each has a removal action. CMYK is an approximate screen conversion. Explain beside the preview that interface accents use derived readable shades while saved swatches preserve their original color and opacity.
+Mode and accent persist locally and apply before React mounts. Restricted storage still permits changes within the current session; custom-color persistence failures show an explicit message. The fallback is light mode with Moss.
+
+### New conversation defaults
+
+Settings places Default permissions and Default model after appearance and before saved workspace permission rules. These labeled selectors save defaults for the selected workspace. Model choices come from configured models; this task-specific choice is not decorative runtime metadata.
+Default permissions offers Require permissions and YOLO. Explain that YOLO skips approval requests and saved permission denials when selected. Changes apply only to new conversations; existing conversations retain their settings. Loading and save errors remain visible with a retry action.
+Harness documentation remains accessible from the command menu. The [settings study](docs/design/settings/STUDY.md) records the interaction contract and evidence limits.
 
 ## Do's and Don'ts
 
@@ -324,14 +332,14 @@ Mode and accent persist locally and apply before React mounts. Restricted storag
 - Do use spacing and alignment before any line or wrapper; justify functional exceptions.
 - Do keep accessible names on icon controls and keyboard access on every action.
 - Do use explicit text for approvals, destructive choices, errors, and ambiguous actions.
-- Do verify both themes, all eight accents, narrow screens, reduced motion, and meaningful loading and error states.
+- Do verify both themes, System mode, all eight presets, custom colors and opacity, narrow screens, reduced motion, and meaningful loading and error states.
 - Do preserve CopilotKit v2 message ownership, Router URL ownership, and Query read ownership.
 - Do treat screenshots under docs/proof/ as historical evidence until checked against current code.
 
 ### Don't:
 
 - Don't tint dark neutral surfaces green or turn the subtle blue trace into a blue theme.
-- Don't display branding, model/container identifiers, idle status, or repeated headings in the working UI.
+- Don't display branding, decorative model/container identifiers, idle status, or repeated headings in the working UI. Keep model choices where they serve a task.
 - Don't add decorative left accent stripes, gradients, or shadows to ordinary tool results.
 - Don't frame every event or region as a card, or add explanatory labels to every control.
 - Don't use oversized whitespace or marketing typography in workspace panels.
