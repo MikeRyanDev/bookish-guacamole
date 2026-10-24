@@ -7,13 +7,14 @@ import {
   useRenderToolCall,
 } from "@copilotkit/react-core/v2";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowUp, Square, ChevronRight, Target } from "lucide-react";
-import { IconButton } from "./icon-button";
+import { ChevronRight } from "lucide-react";
 import { ToolCall } from "./tool-call";
 import { Permission, approvalToolCallId } from "./tool-approval";
 import { PendingStatus } from "./pending-status";
 import { TranscriptMessages } from "./transcript-messages";
-import { GoalStatus, goalFromState } from "./goal-status";
+import { goalFromState } from "./goal-status";
+
+import { ConversationComposer } from "./conversation-composer";
 
 type ConversationProps = {
   threadId: string;
@@ -118,6 +119,7 @@ function ActiveConversation({
       return;
     }
     setDraft("");
+    setGoalMode(false);
     setError("");
     connected.current = true;
     agent.addMessage({
@@ -176,96 +178,29 @@ function ActiveConversation({
           </>
         }
       />
-      {goal && (
-        <GoalStatus
-          goal={goal}
-          running={running}
-          disabled={!isReady || connecting}
-          pendingApproval={agent.pendingInterrupts.length > 0}
-          onResume={() => {
-            void goalCommand("resume");
-          }}
-          onStop={() => {
-            if (running) agent.abortRun();
-            else void goalCommand("stop");
-          }}
-        />
-      )}
-      <form
-        className="composer"
-        onSubmit={(event) => {
-          event.preventDefault();
-          send();
+      <ConversationComposer
+        draft={draft}
+        onDraftChange={setDraft}
+        goalMode={goalMode}
+        onGoalModeChange={setGoalMode}
+        input={input}
+        goal={goal}
+        running={running}
+        connecting={connecting}
+        ready={isReady}
+        pendingApproval={agent.pendingInterrupts.length > 0}
+        onSend={() => {
+          void send();
         }}
-      >
-        <label className="sr-only" htmlFor="message">
-          {goalMode ? "Goal objective" : "Message your coding agent"}
-        </label>
-        <textarea
-          id="message"
-          ref={input}
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          placeholder={
-            goalMode ? "What should the agent work toward?" : "Ask your agent to build something…"
-          }
-          rows={3}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
-              event.preventDefault();
-              send();
-            }
-          }}
-        />
-        {goalMode && (
-          <p className="goal-hint muted">
-            Keeps working for up to 20 rounds. Pauses for approvals. Completion checks use
-            additional model calls.
-          </p>
-        )}
-        <div className="composer-toolbar">
-          <IconButton
-            label={goalMode ? "Switch to message" : "Set a goal"}
-            aria-pressed={goalMode}
-            disabled={unfinishedGoal || running || connecting}
-            onClick={() => {
-              setGoalMode(!goalMode);
-              input.current?.focus();
-            }}
-          >
-            <Target size={16} />
-          </IconButton>
-          <span className="muted">
-            {agent.pendingInterrupts.length
-              ? "Approval required"
-              : connecting
-                ? ""
-                : running
-                  ? "Working…"
-                  : !isReady
-                    ? "Connecting…"
-                    : "⌘ Enter"}
-          </span>
-          {running ? (
-            <IconButton label="Stop run" onClick={() => agent.abortRun()}>
-              <Square size={15} />
-            </IconButton>
-          ) : (
-            <IconButton
-              label={goalMode ? "Start goal" : "Send message"}
-              className="primary"
-              disabled={
-                !draft.trim() || !isReady || connecting || agent.pendingInterrupts.length > 0
-              }
-              onClick={() => {
-                send();
-              }}
-            >
-              <ArrowUp size={17} />
-            </IconButton>
-          )}
-        </div>
-      </form>
+        onStopRun={() => agent.abortRun()}
+        onResumeGoal={() => {
+          void goalCommand("resume");
+        }}
+        onStopGoal={() => {
+          if (running) agent.abortRun();
+          else void goalCommand("stop");
+        }}
+      />
     </section>
   );
 }

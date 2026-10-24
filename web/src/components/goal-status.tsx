@@ -1,5 +1,6 @@
 import type { Goal } from "@tanstack/ai-harness/plugins";
-import { Target, ChevronRight } from "lucide-react";
+import { Target } from "lucide-react";
+import { ComposerPopover } from "./composer-popover";
 
 /** Reads native persisted state without treating arbitrary client state as a goal. */
 export function goalFromState(state: unknown): Goal | null {
@@ -35,6 +36,7 @@ export function GoalStatus({
   pendingApproval = false,
   onResume,
   onStop,
+  onNewGoal,
 }: {
   goal: Goal;
   running: boolean;
@@ -42,6 +44,7 @@ export function GoalStatus({
   pendingApproval?: boolean;
   onResume: () => void;
   onStop: () => void;
+  onNewGoal?: () => void;
 }) {
   const status =
     goal.status === "met"
@@ -54,13 +57,17 @@ export function GoalStatus({
           ? "Paused"
           : "Stopped";
   return (
-    <div className="goal-status" aria-label="Session goal">
-      <details>
-        <summary>
+    <ComposerPopover
+      title="Session goal"
+      label={
+        <>
           <Target size={15} aria-hidden="true" />
-          <ChevronRight className="goal-chevron" size={13} aria-hidden="true" />
-          <span className="goal-objective">{goal.text}</span>
-        </summary>
+          <span>Goal · {pendingApproval ? "Approval required" : status}</span>
+        </>
+      }
+    >
+      <div className="goal-status">
+        <p className="goal-objective">{goal.text}</p>
         {goal.reason && <p>{goal.reason}</p>}
         {goal.note && (
           <p>
@@ -70,26 +77,36 @@ export function GoalStatus({
             )}
           </p>
         )}
-      </details>
-      <div className="goal-actions">
-        <span className="muted" role="status">
-          {status} · Round {goal.round}/20
-        </span>
-        {!running && goal.status !== "met" && (
-          <button type="button" disabled={disabled || pendingApproval} onClick={onResume}>
-            Resume goal
-          </button>
-        )}
-        {(goal.status === "active" || goal.status === "paused") && (
-          <button
-            type="button"
-            disabled={(disabled || pendingApproval) && !running}
-            onClick={onStop}
-          >
-            Stop goal
-          </button>
-        )}
+
+        <div className="goal-actions">
+          <span className="muted" role="status">
+            {status} · Round {goal.round}/20
+          </span>
+          {!running && goal.status !== "met" && (
+            <button type="button" disabled={disabled || pendingApproval} onClick={onResume}>
+              Resume goal
+            </button>
+          )}
+          {(goal.status === "active" || goal.status === "paused") && (
+            <button
+              type="button"
+              disabled={(disabled || pendingApproval) && !running}
+              onClick={onStop}
+            >
+              Stop goal
+            </button>
+          )}
+          {(goal.status === "met" || goal.status === "stopped") && onNewGoal && (
+            <button
+              type="button"
+              disabled={disabled || running || pendingApproval}
+              onClick={onNewGoal}
+            >
+              New goal
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </ComposerPopover>
   );
 }

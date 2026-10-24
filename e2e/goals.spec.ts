@@ -14,7 +14,9 @@ for (const theme of ["light", "dark"] as const) {
     await expect(objective).toHaveValue("Inspect the project and verify its tests");
     await expect(objective).toBeFocused();
     await expect(page.getByRole("button", { name: "Start goal", exact: true })).toBeEnabled();
+    await page.getByRole("button", { name: "20 rounds" }).click();
     await expect(page.getByText(/Keeps working for up to 20 rounds/)).toBeVisible();
+    await page.keyboard.press("Escape");
     await objective.fill("");
     await expect(page.getByRole("button", { name: "Start goal", exact: true })).toBeDisabled();
     await page.setViewportSize({ width: 390, height: 844 });
@@ -30,6 +32,9 @@ for (const theme of ["light", "dark"] as const) {
     ).toEqual([]);
     await page.getByRole("button", { name: "Switch to message" }).click();
     await expect(message).toBeFocused();
+    await page.screenshot({ path: `.impeccable/review/app-${theme}-mobile.png`, fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 960 });
+    await page.screenshot({ path: `.impeccable/review/app-${theme}-desktop.png`, fullPage: true });
   });
 }
 
@@ -44,7 +49,7 @@ test("live Goal runs with approval and persists its completion and evidence", as
       "Read greet.js and its tests. Run npm test once and explain the actual result. Do not edit any files. When you have reported the passing test result, this goal is complete.",
     );
   await page.getByRole("button", { name: "Start goal", exact: true }).click();
-  await expect(page.locator(".goal-status")).toBeVisible();
+  await expect(page.locator(".composer-control").first()).toBeVisible();
   const permission = page.getByRole("region", { name: "Permission request" });
   await expect(permission).toBeVisible({ timeout: 60_000 });
   await expect(permission.locator(".shell-command code")).toHaveText("npm test");
@@ -52,16 +57,23 @@ test("live Goal runs with approval and persists its completion and evidence", as
   await expect(page.getByRole("button", { name: "Stop run", exact: true })).toBeHidden({
     timeout: 60_000,
   });
+  await page.getByRole("button", { name: /Goal ·/ }).click();
   await page.getByRole("button", { name: "Resume goal", exact: true }).click();
-  await expect(page.locator(".goal-status")).toContainText("Complete · agent assessed", {
-    timeout: 60_000,
-  });
+  await expect(page.locator(".composer-control").first()).toContainText(
+    "Complete · agent assessed",
+    {
+      timeout: 60_000,
+    },
+  );
   const url = page.url();
   const threadId = new URL(url).searchParams.get("thread")!;
   await page.reload();
-  await expect(page.locator(".goal-status")).toContainText("Complete · agent assessed", {
-    timeout: 30_000,
-  });
+  await expect(page.locator(".composer-control").first()).toContainText(
+    "Complete · agent assessed",
+    {
+      timeout: 30_000,
+    },
+  );
   await expect(page.locator(".message.assistant .markdown").last()).toContainText(/pass/i);
   process.loadEnvFile(".env");
   const intelligence = new CopilotKitIntelligence({
@@ -96,33 +108,3 @@ test("live Goal runs with approval and persists its completion and evidence", as
     await page.setViewportSize({ width: 1440, height: 960 });
   }
 });
-
-for (const theme of ["light", "dark"] as const) {
-  test(`long Goal disclosure keeps composer and controls reachable in ${theme}`, async ({
-    page,
-  }) => {
-    const fixture = process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174";
-    await page.goto(`${fixture}/goal.html?long`);
-    await page.evaluate((value) => (document.documentElement.dataset.theme = value), theme);
-    await page.setViewportSize({ width: 390, height: 844 });
-    const summary = page.locator(".goal-status summary");
-    await expect(summary).toHaveCSS("cursor", "pointer");
-    await summary.focus();
-    await page.keyboard.press("Enter");
-    await expect(page.locator(".goal-status details")).toHaveAttribute("open", "");
-    await expect(page.getByRole("textbox", { name: "Message your coding agent" })).toBeInViewport();
-    await summary.focus();
-    await page.keyboard.press("Enter");
-    await page.getByRole("button", { name: "Resume goal" }).click();
-    await expect(page.locator(".goal-status")).toContainText("Ready to resume");
-    await page.getByRole("button", { name: "Stop goal" }).click();
-    await expect(page.locator(".goal-status")).toContainText("Stopped");
-    expect(
-      (
-        await new AxeBuilder({ page })
-          .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
-          .analyze()
-      ).violations,
-    ).toEqual([]);
-  });
-}

@@ -47,18 +47,26 @@ Goal controls are disabled while that approval is pending; the loop is already p
 Extend the existing Operate surface and its Manrope/mono, warm accent, and neutral
 surface tokens. Add no new card, border, modal, or visual identity.
 
-A named target icon switches the draft between Message and Goal. Goal mode uses
-an objective placeholder and Start goal action. A short hint explains automatic
-continuation and the round limit before starting. Keyboard submission remains
-Command/Control+Enter. Ordinary messages retain their existing behavior.
+The composer toolbar switches the draft between Message and Goal without changing
+its height. Goal mode uses an objective placeholder and Start goal action. The
+20 rounds control explains continuation, approval pauses, and additional model
+calls before starting. Command/Control+Enter submits; switching modes keeps the draft.
 
-Once a goal exists, a compact disclosure above the composer shows its objective,
-status, and actual round count. Expanded details show the judge reason or pause
-reason. Completion is labelled as the agent's assessment. Resume and Stop are
-explicitly named actions. Stop run also halts Goal continuation. Pending approval
-continues to use the existing approval surface and prevents another start/resume.
-Long objectives wrap; controls remain reachable on narrow screens. Existing
-focus, disabled, error, reduced-motion, and both-theme behavior applies.
+A persisted goal occupies one toolbar control with its current state. Opening it
+shows the full objective, round count, judge or pause reason, and explicit Resume
+and Stop actions. Completion is labelled as the agent's assessment. These details
+use a non-modal popover above the composer. Escape or an outside click dismisses
+it. Opening details and changing goal state do not resize the transcript.
+
+The draft grows to a bounded height and then scrolls internally. Long goal details
+scroll within the available viewport. Readers stay at their position when inspecting
+older output; Jump to latest restores following. Stop run halts Goal continuation.
+Pending approvals retain the existing approval surface and block new commands.
+Finished or stopped goals offer New goal without discarding an existing draft.
+
+This extends the existing Operate surface: Manrope, quiet neutral surfaces, warm
+accents, visible keyboard focus, and no new outlines or enclosing panels. The
+transcript remains the primary reading surface at desktop and mobile sizes.
 
 ## Required validation
 
