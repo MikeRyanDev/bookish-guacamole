@@ -44,3 +44,15 @@ test("approval emphasis stays accessible across every accent and theme", async (
     }
   }
 });
+
+test("tool previews load the design system fonts", async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?tools`);
+  const fonts = await page.evaluate(async () => {
+    const [body, source] = await Promise.all([
+      document.fonts.load('550 12px "Manrope Variable"'),
+      document.fonts.load('400 12px "IBM Plex Mono"'),
+    ]);
+    return [body.length, source.length];
+  });
+  expect(fonts.every((count) => count > 0)).toBe(true);
+});

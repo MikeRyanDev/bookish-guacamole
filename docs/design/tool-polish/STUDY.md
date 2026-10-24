@@ -34,7 +34,7 @@ The rejected study's tree-like decoration is absent. Existing grouping boundarie
 Both themes, narrow layouts, keyboard focus, exact copy, approval retries, denial, missing results, and running completion are covered by browser checks.
 An early opacity reveal briefly reduced text contrast; it was replaced with a clip-only reveal. Background interpolation on tool headers was removed because theme switching could briefly put dark-theme text over a light surface.
 
-Final captures are real synthetic-fixture renders, not model evidence:
+Final captures use verified loaded Manrope and IBM Plex Mono fonts after correcting an isolated-preview dependency-link issue. All 26 affected browser tests passed in that setup. These are real synthetic-fixture renders, not model evidence:
 [light tools](tools-light.png), [dark tools](tools-dark.png), [mobile approval](approval-mobile.png), [dark expanded activity](activity-dark.png), and [mobile activity](activity-mobile.png).
 
 Verdict: ship. The final review found no remaining blocking presentation or interaction defects in the tested scope.
