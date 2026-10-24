@@ -50,3 +50,36 @@ describe("appearance accessibility and persistence", () => {
     expect(document.documentElement.style.getPropertyValue("--accent")).toBe(ACCENTS[3].dark);
   });
 });
+
+it("retains System preference and resolves the current operating-system theme", () => {
+  localStorage.setItem("starter-theme", "system");
+  vi.stubGlobal("matchMedia", () => ({ matches: true }));
+  expect(readAppearance().theme).toBe("system");
+  applyAppearance(readAppearance());
+  expect(document.documentElement.dataset.theme).toBe("dark");
+  vi.unstubAllGlobals();
+});
+
+it("custom accent shades meet text and action contrast across working surfaces", async () => {
+  const { parseHex, accessibleAccent } = await import("../src/client/colors.js");
+  for (const hex of [
+    "#000000",
+    "#ffffff",
+    "#ff0000",
+    "#00ff00",
+    "#0000ff",
+    "#ffff00",
+    "#ff00ff",
+    "#00ffff",
+    "#ffffff00",
+    "#12345680",
+  ]) {
+    for (const theme of ["light", "dark"] as const) {
+      const shade = accessibleAccent(parseHex(hex)!, theme);
+      for (const surface of theme === "light"
+        ? ["#fbfaf8", "#f2f2ee", "#ffffff"]
+        : ["#141517", "#191a1d", "#25262a"])
+        expect(contrast(shade, surface), `${hex} ${theme} ${surface}`).toBeGreaterThanOrEqual(4.5);
+    }
+  }
+});

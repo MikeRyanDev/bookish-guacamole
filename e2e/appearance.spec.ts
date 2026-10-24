@@ -5,11 +5,11 @@ const names = ["Moss", "Ochre", "Apricot", "Coral", "Rose", "Plum", "Iris", "Den
 
 test("eight accents work in both themes, persist, and remain keyboard accessible", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Settings", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Settings" });
-  await expect(dialog.getByRole("radio")).toHaveCount(10);
+  await expect(dialog.getByRole("radio")).toHaveCount(11);
   for (const mode of ["Light", "Dark"]) {
     await dialog.getByRole("radio", { name: mode, exact: true }).check();
     for (const name of names) {
@@ -22,7 +22,7 @@ test("eight accents work in both themes, persist, and remain keyboard accessible
       expect(results.violations, `${mode} / ${name}`).toEqual([]);
     }
     await dialog.screenshot({
-      path: `docs/proof/appearance-${mode.toLowerCase()}.png`,
+      path: testInfo.outputPath(`appearance-${mode.toLowerCase()}.png`),
       animations: "disabled",
     });
   }
@@ -37,7 +37,7 @@ test("eight accents work in both themes, persist, and remain keyboard accessible
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({
-    path: "docs/proof/appearance-mobile.png",
+    path: testInfo.outputPath("appearance-mobile.png"),
     fullPage: true,
     animations: "disabled",
   });

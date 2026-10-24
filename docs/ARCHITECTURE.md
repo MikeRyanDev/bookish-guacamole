@@ -136,3 +136,12 @@ Turning planning off restores that preference. Changing the preference during pl
 The API accepts `{ permissions: "acceptEdits" | "bypass" }` or `{ planOnly: boolean }`. Per-conversation updates serialize.
 The older `{ mode }` API remains compatible. Existing native default sessions retain their stricter policy until the user selects a preference.
 Settings owns the saved-rule view. Closing Settings unmounts it, so reopening reads current rules.
+
+## Workspace conversation defaults
+
+`conversation-defaults.ts` owns the workspace's default model and permission preference in private metadata.
+The settings HTTP routes expose validated reads and partial writes; Query owns confirmed browser values.
+Permission initialization is the single entry point used by model reads, permission reads, and run startup.
+It copies both defaults into an empty native log once, sharing concurrent initialization work.
+Existing logs keep their native settings. The Goal judge continues to follow the thread model.
+Appearance and custom swatches stay browser-local; System subscribes to operating-system theme changes.
