@@ -1,10 +1,4 @@
-/** Git's two-column porcelain status. Paths are workspace-relative, never display-parsed. */
-export interface WorkspaceGitStatus {
-  available: boolean;
-  entries: Record<string, string>;
-  /** Distinct descendant status codes for returned directory rows. */
-  directories?: Record<string, string[]>;
-}
+export type { WorkspaceGitStatus } from "../../shared/workspace.js";
 
 /** Parses NUL-delimited porcelain v1, consuming rename/copy source records separately. */
 export function parseGitStatus(output: string, prefix = ""): Record<string, string> {

@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
-import { buildFileTree, visibleFileRows, gitChange } from "../web/src/file-tree.js";
-import { parseGitStatus } from "../src/file-status.js";
+import { buildFileTree, visibleFileRows, gitChange } from "../src/client/file-tree.js";
+import { parseGitStatus } from "../src/server/workspaces/git-status.js";
 
 test("tree sorts folders first at every level, aggregates states, and retains collapsed search state", () => {
   const roots = buildFileTree(

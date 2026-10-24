@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ApprovalControls, SavedPermissions } from "../../web/src/components/approval-settings";
-import { Permission } from "../../web/src/components/tool-approval";
-import { ConversationComposer } from "../../web/src/components/conversation-composer";
-import { VirtualTranscript } from "../../web/src/components/virtual-transcript";
-import { applyAppearance } from "../../web/src/appearance";
+import { ApprovalControls, SavedPermissions } from "../../src/client/components/approval-settings";
+import { Permission } from "../../src/client/components/tool-approval";
+import { ConversationComposer } from "../../src/client/components/conversation-composer";
+import { VirtualTranscript } from "../../src/client/components/virtual-transcript";
+import { applyAppearance } from "../../src/client/appearance";
 
 import type { PermissionRule } from "@tanstack/ai-harness/plugins";
-import "../../web/src/styles.css";
+import "../../src/client/styles.css";
 import "@fontsource-variable/manrope";
 import "@fontsource/ibm-plex-mono/400.css";
 const params = new URLSearchParams(location.search);

@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { type AIPersistence, defineAIPersistence } from "@tanstack/ai-persistence";
 import { runPersistenceConformance } from "@tanstack/ai-persistence/testkit";
 import { afterAll } from "vitest";
-import { openLogStore } from "../src/log-store.js";
+import { openLogStore } from "../src/server/storage/log-store.js";
 
 const resources: { directory: string; close: () => void }[] = [];
 const paths = new WeakMap<AIPersistence, string>();

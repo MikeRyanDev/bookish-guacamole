@@ -2,7 +2,7 @@ import { mkdtemp, mkdir, readFile, writeFile, realpath, rm } from "node:fs/promi
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { expect, test } from "vitest";
-import { openWorkspaceRegistry } from "../src/workspaces.js";
+import { openWorkspaceRegistry } from "../src/server/workspaces/registry.js";
 
 /** Keeps registry files and sample projects isolated from the developer's checkout. */
 async function setup() {

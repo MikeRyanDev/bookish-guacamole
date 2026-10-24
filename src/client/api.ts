@@ -1,21 +1,7 @@
-import type { WorkspaceGitStatus } from "../../src/file-status";
+import type { WorkspaceGitStatus } from "../shared/workspace";
 import { queryOptions } from "@tanstack/react-query";
-export interface AppConfig {
-  token: string;
-  runtimeUrl: string;
-  workspace: string;
-  workspaceId: string;
-  workspaceName: string;
-  agentId: string;
-  defaultModel: string;
-  models: Array<{ id: string; label: string; provider: string; model: string }>;
-  containerId: string;
-}
-export interface Skill {
-  name: string;
-  description: string;
-  content: string;
-}
+import type { AppConfig, Skill, WorkspaceEntry } from "../shared/api.js";
+export type { AppConfig, Skill, WorkspaceEntry } from "../shared/api.js";
 /** Reads typed local data; private provider credentials never enter this module. */
 export async function request<T>(path: string, token?: string, signal?: AbortSignal): Promise<T> {
   const response = await fetch(path, {
@@ -57,12 +43,6 @@ export const skillsQuery = (token: string) =>
     staleTime: 10000,
   });
 
-export interface WorkspaceEntry {
-  id: string;
-  name: string;
-  path: string;
-  createdAt: string;
-}
 export const workspacesQuery = (token: string) =>
   queryOptions({
     queryKey: ["workspaces"],
@@ -100,7 +80,7 @@ export const directoryQuery = (
   queryOptions({
     queryKey: ["files", workspace, "directory", directory, cursor],
     queryFn: ({ signal }) =>
-      request<import("../../src/workspace-discovery").DirectoryPage>(
+      request<import("../shared/workspace").DirectoryPage>(
         `/api/workspace/directory?${new URLSearchParams({ workspace, path: directory, ...(cursor ? { cursor } : {}) })}`,
         token,
         signal,
@@ -118,7 +98,7 @@ export const searchFilesQuery = (
   queryOptions({
     queryKey: ["files", workspace, "search", query, cursor],
     queryFn: ({ signal }) =>
-      request<import("../../src/workspace-discovery").SearchPage>(
+      request<import("../shared/workspace").SearchPage>(
         `/api/workspace/search?${new URLSearchParams({ workspace, q: query, ...(cursor ? { cursor } : {}) })}`,
         token,
         signal,

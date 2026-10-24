@@ -1,8 +1,9 @@
 ---
 version: 1
 slug: "web-src-workspace-tsx"
-primary_target: "web/src/workspace.tsx"
-related_targets: ["web/src/components/tool-call.tsx", "web/src/components/appearance-settings.tsx"]
+primary_target: "src/client/workspace.tsx"
+related_targets:
+  ["src/client/components/tool-call.tsx", "src/client/components/appearance-settings.tsx"]
 ---
 
 # Coding workspace redesign

@@ -3,7 +3,7 @@ import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronRight, FileCode2, Folder, FolderOpen } from "lucide-react";
 import { buildFileTree, visibleFileRows, gitLabels, gitBadges } from "../file-tree";
 import type { FileTreeNode } from "../file-tree";
-import type { WorkspaceGitStatus } from "../../../src/file-status";
+import type { WorkspaceGitStatus } from "../../shared/workspace";
 
 /** Virtualized ARIA tree: one tab stop, stable path identities, and collapsed initial folders. */
 export function FileTree({

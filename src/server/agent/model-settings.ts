@@ -1,7 +1,7 @@
 import type { AnyTextAdapter } from "@tanstack/ai";
 import { definePlugin, type AnyHarness, type HarnessHost } from "@tanstack/ai-harness";
 import { goal } from "@tanstack/ai-harness/plugins";
-import { WorkspaceError } from "./workspaces.js";
+import { WorkspaceError } from "../workspaces/registry.js";
 
 /** Keeps each native Goal judge on the model captured at that turn's start. */
 export function selectedModelGoal(models: Record<string, AnyTextAdapter>, defaultModel: string) {

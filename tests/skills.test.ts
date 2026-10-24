@@ -7,8 +7,8 @@ import { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 import { EventType } from "@tanstack/ai";
 import { createHarnessHost } from "@tanstack/ai-harness";
 import { expect, test, vi } from "vitest";
-import { createHarnessAgent } from "../src/bridge.js";
-import { createCodingHarness } from "../src/harness.js";
+import { createHarnessAgent } from "../src/server/agent/bridge.js";
+import { createCodingHarness } from "../src/server/agent/harness.js";
 import { answer, scriptedAdapter } from "./provider.js";
 
 test("catalog instructions point to callable tools that load skills and supporting files", async () => {

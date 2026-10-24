@@ -4,7 +4,7 @@ import { mkdtemp, mkdir, writeFile, symlink, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, test } from "vitest";
-import { listWorkspaceFiles, readWorkspaceFile } from "../src/workspace.js";
+import { listWorkspaceFiles, readWorkspaceFile } from "../src/server/workspaces/files.js";
 
 test("file previews refuse traversal, private files and symlinks outside the workspace", async () => {
   const parent = await mkdtemp(join(tmpdir(), "workspace-api-"));
@@ -84,7 +84,7 @@ test("an opened folder ignored by its parent Git repository still lists its own 
 });
 
 test("binary asset reads preserve bytes and enforce the same workspace boundary and a hard size limit", async () => {
-  const { readWorkspaceAsset } = await import("../src/workspace.js");
+  const { readWorkspaceAsset } = await import("../src/server/workspaces/files.js");
   const root = await mkdtemp(join(tmpdir(), "workspace-assets-"));
   try {
     const bytes = Buffer.from([137, 80, 78, 71, 0, 255]);

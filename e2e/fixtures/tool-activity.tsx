@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ToolCall } from "../../web/src/components/tool-call";
-import { TranscriptMessages } from "../../web/src/components/transcript-messages";
+import { ToolCall } from "../../src/client/components/tool-call";
+import { TranscriptMessages } from "../../src/client/components/transcript-messages";
 import { contentToText, type Message } from "@copilotkit/react-core/v2";
 
 const toolSamples: [string, Record<string, unknown>, string][] = [

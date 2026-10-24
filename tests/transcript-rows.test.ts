@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Message } from "@copilotkit/react-core/v2";
-import { transcriptRows } from "../web/src/components/transcript-rows.js";
+import { transcriptRows } from "../src/client/components/transcript-rows.js";
 const call = (id: string): Message => ({
   id,
   role: "assistant",

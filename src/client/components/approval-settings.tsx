@@ -2,7 +2,7 @@ import { useId, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ListChecks } from "lucide-react";
 import type { PermissionRule } from "@tanstack/ai-harness/plugins";
-import type { ApprovalSettings } from "../../../src/permission-settings";
+import type { ApprovalSettings } from "../../shared/permissions";
 import { request, changeWorkspace, type AppConfig } from "../api";
 import { ComposerPopover } from "./composer-popover";
 

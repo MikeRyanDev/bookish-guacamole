@@ -1,5 +1,9 @@
 # Starter architecture
 
+See [backend requirements and design](BACKEND-DESIGN.md) and [HTTP API contracts](API.md).
+The source has explicit `src/client`, `src/server`, and browser-safe `src/shared` boundaries.
+Hono composes feature routes and validation; CopilotKit’s Hono adapter owns its streaming protocol.
+
 ```mermaid
 flowchart LR
   Browser[React workspace] --> Runtime[CopilotKit v2 runtime]
@@ -18,17 +22,17 @@ flowchart LR
 
 ## Ownership
 
-| Surface         | Owns                                                               | Entry                                   |
-| --------------- | ------------------------------------------------------------------ | --------------------------------------- |
-| CopilotKit v2   | Browser transcript, streaming, interrupts, tool renderers, history | `web/src/components/conversation.tsx`   |
-| TanStack Router | Shareable workspace, thread, selected file, inspector tab          | `web/src/router.tsx`                    |
-| TanStack Query  | Workspace management, file/Skill reads and invalidation            | `web/src/api.ts`                        |
-| React           | Draft, theme, panel toggles, dialogs                               | `web/src/workspace.tsx`                 |
-| Runtime         | Local HTTP auth, user identity, Learning assignment                | `src/app.ts`                            |
-| Harness         | Model loop, official coding plugins, permissions                   | `src/harness.ts`                        |
-| Bridge          | Outer event IDs, terminal event, cancellation                      | `src/bridge.ts`                         |
-| Skill plugin    | Per-turn verified snapshot and TanStack SkillSource                | `src/learned-skills.ts`                 |
-| SQLite          | Local workspace registry and per-workspace private execution logs  | `src/workspaces.ts`, `src/log-store.ts` |
+| Surface         | Owns                                                               | Entry                                                                  |
+| --------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| CopilotKit v2   | Browser transcript, streaming, interrupts, tool renderers, history | `src/client/components/conversation.tsx`                               |
+| TanStack Router | Shareable workspace, thread, selected file, inspector tab          | `src/client/router.tsx`                                                |
+| TanStack Query  | Workspace management, file/Skill reads and invalidation            | `src/client/api.ts`                                                    |
+| React           | Draft, theme, panel toggles, dialogs                               | `src/client/workspace.tsx`                                             |
+| Runtime         | Local HTTP auth, user identity, Learning assignment                | `src/server/app.ts`                                                    |
+| Harness         | Model loop, official coding plugins, permissions                   | `src/server/agent/harness.ts`                                          |
+| Bridge          | Outer event IDs, terminal event, cancellation                      | `src/server/agent/bridge.ts`                                           |
+| Skill plugin    | Per-turn verified snapshot and TanStack SkillSource                | `src/server/agent/learned-skills.ts`                                   |
+| SQLite          | Local workspace registry and per-workspace private execution logs  | `src/server/workspaces/registry.ts`, `src/server/storage/log-store.ts` |
 
 Intelligence owns durable product runs and Learning evidence. The SQLite execution log does not replace it. Keep `.data/` when restarting the app. New browser threads have distinct private proxy agents; register each before mounting its interrupt hooks.
 
@@ -64,7 +68,7 @@ This is a single-developer tool, not a hosted multi-user service. The shell tool
 
 Vite 8 uses Rolldown/Oxc for the browser. tsdown builds the Node entry and leaves Vite external because production does not load the dev server. Oxlint checks code; Oxfmt formats it; Vitest tests the backend; Playwright and axe test the browser. Direct dependencies and the package manager are pinned.
 
-Configure coding models in `models.json`; extend adapters in `src/model.ts`. See [model architecture](MODELS.md#code-level-design-and-extension). Add tools/plugins in `src/harness.ts`. Render tool output with v2 `useDefaultRenderTool`/`useRenderToolCall`, or add a typed `useRenderTool` renderer. Use `useInterrupt` for permission decisions. Do not introduce a second chat client or message store.
+Configure coding models in `models.json`; extend adapters in `src/server/agent/models.ts`. See [model architecture](MODELS.md#code-level-design-and-extension). Add tools/plugins in `src/server/agent/harness.ts`. Render tool output with v2 `useDefaultRenderTool`/`useRenderToolCall`, or add a typed `useRenderTool` renderer. Use `useInterrupt` for permission decisions. Do not introduce a second chat client or message store.
 
 The CopilotKit Inspector is explicitly enabled. The SDK shows it only on local development builds; production and remote hosts keep its built-in restrictions. The workspace's Files/Skills inspector is a separate app panel.
 
@@ -80,7 +84,7 @@ CSS uses short opacity/transform entrances for approvals, dialogs, and reopened 
 
 ## File viewer extension boundary
 
-`web/src/viewers/registry.ts` owns lightweight extension dispatch. `Inspector` retains Router-provided selections and Query reads; `file-viewer.tsx` owns transient text controls. Add a format to the registry and implement its lazy renderer under `web/src/viewers/`; keep transport, parsing, and presentation separate. Preserve abort signals, workspace-scoped query keys, size limits, and local failure states. New archive formats require expansion limits and worker cancellation tests.
+`src/client/viewers/registry.ts` owns lightweight extension dispatch. `Inspector` retains Router-provided selections and Query reads; `file-viewer.tsx` owns transient text controls. Add a format to the registry and implement its lazy renderer under `src/client/viewers/`; keep transport, parsing, and presentation separate. Preserve abort signals, workspace-scoped query keys, size limits, and local failure states. New archive formats require expansion limits and worker cancellation tests.
 
 Code highlighting runs Shiki in a disposable worker with lazy grammar imports and a five-second deadline. Files with lines longer than 10,000 characters retain plain text. Source and spreadsheet rows are virtualized. PDF.js loads only for PDFs, renders one page at a time with a 16-million-pixel canvas cap, cancels page renders, and destroys documents on cleanup. Its extracted page text provides a selectable alternative to the canvas.
 
@@ -93,7 +97,7 @@ When running two development checkouts, set `PORT` for the second app and `START
 ## Goal execution
 
 The native TanStack `goal` plugin owns objectives, judging, round limits, and
-continuation state. `src/goals.ts` adapts explicit composer commands to the native
+continuation state. `src/server/agent/goals.ts` adapts explicit composer commands to the native
 session API. It streams the entire sequence of queued turns through one
 Intelligence run, including plugin state snapshots. The ordinary prompt and
 approval transport stays in place. The bridge preserves outer identities and

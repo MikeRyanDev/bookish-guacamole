@@ -9,8 +9,8 @@ import { defineAIPersistence, memoryPersistence } from "@tanstack/ai-persistence
 import { firstValueFrom, toArray } from "rxjs";
 import { afterEach, expect, test, vi } from "vitest";
 import { z } from "zod";
-import { createHarnessAgent } from "../src/bridge.js";
-import { openLogStore } from "../src/log-store.js";
+import { createHarnessAgent } from "../src/server/agent/bridge.js";
+import { openLogStore } from "../src/server/storage/log-store.js";
 import { answer, scriptedAdapter } from "./provider.js";
 
 const hosts: ReturnType<typeof createHarnessHost>[] = [];

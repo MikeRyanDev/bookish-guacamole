@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { ACCENTS } from "../web/src/appearance";
+import { ACCENTS } from "../src/client/appearance";
 import { expect, test } from "@playwright/test";
 import { fixtureUrl } from "./fixture-url";
 

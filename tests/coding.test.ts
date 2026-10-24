@@ -9,9 +9,9 @@ import { EventType } from "@tanstack/ai";
 import { createHarnessHost } from "@tanstack/ai-harness";
 import { defineAIPersistence } from "@tanstack/ai-persistence";
 import { expect, test, vi } from "vitest";
-import { createHarnessAgent } from "../src/bridge.js";
-import { createCodingHarness } from "../src/harness.js";
-import { openLogStore } from "../src/log-store.js";
+import { createHarnessAgent } from "../src/server/agent/bridge.js";
+import { createCodingHarness } from "../src/server/agent/harness.js";
+import { openLogStore } from "../src/server/storage/log-store.js";
 import { answer, scriptedAdapter } from "./provider.js";
 
 for (const decision of ["once", "reject"] as const) {

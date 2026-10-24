@@ -2,22 +2,10 @@ import { execFile, spawn } from "node:child_process";
 import { lstat, opendir, realpath } from "node:fs/promises";
 import { join, relative, resolve, isAbsolute } from "node:path";
 import { promisify } from "node:util";
-import { parseGitStatus, type WorkspaceGitStatus } from "./file-status.js";
+import { parseGitStatus, type WorkspaceGitStatus } from "./git-status.js";
 
-export interface DirectoryEntry {
-  path: string;
-  kind: "directory" | "file";
-}
-export interface DirectoryPage {
-  entries: DirectoryEntry[];
-  nextCursor?: string;
-  git?: WorkspaceGitStatus;
-}
-export interface SearchPage {
-  files: string[];
-  nextCursor?: string;
-  git?: WorkspaceGitStatus;
-}
+import type { DirectoryEntry, DirectoryPage, SearchPage } from "../../shared/workspace.js";
+export type { DirectoryEntry, DirectoryPage, SearchPage } from "../../shared/workspace.js";
 export class FileDiscoveryError extends Error {
   readonly status = 400;
 }

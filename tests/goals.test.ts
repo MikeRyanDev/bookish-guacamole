@@ -4,14 +4,14 @@ import { join } from "node:path";
 import { EventType, toolDefinition } from "@tanstack/ai";
 import { defineAIPersistence } from "@tanstack/ai-persistence";
 import { z } from "zod";
-import { openLogStore } from "../src/log-store.js";
+import { openLogStore } from "../src/server/storage/log-store.js";
 import { randomUUID } from "node:crypto";
 import { createHarnessHost, defineHarness } from "@tanstack/ai-harness";
 import { goal } from "@tanstack/ai-harness/plugins";
 import { memoryPersistence } from "@tanstack/ai-persistence";
 import { firstValueFrom, toArray } from "rxjs";
 import { expect, test, vi } from "vitest";
-import { createHarnessAgent } from "../src/bridge.js";
+import { createHarnessAgent } from "../src/server/agent/bridge.js";
 import { answer, scriptedAdapter } from "./provider.js";
 
 test("streams every native Goal round and its persisted state through one outer run", async () => {

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ACCENTS, applyAppearance, readAppearance } from "../web/src/appearance.js";
+import { ACCENTS, applyAppearance, readAppearance } from "../src/client/appearance.js";
 
 function luminance(hex: string) {
   const channels = [1, 3, 5].map((start) => {

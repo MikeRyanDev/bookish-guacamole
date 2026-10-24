@@ -7,7 +7,7 @@ import { permissions, todos } from "@tanstack/ai-harness/plugins";
 import { workspaceTools } from "@tanstack/ai-harness/plugins/coding";
 import { projectInstructions } from "@tanstack/ai-harness/plugins/node";
 import { learnedSkills } from "./learned-skills.js";
-import { loadModelCatalog, type ModelCatalog } from "./model.js";
+import { loadModelCatalog, type ModelCatalog } from "./models.js";
 import { selectedModelGoal } from "./model-settings.js";
 
 /** Combines official coding plugins with published Intelligence Skills. */

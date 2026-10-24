@@ -4,20 +4,18 @@ import {
   deleteSavedPermission,
   type PermissionRule,
 } from "@tanstack/ai-harness/plugins";
-import type { openLogStore } from "./log-store.js";
-import { WorkspaceError } from "./workspaces.js";
+import type { openLogStore } from "../storage/log-store.js";
+import { WorkspaceError } from "../workspaces/registry.js";
 
-export const approvalModes = ["default", "acceptEdits", "plan", "bypass"] as const;
-export type ApprovalMode = (typeof approvalModes)[number];
+import {
+  approvalModes,
+  type ApprovalMode,
+  type ApprovalSettings,
+} from "../../shared/permissions.js";
+export { approvalModes } from "../../shared/permissions.js";
+export type { ApprovalMode, ApprovalSettings } from "../../shared/permissions.js";
 export function isApprovalMode(value: unknown): value is ApprovalMode {
   return approvalModes.some((mode) => mode === value);
-}
-export interface ApprovalSettings {
-  mode: ApprovalMode;
-  permissionMode: "acceptEdits" | "bypass";
-  planOnly: boolean;
-  status: string;
-  pending: number;
 }
 
 /** Uses native session settings. Existing logs retain their native default. */

@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { expect, test } from "vitest";
-import { browseWorkspace, searchWorkspace } from "../src/workspace-discovery.js";
+import { browseWorkspace, searchWorkspace } from "../src/server/workspaces/discovery.js";
 
 for (const repository of [false, true]) {
   test(`${repository ? "Git" : "plain"} discovery pages every file and searches beyond 1,000`, async () => {

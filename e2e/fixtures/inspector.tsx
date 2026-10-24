@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Inspector } from "../../web/src/components/inspector";
-import "../../web/src/styles.css";
+import { Inspector } from "../../src/client/components/inspector";
+import "../../src/client/styles.css";
 import "@fontsource-variable/manrope";
 import "@fontsource/ibm-plex-mono/400.css";
 

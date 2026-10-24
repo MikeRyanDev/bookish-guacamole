@@ -4,7 +4,7 @@ import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 // Adapted from Intelligence b10ee8971 (Tyler Slaton). Scope this starter's UI only.
-export const UI_ROOTS = Object.freeze(["web/src/", "web/index.html"]);
+export const UI_ROOTS = Object.freeze(["src/client/", "src/client/index.html"]);
 const repositoryRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const launcherPath = join(repositoryRoot, "node_modules/impeccable/cli/bin/cli.js");
 const PATCH_FILE_HEADER = /^\*\*\* (?:Add|Update|Delete) File: (.+)$|^\*\*\* Move to: (.+)$/gm;
@@ -46,6 +46,7 @@ function isUiPath(filePath, cwd, repoRoot) {
   const absolute = isAbsolute(filePath) ? filePath : resolve(cwd, filePath);
   const fromRoot = relative(repoRoot, absolute).split(sep).join("/");
   if (fromRoot.startsWith("..") || isAbsolute(fromRoot)) return false;
+  if (!/\.(?:tsx?|css|html)$/.test(fromRoot)) return false;
   return UI_ROOTS.some((root) =>
     root.endsWith("/") ? fromRoot.startsWith(root) : fromRoot === root,
   );

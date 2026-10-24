@@ -1,7 +1,7 @@
 import { open, realpath } from "node:fs/promises";
 import { isAbsolute, relative, resolve } from "node:path";
-import { type WorkspaceGitStatus } from "./file-status.js";
-import { searchWorkspace } from "./workspace-discovery.js";
+import { type WorkspaceGitStatus } from "./git-status.js";
+import { searchWorkspace } from "./discovery.js";
 /** Keeps private dotfiles and parent traversal out of the browser's file preview. */
 function visible(path: string): boolean {
   return (

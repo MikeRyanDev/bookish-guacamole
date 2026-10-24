@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { zipSync, strToU8 } from "fflate";
-import { parseOffice } from "../web/src/viewers/office-parser.js";
+import { parseOffice } from "../src/client/viewers/office-parser.js";
 import { officeFixture } from "./fixtures/office.js";
 
 test("Word preserves paragraph order and XML entities as text", () => {

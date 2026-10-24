@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 export default defineConfig({
-  root: "web",
+  root: "src/client",
   plugins: [react()],
   optimizeDeps: {
     include: [
@@ -20,5 +20,5 @@ export default defineConfig({
     hmr: process.env.STARTER_HMR_PORT ? { port: Number(process.env.STARTER_HMR_PORT) } : undefined,
     fs: { deny: ["**/.env*", "**/.data/**", "**/.copilotkit/**", "**/*.sqlite", "**/.git/**"] },
   },
-  build: { outDir: "../dist/web", emptyOutDir: true },
+  build: { outDir: "../../dist/client", emptyOutDir: true },
 });

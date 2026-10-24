@@ -2,7 +2,7 @@
 import { createElement } from "react";
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
-import { PendingStatus } from "../web/src/components/pending-status.js";
+import { PendingStatus } from "../src/client/components/pending-status.js";
 
 afterEach(() => {
   cleanup();

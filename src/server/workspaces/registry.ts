@@ -15,7 +15,7 @@ const entrySchema = z.object({
 });
 export type WorkspaceEntry = z.infer<typeof entrySchema>;
 const nameSchema = z.string().trim().min(1).max(80);
-const createSchema = z
+export const createWorkspaceSchema = z
   .object({
     name: nameSchema,
     mode: z.enum(["create", "open"]),
@@ -64,7 +64,7 @@ export async function openWorkspaceRegistry(directory: string, defaultRoot: stri
   }
   /** Creates an empty Git project or registers an explicitly chosen existing directory. */
   async function create(input: unknown): Promise<WorkspaceEntry> {
-    const parsed = createSchema.safeParse(input);
+    const parsed = createWorkspaceSchema.safeParse(input);
     if (!parsed.success)
       throw new WorkspaceError("Enter a workspace name of 1–80 characters and a valid folder.");
     const { name, mode, path } = parsed.data;

@@ -4,7 +4,7 @@ import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test, expect } from "vitest";
-import { listWorkspaceFiles } from "../src/workspace.js";
+import { listWorkspaceFiles } from "../src/server/workspaces/files.js";
 
 test("Git file discovery returns scoped staged, unstaged, renamed, deleted, and untracked status", async () => {
   const root = await mkdtemp(join(tmpdir(), "git-tree-"));

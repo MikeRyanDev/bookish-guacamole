@@ -22,6 +22,7 @@ an upgrade or another stack. Preserve existing conversations and Skills when cha
 | CopilotKit React v2                 | Streams the conversation, restores sessions, and renders approvals     |
 | Intelligence                        | Stores conversations and turns their evidence into Insights and Skills |
 | TanStack Router, Query, and Virtual | Manage URL selections, server reads, and long transcripts              |
+| Hono                                | Routes and validates local APIs; mounts the CopilotKit v2 adapter      |
 | Vite, tsdown, Oxlint, and Oxfmt     | Build, check, and format the browser and Node service                  |
 
 This is a starter for one trusted local developer. Provider keys stay on the server. An approved shell command can access your host; the workspace is not a sandbox.
@@ -125,15 +126,30 @@ In **Settings → Appearance**, choose light/dark mode and one of eight warm acc
 
 The catalog is refreshed through the SDK before each turn. Skills are not copied into the starter's source tree. Repository development skills under `.agents/skills/` are separate: they guide the assistant changing this template.
 
+## Find your way around
+
+The application source is under `src/`:
+
+- `client/`: React workspace, components, navigation and file viewers.
+- `server/http/`: Hono API routes, validation and local access checks.
+- `server/agent/`: coding harness, model adapters, permissions and Learning.
+- `server/workspaces/`: workspace registry, file access and discovery.
+- `server/storage/`: private SQLite execution and metadata adapters.
+- `shared/`: browser-safe API types.
+
+`server/main.ts` starts the process; `server/app.ts` connects services and owns their
+lifetime. Use the [backend design](docs/BACKEND-DESIGN.md) and [API reference](docs/API.md)
+when adding endpoints. The repository `$starter-api` skill encodes those conventions.
+
 ## Make it your own
 
-| Change                                   | Start here                                                                                   |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Model or model options                   | [`models.json` configuration](docs/MODELS.md)                                                |
-| Tools, prompts, or permission policy     | [`src/harness.ts`](src/harness.ts)                                                           |
-| Transcript, approvals, and tool displays | [`web/src/components/`](web/src/components/)                                                 |
-| Workspace shell and navigation           | [`web/src/workspace.tsx`](web/src/workspace.tsx), [`web/src/router.tsx`](web/src/router.tsx) |
-| Learning catalog integration             | [`src/learned-skills.ts`](src/learned-skills.ts)                                             |
+| Change                                   | Start here                                                                                               |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Model or model options                   | [`models.json` configuration](docs/MODELS.md)                                                            |
+| Tools, prompts, or permission policy     | [`src/server/agent/harness.ts`](src/server/agent/harness.ts)                                             |
+| Transcript, approvals, and tool displays | [`src/client/components/`](src/client/components/)                                                       |
+| Workspace shell and navigation           | [`src/client/workspace.tsx`](src/client/workspace.tsx), [`src/client/router.tsx`](src/client/router.tsx) |
+| Learning catalog integration             | [`src/server/agent/learned-skills.ts`](src/server/agent/learned-skills.ts)                               |
 
 Read [AGENTS.md](AGENTS.md) and [architecture](docs/ARCHITECTURE.md) before changing ownership boundaries. Keep CopilotKit React imports on `/v2`: CopilotKit owns messages, Router owns URL selections, and Query owns server reads. [Agent guidance sources](docs/AGENT-SKILLS.md) explains the installed TanStack and React skills.
 

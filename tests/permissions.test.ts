@@ -5,8 +5,8 @@ import { expect, test } from "vitest";
 import { createHarnessHost, defineHarness } from "@tanstack/ai-harness";
 import { permissions } from "@tanstack/ai-harness/plugins";
 import { defineAIPersistence } from "@tanstack/ai-persistence";
-import { openLogStore } from "../src/log-store.js";
-import { createPermissionSettings } from "../src/permission-settings.js";
+import { openLogStore } from "../src/server/storage/log-store.js";
+import { createPermissionSettings } from "../src/server/agent/permission-settings.js";
 import { scriptedAdapter, answer } from "./provider.js";
 
 test("metadata revisions survive restart and reject stale writers after delete", async () => {
@@ -70,8 +70,8 @@ test("new conversations use acceptEdits; old conversations retain default; modes
 import { readFile } from "node:fs/promises";
 import { EventType } from "@tanstack/ai";
 import { workspaceTools } from "@tanstack/ai-harness/plugins/coding";
-import { createHarnessAgent } from "../src/bridge.js";
-import { permissionPreview, PREVIEW_PLUGIN } from "../src/permission-preview.js";
+import { createHarnessAgent } from "../src/server/agent/bridge.js";
+import { permissionPreview, PREVIEW_PLUGIN } from "../src/server/agent/permission-preview.js";
 import { randomUUID } from "node:crypto";
 
 async function codingFixture() {

@@ -4,8 +4,8 @@ import { join } from "node:path";
 import { createHarnessHost, defineHarness } from "@tanstack/ai-harness";
 import { defineAIPersistence } from "@tanstack/ai-persistence";
 import { expect, test } from "vitest";
-import { openLogStore } from "../src/log-store.js";
-import { createModelSettings, selectedModelGoal } from "../src/model-settings.js";
+import { openLogStore } from "../src/server/storage/log-store.js";
+import { createModelSettings, selectedModelGoal } from "../src/server/agent/model-settings.js";
 import { answer, scriptedAdapter } from "./provider.js";
 
 test("native model selection survives restart, isolates threads, and drives goal checks", async () => {

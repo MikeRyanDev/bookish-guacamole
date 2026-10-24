@@ -125,7 +125,7 @@ Configuration success does not prove a Learning run. Inspect a real run and its 
 The implementation uses the published, pinned TanStack AI 1.0.0 and harness 0.1.0 sources.
 The installed source is authoritative for this starter's experimental harness API.
 
-`src/model.ts` validates configuration and builds `AnyTextAdapter` values on the server.
+`src/server/agent/models.ts` validates configuration and builds `AnyTextAdapter` values on the server.
 `extendAdapter(factory, [createModel(id, ["text"])])` permits developer-specified IDs without casts to a stale model union.
 This widens the factory's accepted IDs; it does not validate remote access or add provider capabilities.
 For typed application-specific configuration, call a native factory with a literal ID directly.
@@ -146,7 +146,7 @@ Keys, environment-variable names, and endpoint URLs never enter browser configur
 TanStack Query owns confirmed selection. CopilotKit v2 continues to own the transcript and interrupts.
 [Runtime adapter switching](https://tanstack.com/ai/latest/docs/advanced/runtime-adapter-switching) explains provider metadata conversion across conversation history.
 
-To add another native provider, install its published pinned adapter package and extend `src/model.ts`.
+To add another native provider, install its published pinned adapter package and extend `src/server/agent/models.ts`.
 Add its configuration schema branch and adapter factory without changing the composer or transcript ownership.
 For AWS credential chains, custom headers, or other code-only configuration, construct a `ModelCatalog` and pass it to `startApp({ models })`.
 That extension accepts any TanStack `AnyTextAdapter`; the JSON convenience layer does not limit the harness contract.

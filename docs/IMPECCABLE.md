@@ -15,7 +15,7 @@ The investigation used local history, a remote branch lookup, and the pull reque
 | ------------------------ | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | `85095ac29`              | Vendored Impeccable 4.7.0 skill and lock entry                         | Vendor the complete skill from an exact upstream commit, with license and provenance |
 | `2b0490634`              | Replaces custom frontend-design guidance with Impeccable and DESIGN.md | Keep starter React ownership guidance and add product/design context                 |
-| `b10ee8971`              | Scoped Codex/Claude edit hooks and source detector                     | Adapt the hook routing to `web/src/` and `web/index.html`                            |
+| `b10ee8971`              | Scoped Codex/Claude edit hooks and source detector                     | Adapt the hook routing to `src/client/` and `src/client/index.html`                  |
 | `52256b80b`, `488a35e2d` | Advisory baseline and lint-job gate                                    | Add the source gate to `pnpm check`; no findings baseline is needed here             |
 | `bdb95366c`              | Rendered Storybook scans                                               | Use this starter's real tool/approval components in its existing Playwright fixture  |
 | `45dbdd8a7`, `b3a79b188` | Live shell scans and engine caching                                    | Attach to a loaded browser through CDP; use the pinned npm platform binary           |
@@ -33,7 +33,7 @@ The starter already has React guidance, Vite 8, tsdown, Oxlint, Oxfmt, and TanSt
 - `.codex/hooks.json` and `.claude/settings.json` route edit and Stop events through `scripts/impeccable-ui.mjs`.
 - `.claude/skills/impeccable` links to the canonical skill. Codex discovers `.agents/skills/` directly.
 - `.impeccable/config.json` contains shared detector configuration. Local state and live sessions remain ignored.
-- `.impeccable/live/config.json` targets the Vite shell, `web/index.html`. No live script is injected by default.
+- `.impeccable/live/config.json` targets the Vite shell, `src/client/index.html`. No live script is injected by default.
 
 The integration uses the npm CLI for checks and hooks. It invokes Node directly, without interpolating tool arguments into a shell.
 The upstream skill launcher remains available for skill commands. Both paths use engine 0.1.16.
@@ -44,7 +44,7 @@ These are repository development tools. They do not replace Intelligence Learnin
 ## Use it
 
 After `pnpm install --frozen-lockfile`, the CLI is ready. The installed skill is available to Codex on the next turn.
-In Codex, use `$impeccable audit web/src`, `$impeccable polish`, or a direct request naming Impeccable.
+In Codex, use `$impeccable audit src/client`, `$impeccable polish`, or a direct request naming Impeccable.
 In clients with slash commands, use `/impeccable audit` or `/impeccable polish`.
 The skill routes each task to its playbook. Root AGENTS.md links it to the starter-specific rules.
 
@@ -63,7 +63,7 @@ pnpm design:browser
 pnpm exec impeccable detect --cdp 9222 --target 127.0.0.1:4173 --json
 
 # Inspect the context supplied to design work
-pnpm exec impeccable context --target web/src/workspace.tsx
+pnpm exec impeccable context --target src/client/workspace.tsx
 ```
 
 The browser command starts the existing fixture server on port 4174 and an isolated Chromium profile.
@@ -111,9 +111,9 @@ The current configuration has no ignored font values.
 No blanket rule ignores or accepted-finding baselines are installed.
 
 For browser variant work, invoke `$impeccable live` in the agent and follow the installed playbook.
-The local CSP probe returned no policy. Live setup targets only `web/index.html`.
+The local CSP probe returned no policy. Live setup targets only `src/client/index.html`.
 The live helper is opt-in. It is not part of app startup or the production bundle.
-When finished, run `pnpm exec impeccable live-server stop` and inspect `git diff -- web/index.html` for leftover injection.
+When finished, run `pnpm exec impeccable live-server stop` and inspect `git diff -- src/client/index.html` for leftover injection.
 Do not commit injected scripts, screenshots of private data, local consent, caches, or session state.
 Live variant generation was not exercised during this tooling installation.
 

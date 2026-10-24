@@ -9,17 +9,26 @@ async function main(): Promise<void> {
         await import("vite")
       ).createServer({ server: { middlewareMode: true }, appType: "spa" })
     : undefined;
-  const app = await startApp({
-    port: Number(process.env.PORT ?? 4173),
-    serve: vite?.middlewares ?? sirv("dist/web", { single: true }),
-  });
+  let app: Awaited<ReturnType<typeof startApp>>;
+  try {
+    app = await startApp({
+      port: Number(process.env.PORT ?? 4173),
+      serve: vite?.middlewares ?? sirv("dist/client", { single: true }),
+    });
+  } catch (error) {
+    await vite?.close();
+    throw error;
+  }
   console.log(`Coding workspace: ${app.runtimeUrl.replace("/api/copilotkit", "")}`);
   let closing = false;
   async function close() {
     if (closing) return;
     closing = true;
-    await vite?.close();
-    await app.close();
+    try {
+      await app.close();
+    } finally {
+      await vite?.close();
+    }
   }
   for (const signal of ["SIGINT", "SIGTERM"] as const)
     process.once(signal, () => {

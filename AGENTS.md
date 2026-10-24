@@ -131,6 +131,9 @@ Write a failing regression test before behavior fixes. Run `pnpm check`, `node -
 
 ### Before editing
 
+- Implement changes in a dedicated Git worktree from the current intended base. Preserve unrelated work in other worktrees. After delivery checks pass, merge the completed work into local `main`. Verify the merged tree. Never force-push or discard unrelated changes.
+- For HTTP APIs and server architecture, read `.agents/skills/starter-api/SKILL.md` and `docs/BACKEND-DESIGN.md`.
+
 - Read the nearest `AGENTS.md` for each file you change.
 - Inspect the relevant package scripts, tests, and a similar implementation before choosing an approach.
 - Run commands from the repository root unless a guide specifies another directory.
@@ -179,7 +182,7 @@ Keep persistent UI text tied to a task or decision. Do not display framework bra
 Dark surfaces must be deeper neutral charcoal with only a trace of blue, never green-tinted gray. Warm accents are separate from neutral surface tokens.
 Run `pnpm design:check` for source changes and `pnpm design:browser` for rendered tool surfaces. Run affected browser tests too.
 Codex and Claude edit hooks provide feedback where supported. The explicit check in `pnpm check` remains required.
-Use `pnpm exec impeccable` for the pinned CLI. Live iteration is opt-in through the skill and targets `web/index.html`.
+Use `pnpm exec impeccable` for the pinned CLI. Live iteration is opt-in through the skill and targets `src/client/index.html`.
 See `docs/IMPECCABLE.md` for investigation, commands, limits, and upgrades. These tools do not inject repository skills into the runtime agent.
 
 ## Temporary weekend stacks and previews

@@ -3,8 +3,8 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, test, vi } from "vitest";
-import { createModelCatalog } from "../src/model.js";
-import { startApp } from "../src/app.js";
+import { createModelCatalog } from "../src/server/agent/models.js";
+import { startApp } from "../src/server/app.js";
 
 test("local browser bootstrap refuses cross-origin access and protects workspace APIs", async () => {
   const directory = await mkdtemp(join(tmpdir(), "starter-http-"));
@@ -118,6 +118,18 @@ test("local browser bootstrap refuses cross-origin access and protects workspace
       request.end();
     });
     expect(wrongHost).toBe(403);
+    const malformedTarget = await new Promise<number>((resolve, reject) => {
+      const request = httpRequest(origin, { path: "http://[", timeout: 300 }, (response) => {
+        response.resume();
+        resolve(response.statusCode ?? 0);
+      });
+      request.on("timeout", () => request.destroy(new Error("Malformed target hung")));
+      request.on("error", reject);
+      request.end();
+    });
+    expect(malformedTarget).toBe(400);
+    expect((await fetch(origin + "/api/config")).status).toBe(200);
+
     expect((await fetch(origin + "/api/workspace/files")).status).toBe(401);
     for (const path of ["directory?path=", "search?q=example"]) {
       expect((await fetch(origin + "/api/workspace/" + path)).status).toBe(401);
@@ -164,6 +176,7 @@ test("local browser bootstrap refuses cross-origin access and protects workspace
         .status,
     ).toBe(401);
   } finally {
+    await app.close();
     await app.close();
     vi.unstubAllEnvs();
     await rm(directory, { recursive: true, force: true });

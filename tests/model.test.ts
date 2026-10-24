@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { createModelCatalog, parseModelConfig } from "../src/model.js";
+import { createModelCatalog, parseModelConfig } from "../src/server/agent/models.js";
 
 const config = {
   defaultModel: "local",

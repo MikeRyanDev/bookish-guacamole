@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { buildFileTree } from "../web/src/file-tree";
+import { buildFileTree } from "../src/client/file-tree";
 
 /** Supplies the paginated discovery contract for viewer-only fixtures; real API coverage is separate. */
 export async function mockFileDiscovery(

@@ -1,13 +1,13 @@
 import { ToolActivityFixture } from "./tool-activity";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import { VirtualTranscript } from "../../web/src/components/virtual-transcript";
-import "../../web/src/styles.css";
+import { VirtualTranscript } from "../../src/client/components/virtual-transcript";
+import "../../src/client/styles.css";
 import "@fontsource-variable/manrope";
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
-import { Permission } from "../../web/src/components/tool-approval";
-import { ToolCall } from "../../web/src/components/tool-call";
+import { Permission } from "../../src/client/components/tool-approval";
+import { ToolCall } from "../../src/client/components/tool-call";
 
 function Fixture() {
   if (new URLSearchParams(location.search).has("activity")) return <ToolActivityFixture />;

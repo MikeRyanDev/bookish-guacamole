@@ -1,5 +1,7 @@
 # Verification record
 
+Latest backend architecture and Hono delivery: [backend verification](BACKEND-VERIFICATION.md).
+
 > Historical implementation and validation record. Named models describe those runs, not starter requirements.
 > For current provider-neutral setup, use [model configuration](MODELS.md) and the [README](../README.md).
 

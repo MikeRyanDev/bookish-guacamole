@@ -196,7 +196,7 @@ Dark neutral surfaces must be deeper charcoal with only a trace of blue, never g
 
 The latest user request takes priority, followed by user-owned requirements and these recorded preferences.
 The current Google Fonts pairing and configurable warm accents implement the delegated redesign. Exact sizes, colors, and radii are implementation choices; preserve them during routine refinements without treating them as permanent personal preferences.
-Generic design guidance must not override the compact workspace brief. Source values in `web/src/styles.css` and `web/src/appearance.ts` are the implementation ground truth; refresh these tokens when they change.
+Generic design guidance must not override the compact workspace brief. Source values in `src/client/styles.css` and `src/client/appearance.ts` are the implementation ground truth; refresh these tokens when they change.
 
 For new or substantially redesigned component families, use imagegen concepts and component/state studies before implementation, as requested by the user. Small fixes can use existing studies and rendered UI.
 Consult the [component inventory](docs/IMPROVEMENTS-PLAN.md#component-inventory), the current [workspace](docs/design/redesign/workspace.png), [tools](docs/design/redesign/tools.png), and [appearance](docs/design/redesign/appearance.png) studies, and their [direction contract](docs/DESIGN-STUDY.md).

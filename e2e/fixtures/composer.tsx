@@ -1,13 +1,13 @@
-import { ApprovalControls } from "../../web/src/components/approval-settings";
-import { ModelSelector } from "../../web/src/components/model-selector";
+import { ApprovalControls } from "../../src/client/components/approval-settings";
+import { ModelSelector } from "../../src/client/components/model-selector";
 import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import type { Goal } from "@tanstack/ai-harness/plugins";
-import { ConversationComposer } from "../../web/src/components/conversation-composer";
-import { Permission } from "../../web/src/components/tool-approval";
-import { VirtualTranscript } from "../../web/src/components/virtual-transcript";
-import { applyAppearance } from "../../web/src/appearance";
-import "../../web/src/styles.css";
+import { ConversationComposer } from "../../src/client/components/conversation-composer";
+import { Permission } from "../../src/client/components/tool-approval";
+import { VirtualTranscript } from "../../src/client/components/virtual-transcript";
+import { applyAppearance } from "../../src/client/appearance";
+import "../../src/client/styles.css";
 import "@fontsource-variable/manrope";
 import "@fontsource/ibm-plex-mono/400.css";
 
