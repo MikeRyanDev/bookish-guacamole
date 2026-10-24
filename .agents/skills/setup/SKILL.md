@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Set up this starter with developer-chosen coding models, separate Learning configuration, CopilotKit CLI sign-in, personal EULA acceptance, and a verified local browser connection.
+description: Install this starter's dependencies and set it up with developer-chosen coding models, separate Learning configuration, CopilotKit CLI sign-in, personal EULA acceptance, and a verified local browser connection.
 ---
 
 # Set up the starter
@@ -8,6 +8,24 @@ description: Set up this starter with developer-chosen coding models, separate L
 Read `README.md` and `docs/MODELS.md`. Work from the repository root.
 Preserve existing `.env`, model catalogs, workspaces, conversations, and local stacks.
 Do not upgrade or replace an installed backend just to finish setup.
+
+## Install dependencies first
+
+Do the installation work, not just list commands for the developer.
+
+1. Inspect `package.json`, `pnpm-lock.yaml`, and the host operating system.
+2. Check Node.js, pnpm, Git, and Docker. Use versions compatible with the pinned dependencies and `packageManager` field.
+3. Install missing prerequisites through the developer's existing version manager or package manager. Consult current official installation instructions.
+4. Preserve existing installations and global defaults. If installation requires administrator access or an interactive installer, explain the required action.
+5. Run `pnpm install --frozen-lockfile` from the repository root, including development dependencies. This also installs the pinned CopilotKit CLI.
+6. Verify the command succeeds, then run `pnpm check` and `node --test example/greet.test.js`.
+
+Do not replace the lockfile, upgrade packages, or install a global CLI to bypass an installation error.
+Resolve the actual failure and retry. Do not claim dependencies are ready from an existing `node_modules` folder alone.
+If package installation reports blocked build scripts, inspect which packages require them before approving specific scripts. Do not approve all scripts automatically.
+When browser verification is needed, run `pnpm exec playwright install chromium` before the browser tests.
+If Chromium needs host libraries, follow Playwright's platform instructions and handle required administrator access explicitly.
+Start Docker and verify its engine is reachable before installing Intelligence.
 
 ## Choose models with the developer
 
@@ -30,11 +48,9 @@ Create ignored `learning.json` independently. The developer can explicitly reuse
 
 ## Prepare and authenticate
 
-1. Check the Node and pnpm requirements in `package.json`. Check Git and Docker availability.
-2. Run `pnpm install --frozen-lockfile`.
-3. Create `.env` from `.env.example` only when it does not exist.
-4. Run `pnpm workspace:create` only when the intended workspace does not exist.
-5. Run `pnpm intelligence login --json` and retain its process handle.
+1. Create `.env` from `.env.example` only when it does not exist.
+2. Run `pnpm workspace:create` only when the intended workspace does not exist.
+3. Run `pnpm intelligence login --json` and retain its process handle.
 
 The login command streams JSON lines. Relay its `authentication_url` and `action_required` messages with the exact current URL and code.
 The developer completes sign-in in their browser. Do not approve the device request on their behalf.
@@ -74,4 +90,4 @@ Ask before spending model credits unless the active task already authorizes mode
 When authorized, send a small coding task with tool use and verify its actual result.
 Report deterministic checks separately from provider requests and real Learning runs.
 A saved configuration or enabled Learning indicator does not prove a successful Learning run.
-Report the selected providers, model IDs, configuration paths, authentication result, agreement/setup result, browser URL, and remaining failures. Never include keys.
+Report installed prerequisite versions, dependency installation and check results, selected providers, model IDs, configuration paths, authentication result, agreement/setup result, browser URL, and remaining failures. Never include keys.
