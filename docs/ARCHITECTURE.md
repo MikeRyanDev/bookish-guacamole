@@ -100,3 +100,9 @@ approval transport stays in place. The bridge preserves outer identities and
 excludes private message snapshots. Stop removes queued work and cancels the
 active native turn. CopilotKit replays the persisted state for the composer.
 See [Goal design and limits](GOALS.md) for the lifecycle and verification contract.
+
+## HTML and tree extensions
+
+The text reader previews HTML directly in an iframe with `sandbox="allow-scripts"` and no same-origin grant. It does not parse or rewrite the document. Scripts run in the preview, but cannot access the parent document or its storage. Forms, popups, downloads, and top-level navigation remain sandboxed. Network requests remain possible; the preview does not serve relative workspace resources.
+
+Workspace file responses add optional Git metadata from bounded, NUL-delimited porcelain reads. TanStack Query owns that data. A pure tree model derives sorted ancestry and aggregated status. TanStack Virtual renders visible rows and retains the active row for keyboard access. React owns expansion and tree focus; Router still owns the selected file. See [the HTML and tree verification record](HTML-TREE-VERIFICATION.md) for the contract, constraints, and evidence.

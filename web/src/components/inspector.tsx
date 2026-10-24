@@ -5,8 +5,6 @@ import {
   BookOpen,
   RefreshCw,
   ArrowLeft,
-  Folder,
-  ChevronRight,
   Maximize2,
   Minimize2,
   Copy,
@@ -16,6 +14,7 @@ import {
 import Markdown from "react-markdown";
 import { type AppConfig, filesQuery, skillsQuery, request } from "../api";
 import { IconButton } from "./icon-button";
+import { FileTree } from "./file-tree";
 import { FileViewer } from "./file-viewer";
 import { viewerKind } from "../viewers/registry";
 const AssetViewer = lazy(() =>
@@ -58,24 +57,6 @@ function WorkspaceInspector({
   const state = panel === "files" ? files : skills;
   const paths = (files.data?.files ?? []).filter((path) =>
     path.toLowerCase().includes(filter.toLowerCase()),
-  );
-  const groups = new Map<string, string[]>();
-  for (const path of paths) {
-    const folder = path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : "";
-    groups.set(folder, [...(groups.get(folder) ?? []), path]);
-  }
-  const row = (path: string) => (
-    <button
-      className={`file-row ${file === path ? "selected" : ""}`}
-      key={path}
-      title={path}
-      aria-label={`Open ${path}`}
-      aria-current={file === path ? "true" : undefined}
-      onClick={() => onFile(path)}
-    >
-      <FileCode2 size={14} />
-      <span>{filter ? path : path.split("/").pop()}</span>
-    </button>
   );
   async function copyPath() {
     if (!file) return;
@@ -182,22 +163,20 @@ function WorkspaceInspector({
                 {filter && files.data && !paths.length && (
                   <p className="muted">No files match “{filter}”.</p>
                 )}
-                {[...groups]
-                  .sort(([a], [b]) => a.localeCompare(b))
-                  .map(([folder, entries]) =>
-                    folder && !filter ? (
-                      <details className="file-folder" key={folder} open>
-                        <summary>
-                          <ChevronRight className="folder-chevron" size={12} aria-hidden="true" />
-                          <Folder size={14} />
-                          <span>{folder}</span>
-                        </summary>
-                        {entries.map(row)}
-                      </details>
-                    ) : (
-                      <div key={folder}>{entries.map(row)}</div>
-                    ),
-                  )}
+                {files.data && files.data.files.length > 0 && (
+                  <FileTree
+                    paths={files.data.files}
+                    git={files.data.git}
+                    filter={filter}
+                    selected={file}
+                    onFile={onFile}
+                  />
+                )}
+                {files.data?.git?.available === false && (
+                  <p className="muted" role="status">
+                    Git status unavailable. Refresh to retry.
+                  </p>
+                )}
                 {files.data?.truncated && (
                   <p className="muted">
                     File listing limited. Search covers only the listed files.

@@ -2,6 +2,7 @@ import { execFile } from "node:child_process";
 import { open, opendir, realpath } from "node:fs/promises";
 import { isAbsolute, join, relative, resolve } from "node:path";
 import { promisify } from "node:util";
+import { parseGitStatus, type WorkspaceGitStatus } from "./file-status.js";
 const execute = promisify(execFile);
 /** Keeps private dotfiles and parent traversal out of the browser's file preview. */
 function visible(path: string): boolean {
@@ -10,7 +11,9 @@ function visible(path: string): boolean {
   );
 }
 /** Walks plain folders without following symlinks or entering dependency/private trees. */
-async function listPlainFolder(root: string) {
+async function listPlainFolder(
+  root: string,
+): Promise<{ files: string[]; truncated: boolean; git?: WorkspaceGitStatus }> {
   const files: string[] = [];
   const pending = [""];
   let visited = 0;
@@ -69,8 +72,48 @@ export async function listWorkspaceFiles(root: string) {
         env: { ...process.env, LC_ALL: "C" },
       },
     );
-    const files = [...new Set(stdout.split("\0").filter(visible))].sort();
-    return { files: files.slice(0, 1000), truncated: files.length > 1000 };
+    let git: WorkspaceGitStatus;
+    try {
+      const options = {
+        cwd: root,
+        timeout: 5000,
+        maxBuffer: 4 * 1024 * 1024,
+        env: { ...process.env, LC_ALL: "C", GIT_OPTIONAL_LOCKS: "0" },
+      };
+      const [{ stdout: prefix }, { stdout: status }] = await Promise.all([
+        execute("git", ["rev-parse", "--show-prefix"], options),
+        execute(
+          "git",
+          [
+            "-c",
+            "core.fsmonitor=",
+            "-c",
+            "core.hooksPath=",
+            "status",
+            "--porcelain=v1",
+            "-z",
+            "--untracked-files=all",
+            "--",
+            ".",
+          ],
+          options,
+        ),
+      ]);
+      git = { available: true, entries: parseGitStatus(status, prefix.replace(/\n$/, "")) };
+    } catch {
+      // A timeout/unsupported status command must not turn unavailable status into "clean".
+      git = { available: false, entries: {} };
+    }
+    const paths = [
+      ...new Set([...stdout.split("\0").filter(visible), ...Object.keys(git.entries)]),
+    ].sort();
+    const files = paths.slice(0, 1000);
+    git.entries = Object.fromEntries(
+      files
+        .filter((path) => Object.hasOwn(git.entries, path))
+        .map((path) => [path, git.entries[path]!]),
+    );
+    return { files, truncated: paths.length > 1000, git };
   } catch (error) {
     if (
       error instanceof Error &&

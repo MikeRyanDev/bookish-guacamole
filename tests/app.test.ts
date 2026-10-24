@@ -107,7 +107,11 @@ test("workspace APIs create isolated identities and preserve files when an entry
     const files = await fetch(origin + `/api/workspace/files?workspace=${workspace.id}`, {
       headers,
     });
-    expect(await files.json()).toEqual({ files: [], truncated: false });
+    expect(await files.json()).toEqual({
+      files: [],
+      truncated: false,
+      git: { available: true, entries: {} },
+    });
     expect(
       (await fetch(origin + `/api/workspaces/${workspace.id}`, { method: "DELETE", headers }))
         .status,

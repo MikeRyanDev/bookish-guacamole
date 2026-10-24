@@ -5,6 +5,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { IconButton } from "./icon-button";
 import { useSyntax } from "../viewers/use-syntax";
+import HtmlViewer from "../viewers/html-viewer";
 
 /** Displays bounded, read-only text. Copy/download always use the unmodified response. */
 export function FileViewer({ path, content }: { path: string; content: string }) {
@@ -71,6 +72,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
   useEffect(() => {
     if (finding) findInput.current?.focus();
   }, [finding]);
+  const html = /\.(html?|xhtml)$/i.test(path);
   const markdown = /\.(md|markdown|mdx)$/i.test(path);
   async function copy(value: string, label: string) {
     try {
@@ -113,7 +115,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
       }}
     >
       <div className="reader-toolbar">
-        {markdown && (
+        {(markdown || html) && (
           <div className="reader-modes" aria-label="File view">
             <button aria-pressed={mode === "source"} onClick={() => setMode("source")}>
               Source
@@ -245,7 +247,9 @@ export function FileViewer({ path, content }: { path: string; content: string })
           {feedback.text}
         </p>
       )}
-      {mode === "preview" ? (
+      {mode === "preview" && html ? (
+        <HtmlViewer content={content} />
+      ) : mode === "preview" ? (
         <div
           className="file-markdown markdown"
           role="region"

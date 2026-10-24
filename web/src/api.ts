@@ -1,3 +1,4 @@
+import type { WorkspaceGitStatus } from "../../src/file-status";
 import { queryOptions } from "@tanstack/react-query";
 export interface AppConfig {
   token: string;
@@ -40,7 +41,7 @@ export const filesQuery = (token: string, workspace: string) =>
   queryOptions({
     queryKey: ["files", workspace],
     queryFn: ({ signal }) =>
-      request<{ files: string[]; truncated: boolean }>(
+      request<{ files: string[]; truncated: boolean; git?: WorkspaceGitStatus }>(
         `/api/workspace/files?workspace=${encodeURIComponent(workspace)}`,
         token,
         signal,
