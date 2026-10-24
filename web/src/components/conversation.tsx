@@ -163,7 +163,7 @@ function ActiveConversation({
                   input.current?.focus();
                 }}
               >
-                Explore this project <ChevronRight size={14} />
+                Use project overview prompt <ChevronRight size={14} />
               </button>
             </div>
           )

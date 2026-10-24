@@ -22,6 +22,22 @@ The following combined browser run passed all 14 tests:
 CI=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4195 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4216 pnpm test:e2e e2e/lazy-files.spec.ts e2e/composer.spec.ts e2e/html-tree.spec.ts e2e/html-tree-integration.spec.ts e2e/workspaces.spec.ts
 ```
 
+After integration, the new repository usability gate required a fresh task-first review. [Separate usability and visual verdicts](FILE-DISCOVERY.md#usability-verdict).
+The review found mobile entry and search-clear issues. A pointer-hit regression failed with a long workspace name before the header fix.
+Final corrections add a visible Files entry, clarify the prompt suggestion, and remove the delay when clearing search.
+
+`pnpm check` passed again with 134 tests and 49 declared skips. `pnpm design:browser` passed the rendered matrix.
+The final affected run passed 12 tests; one new keyboard test initially omitted the existing Back-to-files focus handoff.
+After waiting for that visible focus state, the focused command passed all six tests:
+
+```sh
+CI=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4195 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4216 pnpm test:e2e e2e/html-tree.spec.ts e2e/file-entry.spec.ts
+```
+
+The other affected command covered `e2e/file-entry.spec.ts`, `e2e/html-tree.spec.ts`, `e2e/file-viewer-integration.spec.ts`, `e2e/html-tree-integration.spec.ts`, `e2e/workspace.spec.ts`, and `e2e/lazy-files.spec.ts` with the same URL overrides.
+Before the final entry-label correction, the merged main app also passed `e2e/lazy-files.spec.ts` at port 4173.
+No backend deployment changed; only the local starter app was restarted to load the new endpoints.
+
 The new API tests first failed because the requested discovery contract was absent. A later literal-path regression failed before the Git argument fix.
 Current tests page through all 1,105 files in Git and plain folders. Plain-folder search also crosses more than 10,000 entries.
 They cover private paths, symlinks, ignores, forced tracked files, deleted files, aggregate Git status, cursor scope, cancellation, and unusual filenames.

@@ -30,9 +30,9 @@ test("mobile exposes both side panels without hiding the conversation forever", 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await expect(page.getByRole("textbox", { name: "Message your coding agent" })).toBeVisible();
-  await page.getByRole("button", { name: "Toggle inspector", exact: true }).click();
+  await page.getByRole("button", { name: "Toggle files", exact: true }).click();
   await expect(page.getByRole("complementary", { name: "Workspace inspector" })).toBeVisible();
-  await page.getByRole("button", { name: "Toggle inspector", exact: true }).click();
+  await page.getByRole("button", { name: "Toggle files", exact: true }).click();
   await page.getByRole("button", { name: "Toggle sessions" }).click();
   await expect(page.getByRole("complementary", { name: "Sessions", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Toggle sessions" }).click();

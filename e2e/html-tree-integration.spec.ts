@@ -83,12 +83,12 @@ test("real Git changes refresh the tree while original HTML runs in the sandbox"
         animations: "disabled",
       });
       await page.setViewportSize({ width: 390, height: 844 });
-      await expect(page.getByRole("button", { name: "Toggle inspector" })).toHaveAttribute(
+      await expect(page.getByRole("button", { name: "Toggle files" })).toHaveAttribute(
         "aria-pressed",
         "false",
       );
       // The SDK Inspector overlay retains its desktop position after resizing; use the host keyboard control.
-      await page.getByRole("button", { name: "Toggle inspector" }).focus();
+      await page.getByRole("button", { name: "Toggle files" }).focus();
       await page.keyboard.press("Enter");
       await expect(frame.getByRole("button", { name: "Count 1" })).toBeVisible();
       await page.screenshot({

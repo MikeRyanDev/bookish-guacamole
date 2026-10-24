@@ -247,6 +247,7 @@ Keep headings subordinate to the developer task; larger empty-state headings are
 The desktop workspace has session navigation, a central transcript and anchored composer, and file/Skill inspection.
 Its grid is 224px / flexible (minimum 320px) / 290px beneath a 48px header. At 1100px, side panes narrow to 200px and 250px.
 At 850px, panes occupy one shared content area and navigation selects the visible pane; icon hit areas grow from 32px to 40px.
+When the development Inspector is present, the header reserves 72px at its end for the floating badge. Workspace names truncate before app controls overlap it.
 The conversation uses compact grouped spacing and contained scrolling. Tool headers wrap below 600px. Eight accent choices form one row, then two four-item rows below 480px.
 
 The virtual transcript follows streaming only while the reader remains near its end. User-triggered disclosure preserves the clicked control's viewport position while row heights settle; streaming then resumes following only at the end. Saved session rows stay mounted during navigation.

@@ -164,6 +164,17 @@ pre {
 .workspace-name {
   font-size: 12px;
 }
+/* The development Inspector floats at the viewport edge; keep app controls outside its hit area. */
+body:has(cpk-web-inspector) .workspace-header {
+  padding-inline-end: 72px;
+}
+.header-left {
+  min-width: 0;
+}
+.header-left > .icon-control,
+.header-actions {
+  flex-shrink: 0;
+}
 .header-actions {
   gap: 2px;
 }

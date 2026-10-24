@@ -22,7 +22,8 @@ export function WorkspaceFileBrowser({
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set());
   const [pages, setPages] = useState<Pages>(initialPages);
-  const [search, setSearch] = useState(filter);
+  const [settledSearch, setSearch] = useState(filter);
+  const search = filter ? settledSearch : "";
   // Debounce the network request; changing the Query key cancels obsolete reads.
   useEffect(() => {
     const timer = setTimeout(() => setSearch(filter), 200);

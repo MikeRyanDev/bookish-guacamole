@@ -95,7 +95,10 @@ function Shell({ config }: { config: AppConfig }) {
     if (compact) setInspector(false);
   }
   function toggleInspector() {
-    setInspector(!inspector);
+    const openFiles = !inspector || search.panel === "skills";
+    setInspector(openFiles);
+    if (openFiles && search.panel === "skills")
+      void navigate({ search: (previous) => ({ ...previous, panel: "files" }) });
     if (compact) setSidebar(false);
   }
   const [filter, setFilter] = useState("");
@@ -168,8 +171,12 @@ function Shell({ config }: { config: AppConfig }) {
           <IconButton label="Settings" onClick={() => showModal("settings")}>
             <Settings size={16} />
           </IconButton>
-          <IconButton label="Toggle inspector" aria-pressed={inspector} onClick={toggleInspector}>
-            <PanelRight size={17} />
+          <IconButton
+            label="Toggle files"
+            aria-pressed={inspector && search.panel !== "skills"}
+            onClick={toggleInspector}
+          >
+            <span>Files</span>
           </IconButton>
         </div>
       </header>
@@ -291,7 +298,7 @@ function Shell({ config }: { config: AppConfig }) {
               }}
             >
               <PanelRight size={16} />
-              Toggle inspector
+              Toggle files
             </button>
             <button
               onClick={() => {

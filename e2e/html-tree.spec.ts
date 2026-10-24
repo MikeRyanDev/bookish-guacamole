@@ -195,3 +195,21 @@ test("directory and search errors retry locally, and obsolete search results can
   await page.getByRole("button", { name: "Clear file search" }).click();
   await expect(page.getByRole("button", { name: "Collapse src", exact: true })).toBeVisible();
 });
+
+test("clearing search immediately restores folder keyboard navigation", async ({ page }) => {
+  await page.route("**/api/workspace/file?*", (route) =>
+    route.fulfill({ json: { path: "src/z.ts", content: "selected source" } }),
+  );
+  await page.goto(`${origin}/inspector.html`);
+  await page.getByRole("textbox", { name: "Search files", exact: true }).fill("z.ts");
+  await page.getByRole("button", { name: "Open src/z.ts", exact: true }).click();
+  await page.getByRole("button", { name: "Back to files", exact: true }).click();
+  await expect(page.getByRole("textbox", { name: "Search files", exact: true })).toBeFocused();
+  // Back focuses search. Clear then immediately activate the restored tree with no network wait.
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("button", { name: "Collapse assets", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "File contents" })).toHaveCount(0);
+});

@@ -59,9 +59,9 @@ test("real workspace file reads preserve URL navigation, refresh, and asset isol
     await expect(page.getByText("Quarterly report & review", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Open image.svg", exact: true }).click();
     await expect(page.getByRole("img", { name: "image.svg" })).toBeVisible();
-    await page.getByRole("button", { name: "Toggle inspector" }).click();
+    await page.getByRole("button", { name: "Toggle files" }).click();
     await expect(page.locator(".main-pane")).toBeVisible();
-    await page.getByRole("button", { name: "Toggle inspector" }).click();
+    await page.getByRole("button", { name: "Toggle files" }).click();
     await expect(page.getByRole("img", { name: "image.svg" })).toBeVisible();
     const other = await request.get(
       `${origin}/api/workspace/asset?workspace=default&path=document.docx`,

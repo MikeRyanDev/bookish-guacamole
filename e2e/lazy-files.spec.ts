@@ -116,7 +116,7 @@ test("real directory pages and workspace search reach files beyond 1,000 without
             ),
         );
         if (!(await page.locator(".inspector").isVisible()))
-          await page.getByRole("button", { name: "Toggle inspector", exact: true }).click();
+          await page.getByRole("button", { name: "Toggle files", exact: true }).click();
         await expect(page.locator(".inspector")).toBeVisible();
         await expect(page.locator(".inspector")).toHaveCSS("opacity", "1");
         await tree.focus();
