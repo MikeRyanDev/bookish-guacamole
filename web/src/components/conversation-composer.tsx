@@ -135,7 +135,9 @@ export function ConversationComposer({
           className={`composer-state muted ${!pendingApproval && !connecting && !running && ready ? "composer-shortcut" : ""}`}
         >
           {pendingApproval
-            ? "Approval required"
+            ? goal && !goalMode
+              ? ""
+              : "Approval required"
             : connecting
               ? "Restoring…"
               : running

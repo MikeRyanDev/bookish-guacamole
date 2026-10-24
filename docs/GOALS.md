@@ -84,4 +84,5 @@ preserving its grouped tool activity. Remote alpha main `a248492` replaces the
 current design and viewer with an older tree; it is not the local merge target.
 No upstream package, shared deployment, or release-history rewrite is required.
 
-[Validation record](GOALS-VERIFICATION.md).
+[Goal backend validation](GOALS-VERIFICATION.md).
+[Integrated composer validation](COMPOSER-VERIFICATION.md).

@@ -105,7 +105,11 @@ function Fixture() {
             <>
               {state === "approval" && (
                 <Permission
-                  interrupt={{ id: "fixture-approval", message: "Run the project tests?" }}
+                  interrupt={{
+                    id: "fixture-approval",
+                    reason: "approval",
+                    message: "Run the project tests?",
+                  }}
                   messages={[]}
                   resolve={async () => {
                     setState("paused");
