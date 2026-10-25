@@ -48,7 +48,7 @@ Technical evidence is deterministic. The fixture never executes code. No new mod
 - `node --test example/greet.test.js`: 1 passed.
 - `pnpm check`: passed lint, source design check, typechecks, 179 tests (47 declared skips), and browser/server builds. Existing palette/radius advisories and large-chunk warning remain.
 - `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4207 pnpm design:browser`: passed tool/approval surfaces, including TypeScript, in both themes and widths. An earlier run collided with another Playwright run sharing its output directory; sequential rerun passed.
-- Formatting and merged-tree checks are recorded below after integration.
+- Changed-file `pnpm exec oxfmt --check` and `git diff --check`: passed.
 
 Historical screenshot files rewritten by existing tests were restored in the isolated worktree. New automated screenshots go to ignored Playwright output. Curated final captures in this study use synthetic data only.
 
@@ -67,4 +67,11 @@ After rebase:
 
 A temporary Vite preview at port 4208 served the rebased frontend and proxied only `/api/` to the existing isolated capabilities app at 4253. Proxy Host/Origin were normalized to that backend; application authorization checks were not changed. The saved real-model conversation reopened with its TypeScript call, source, and returned output visible. Reload restored the exact same 229-character source and 555-character formatted output. This was a read-only replay of prior execution, with zero new model calls. The replay script, report, and screenshot remain ignored under `.data/typescript-review/`; no private transcript was committed.
 
-The final merge preserves the pre-existing user edits to MONDAY_CUTOVER_CHECKLIST.md. Main verification is recorded after merge.
+Fast-forward merged into the local main worktree at `71fbd93`. Fresh checks ran from `/Users/mikeryan/Repos/cpk/tanstack-intelligence-starter`:
+
+- `pnpm check`: passed lint, source design check, both TypeScript checks, 202 tests (47 declared skips), and both production builds.
+- `node --test example/greet.test.js`: 1 passed.
+- `CI=1 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4217 pnpm test:e2e e2e/typescript-tool.spec.ts e2e/design.spec.ts`: 6 passed against a newly started fixture server from merged main.
+- `git diff --check`: passed. The only pre-existing main modification remains MONDAY_CUTOVER_CHECKLIST.md; its SHA-256 stayed `7576660e7c42302024827619873da1ba6260f47c018f99bc50d80a37986d95f3`.
+
+This final evidence update changes documentation only. The verified implementation tree is unchanged. No remote push, upstream merge, shared deployment, or history rewrite occurred.
