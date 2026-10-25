@@ -19,7 +19,7 @@ test("coding tools show commands, honest exit status, readable diffs, and number
   await expect(read.locator(".code-line").first()).toContainText("export function greet(name)");
   const program = page.getByRole("region", { name: "execute_typescript tool call" });
   await program.locator("summary.tool-header").click();
-  await expect(program.locator(".tool-surface-heading")).toContainText("TypeScript program");
+  await expect(program.locator(".tool-surface-heading").first()).toContainText("TypeScript");
   await expect(program.locator(".tool-surface")).toContainText(
     'external_read_file({ path: "notes.txt" })',
   );

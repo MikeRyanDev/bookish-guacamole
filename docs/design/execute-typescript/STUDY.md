@@ -34,9 +34,11 @@ A stacked view exposes both sides of execution in one disclosure. Tabs would hid
 
 Usability: independent fresh reviewer passed the inspection/copy task using the runnable fixture, keyboard, clipboard, state selector, and 390 × 844 viewport. Initial prediction was to expand Execute TypeScript, then inspect source and output. Controls matched that prediction. The reviewer found compact JSON harder to scan on mobile. After display indentation, a scoped follow-up confirmed the error message and line number were easy to scan and exact-output copying met expectations.
 
+Documentation: the independent documenter confirmed no durable system change. DESIGN.md and its sidecar were preserved. Existing weight/permission-label sidecar drift was reported without repair.
+
 Visual: independent finish reviewer returned **ship** with no material fixes. All seven required captures matched the incumbent system and the direction contract. Current captures use production fonts and disabled motion, in both themes at 1440px and 390px. The generated study is not fidelity evidence.
 
-Technical evidence is deterministic. The fixture never executes code. No new model, Learning, live backend, or publication acceptance is claimed. The runtime is not enabled on the starting main checkout; integration with concurrent capabilities remains separate.
+Technical evidence is deterministic. The fixture never executes code. No new model, Learning, live backend, or publication acceptance is claimed. The capabilities implementation landed on main during this work and was preserved during rebase. A read-only replay check against the existing CLI-installed backend is recorded below; no new model execution was requested.
 
 ## Validation
 
@@ -51,3 +53,18 @@ Technical evidence is deterministic. The fixture never executes code. No new mod
 Historical screenshot files rewritten by existing tests were restored in the isolated worktree. New automated screenshots go to ignored Playwright output. Curated final captures in this study use synthetic data only.
 
 Final synthetic captures: [light desktop](light-desktop.png), [dark mobile](dark-mobile.png), [error mobile](error-mobile.png). These are browser captures, not generated assets.
+
+## Integration with current main
+
+Rebased onto `6f57039`, which includes the concurrent capabilities delivery. The renderer conflict was resolved by retaining this reviewed source/output design while keeping all runtime, settings, dependency, and other-tool changes from main. The existing TypeScript renderer test now checks the new heading. No upstream repository or preview artifact changed; local UI integration requires no weekend preview publication.
+
+After rebase:
+
+- `pnpm install --frozen-lockfile`: passed with the current main dependency pins.
+- `pnpm check`: passed, 202 tests and 47 declared skips, plus lint/design/types and both builds.
+- `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4207 pnpm test:e2e e2e/typescript-tool.spec.ts e2e/tool-renderers.spec.ts e2e/tool-stack.spec.ts e2e/tool-polish.spec.ts e2e/tool-approvals.spec.ts e2e/tool-disclosure.spec.ts e2e/motion.spec.ts e2e/virtual-transcript.spec.ts e2e/design.spec.ts`: all 29 passed.
+- Fresh 1440px/390px light/dark component captures were byte-identical to the reviewed captures after rebase.
+
+A temporary Vite preview at port 4208 served the rebased frontend and proxied only `/api/` to the existing isolated capabilities app at 4253. Proxy Host/Origin were normalized to that backend; application authorization checks were not changed. The saved real-model conversation reopened with its TypeScript call, source, and returned output visible. Reload restored the exact same 229-character source and 555-character formatted output. This was a read-only replay of prior execution, with zero new model calls. The replay script, report, and screenshot remain ignored under `.data/typescript-review/`; no private transcript was committed.
+
+The final merge preserves the pre-existing user edits to MONDAY_CUTOVER_CHECKLIST.md. Main verification is recorded after merge.
