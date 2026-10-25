@@ -128,3 +128,66 @@ The production route-registration test now verifies that the runtime API-key gua
 
 Next: implement typed management methods in the CopilotKit runtime SDK above #7966, cross-link the companion PRs, then build the UI.
 The user has not answered the optional evidence-source question. Continue with saved conversations as the stated assumption.
+
+## SDK and UI study — 2026-10-24
+
+[CopilotKit draft #7977](https://github.com/CopilotKit/CopilotKit/pull/7977) is in native stack #7978,
+ordered #7966 then #7977. GitHub confirmed head `ac77c6e91eba024dcdd47c4602846b1f4c487c39`.
+The companion PRs cross-link each other. Both upstream worktrees are clean.
+The SDK adds typed management methods, bounded validated responses, cancellation through body reads,
+a 30-second deadline, and safe platform errors. Writes have no automatic retries.
+It also exposes the existing backend Thread membership fields without changing wire behavior.
+
+Validation: 227 Intelligence platform tests passed before the additive Thread type fix;
+all seven management tests and runtime typecheck passed afterward.
+Runtime build/declaration validation passed, including Express 4/5 fixtures.
+Both commits passed the required affected-package test/publint/attw hook.
+The first hook ran 2,983 runtime tests in 203 files. Changed-file lint and formatting passed.
+The backend's full CI and delivery acceptance workflows now report success.
+These checks do not replace installed starter acceptance.
+SDK preview runs for the superseded `2037477` head were cancelled.
+Current exact-head push preview: https://github.com/CopilotKit/CopilotKit/actions/runs/40148666525
+Current exact-head PR preview: https://github.com/CopilotKit/CopilotKit/actions/runs/40148670586
+Both were still building when recorded. No new chart/CLI candidate was dispatched yet.
+
+The required ImageGen [component/state study](states.png) was produced from a fresh capture
+of the running incumbent workspace. Its prompt sidecar and embedded provenance are present.
+It covers assignment, the Skill list, review/evidence, and mobile running/error states.
+This is a code-led local extension under the current Impeccable Operate guidance.
+It is not a new-world comp round or an approved pixel contract.
+The generated outlines, invented progress counts, dates, and evidence counts must not be copied.
+The existing borderless controls and real API data take precedence.
+The concrete control sequence and a spatial sketch were shown in the conversation.
+The six-block direction contract is `.impeccable/surfaces/src-client-components-learning-panel-tsx.md`.
+`IMPROVEMENTS.md` was rechecked and left unchanged.
+
+Runtime integration design: select new conversation assignment from the workspace setting;
+read existing memberships from Intelligence rather than inventing a local transcript mapping.
+A per-session Skill source must use that conversation's confirmed membership on each turn,
+with zero freshness window and stale-snapshot rejection. Multi-membership responses must
+remain explicit, and a missing membership field must not be guessed from the new workspace choice.
+The selector executes before the SDK gets or creates the Thread, as verified in the installed-source analogue.
+No runtime, HTTP, or UI behavior for the new controls is implemented yet.
+
+### Preview publication progress
+
+The SDK push workflow `40148666525` succeeded at exact head `ac77c6e91eba024dcdd47c4602846b1f4c487c39`.
+All 15 public SDK archives downloaded through anonymous curl; package names, versions,
+SHA-256/SHA-512 checksums, and matching preview dependency commits were verified.
+Private download staging and the new archive record are under `.data/workspace-learning/sdk-ac77c6e/`.
+Python urllib received HTTP 403; curl succeeded. No credentials were needed.
+
+The live main checkout has advanced to `93467d9` and now includes `docs/WEEKEND-DELIVERY.md`.
+Its runbook explicitly requires a candidate version newer than the installed local release.
+The current ledger records installed chart `0.15.1-validation.7cab78803075`.
+The new candidate therefore uses base `0.15.1`, yielding `0.15.1-validation.985175b7747f`.
+CLI version is `4.30.0-pre.985175b`; planned template pin is the verified SDK full SHA.
+The API commit has no migration or support-input differences from `7cab788`.
+The reviewed schema identity and compatibility declaration remain unchanged.
+`release-chart.yml` was dispatched with `mode=validate_release`, `publish_local_candidate=true`,
+`local_candidate_support=scripts/local-evaluation-support.json`, and the exact CLI version.
+Shared promotions, upstream merges, and stable package publication remain outside this delivery.
+Do not dispatch the matching CLI until the candidate chart and images pass verification.
+
+Main still has the user's unrelated Monday checklist edit. Preserve it and the newer merged work.
+The starter worktree remains based on `6f57039`; integrate current main before final delivery checks.
