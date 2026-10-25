@@ -17,6 +17,12 @@ test("coding tools show commands, honest exit status, readable diffs, and number
   await expect(read.locator(".tool-surface-heading code")).toHaveText("src/greet.ts");
   await expect(read.locator(".line-number").first()).toHaveText("10");
   await expect(read.locator(".code-line").first()).toContainText("export function greet(name)");
+  const program = page.getByRole("region", { name: "execute_typescript tool call" });
+  await program.locator("summary.tool-header").click();
+  await expect(program.locator(".tool-surface-heading")).toContainText("TypeScript program");
+  await expect(program.locator(".tool-surface")).toContainText(
+    'external_read_file({ path: "notes.txt" })',
+  );
   for (const theme of ["light", "dark"]) {
     await page.evaluate((value) => (document.documentElement.dataset.theme = value), theme);
     const results = await new AxeBuilder({ page })

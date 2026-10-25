@@ -2,10 +2,84 @@ import { Hono } from "hono";
 import { z } from "zod";
 import type { ApiDependencies } from "./context.js";
 import { managementJson } from "./validation.js";
+import { executionUpdateSchema } from "../agent/execution-settings.js";
+import { connectionsUpdateSchema } from "../agent/connections.js";
 
 /** Per-thread settings and workspace permission rules; services enforce native policy. */
 export function settingsRoutes({ runtimeFor, selectedWorkspace }: ApiDependencies) {
   const app = new Hono();
+  app.get("/history", async (c) =>
+    c.json(
+      await runtimeFor(selectedWorkspace(new URL(c.req.url))).undo.preview(
+        c.req.query("thread") ?? "",
+      ),
+    ),
+  );
+  app.get("/connections", async (c) =>
+    c.json(await runtimeFor(selectedWorkspace(new URL(c.req.url))).connections.read()),
+  );
+  app.put("/connections", ...managementJson(connectionsUpdateSchema), async (c) =>
+    c.json(
+      await runtimeFor(selectedWorkspace(new URL(c.req.url))).connections.save(c.req.valid("json")),
+    ),
+  );
+  app.get("/connections/status", async (c) =>
+    c.json(await runtimeFor(selectedWorkspace(new URL(c.req.url))).connections.status()),
+  );
+  app.post("/connections/retry", ...managementJson(z.object({}).strict()), async (c) =>
+    c.json(await runtimeFor(selectedWorkspace(new URL(c.req.url))).connections.retry()),
+  );
+  app.post(
+    "/connections/sign-in",
+    ...managementJson(
+      z.object({ connectionId: z.string().regex(/^[a-z][a-z0-9_-]{0,39}$/) }).strict(),
+    ),
+    async (c) =>
+      c.json(
+        await runtimeFor(selectedWorkspace(new URL(c.req.url))).connections.startSignIn(
+          c.req.valid("json").connectionId,
+        ),
+      ),
+  );
+  app.post("/connections/cancel-sign-in", ...managementJson(z.object({}).strict()), async (c) =>
+    c.json(await runtimeFor(selectedWorkspace(new URL(c.req.url))).connections.cancelSignIn()),
+  );
+  app.post(
+    "/connections/sign-out",
+    ...managementJson(
+      z.object({ connectionId: z.string().regex(/^[a-z][a-z0-9_-]{0,39}$/) }).strict(),
+    ),
+    async (c) =>
+      c.json(
+        await runtimeFor(selectedWorkspace(new URL(c.req.url))).connections.signOut(
+          c.req.valid("json").connectionId,
+        ),
+      ),
+  );
+  app.get("/execution", async (c) =>
+    c.json(await runtimeFor(selectedWorkspace(new URL(c.req.url))).executionSettings.read()),
+  );
+  app.put("/execution", ...managementJson(executionUpdateSchema), async (c) =>
+    c.json(
+      await runtimeFor(selectedWorkspace(new URL(c.req.url))).executionSettings.save(
+        c.req.valid("json"),
+      ),
+    ),
+  );
+  app.get("/execution/status", async (c) =>
+    c.json(
+      await runtimeFor(selectedWorkspace(new URL(c.req.url))).executionStatus(
+        c.req.query("thread") ?? "",
+      ),
+    ),
+  );
+  app.post("/execution/compact", ...managementJson(z.object({}).strict()), async (c) =>
+    c.json(
+      await runtimeFor(selectedWorkspace(new URL(c.req.url))).scheduleCompaction(
+        c.req.query("thread") ?? "",
+      ),
+    ),
+  );
   app.get("/defaults", async (c) =>
     c.json(await runtimeFor(selectedWorkspace(new URL(c.req.url))).defaults.read()),
   );
