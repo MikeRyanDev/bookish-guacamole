@@ -21,6 +21,7 @@ Start from [the Learning stacked-alpha plan](LEARNING_KNOB_PLAN.md). Add each we
 - [ ] Freeze the intended cutover scope and record each repository's native stack ID, ordered PRs, owners, and exact heads.
 - [ ] Resolve review threads and obtain required approvals for every included layer. Confirm trunk protections and required CI pass at the current heads.
 - [ ] Review the complete result across Intelligence, CopilotKit, and the starter. Check API compatibility, dependency/license changes, migrations, and absence of secrets.
+- [ ] Review the new CopilotKit Learning SDK APIs in [#7977](https://github.com/CopilotKit/CopilotKit/pull/7977) before stable publication. Include the companion Intelligence endpoints in [#2068](https://github.com/CopilotKit/Intelligence/pull/2068). Check naming, request/response contracts, project-key authorization, errors, cancellation, pagination, conversation membership, backward compatibility, and documentation. Record approval or required changes.
 - [ ] Rebase dependent layers when needed and rerun affected checks. Replace acceptance evidence that refers to an older head or artifact set.
 - [ ] Select the approved stack or prefix for GitHub's native stack merge flow. Coordinate companion repository merges; do not merge only one side of the Learning contract.
 
