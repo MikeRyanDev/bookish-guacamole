@@ -10,6 +10,11 @@ test("real Intelligence keeps file Undo/Redo, usage, compaction, and read progra
     "Requires an explicitly isolated workspace and model use.",
   );
   test.setTimeout(180_000);
+  const historyErrors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && message.text().includes("Files changed after"))
+      historyErrors.push(message.text());
+  });
   const root = resolve(process.env.CAPABILITIES_WORKSPACE!);
   const path = resolve(root, "capabilities-proof.txt");
   await writeFile(path, "before recovery proof\n");
@@ -87,6 +92,7 @@ test("real Intelligence keeps file Undo/Redo, usage, compaction, and read progra
     await expect(undo).toBeVisible();
     await expect(undo).toContainText("Files changed after the recorded turn");
     expect(await readFile(path, "utf8")).toBe("later human edit\n");
+    expect(historyErrors).toEqual([]);
     await writeFile(path, "after recovery proof\n");
     await undo.getByRole("button", { name: "Refresh preview", exact: true }).click();
     await undo.getByRole("button", { name: "Undo turn", exact: true }).click();

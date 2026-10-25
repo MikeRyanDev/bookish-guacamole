@@ -157,6 +157,9 @@ Compaction runs before main-call admission so a summary cannot consume the remai
 Native `snapshots()` owns file trees and Undo/Redo transcript buffers. `undo.ts` stores only outer message-ID mappings and recovery boundaries.
 It checks native activity, matching turn ownership, preview revisions, and later file changes before restoration.
 Only explicit history commands emit outer message snapshots; normal pause/resume snapshots stay private.
+A refused history command emits `starter.history.rejected` with its reason, followed by `RUN_FINISHED`.
+The dialog shows that refusal without changing the transcript or triggering SDK run-error reporting.
+Unexpected failures still emit `RUN_ERROR`.
 No second React transcript or product-message database is introduced.
 
 `connections.ts` provides a stable native MCP plugin across sessions. Management operations hold a private session that makes no model calls.

@@ -527,6 +527,7 @@ transcript position, and axe checks pass. Light desktop and dark mobile captures
 reviewed; this is a small presentation fix, not an independently reviewed workflow redesign.
 
 Validation in the isolated worktree:
+
 - `pnpm check`: passed lint, design check, TypeScript, 171 tests, and build; 47 declared skips.
 - `node --test example/greet.test.js`: one passed.
 - `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4374 pnpm exec playwright test e2e/models.spec.ts e2e/composer.spec.ts e2e/composer-discovery.spec.ts e2e/permissions.spec.ts --output .data/composer-final`: 27 passed.
@@ -538,3 +539,23 @@ isolated rerun passed. The outside-dismissal test now clicks the gutter because 
 popover overlaps the textarea. Fixture runs emitted ResizeObserver loop warnings.
 No backend, model execution, dependency preview, or shared deployment changed; live-model and
 backend persistence tests were not rerun for this presentation change.
+
+## Undo conflict reporting — 2026-10-24
+
+A regression reproduced a later file edit turning an undo refusal into `RUN_ERROR`.
+The bridge now returns an expected command rejection to the existing dialog.
+File conflict protection remains enforced, and ordinary model failures remain errors.
+
+Validation in `fix/history-conflict-result`:
+
+- `pnpm test tests/undo.test.ts tests/bridge.test.ts`: 10 passed. The conflict regression failed before the fix.
+- `pnpm check`: passed lint, design source checks, both type checks, 205 tests, and builds; 47 declared skips.
+- `node --test example/greet.test.js`: one passed.
+- `LIVE_MODEL=1 CAPABILITIES_WORKSPACE=/tmp/starter-history-conflict/workspace FILE_VIEWER_APP_URL=http://127.0.0.1:4277 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4278 pnpm exec playwright test e2e/live-capabilities.spec.ts --output .data/history-live`: one passed.
+
+The live browser used the configured model and CLI-installed Intelligence in an isolated workspace.
+It verified a human edit survived refused undo without a console error, then successful undo, redo,
+transcript reload, and further model turns. It also exercised compaction and usage admission.
+No SDK packages, backend releases, or shared deployments changed. No new Learning run was required.
+
+- `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4279 pnpm exec playwright test e2e/conversation-capabilities.spec.ts e2e/capabilities-design.spec.ts --output .data/history-fixtures`: seven passed, including both themes and 1440px, 390px, and 320px widths.

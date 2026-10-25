@@ -86,7 +86,21 @@ class HarnessAgent extends HttpAgent {
           };
           work()
             .catch((error: unknown) => {
-              if (!subscriber.closed)
+              if (subscriber.closed) return;
+              // A refused history command is an expected result, not a failed model run.
+              // Keep the refusal local to the dialog without triggering SDK crash reporting.
+              if (error instanceof WorkspaceError && error.status === 409) {
+                subscriber.next({
+                  type: EventType.CUSTOM,
+                  name: "starter.history.rejected",
+                  value: { message: error.message },
+                });
+                subscriber.next({
+                  type: EventType.RUN_FINISHED,
+                  threadId: input.threadId,
+                  runId: input.runId,
+                });
+              } else
                 subscriber.next({
                   type: EventType.RUN_ERROR,
                   message:
