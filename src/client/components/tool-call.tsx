@@ -135,6 +135,41 @@ function FileContents({ content }: { content: string }) {
     </pre>
   );
 }
+/** Indents JSON evidence for reading; copy retains the original provider text. */
+function readableOutput(output: string): string {
+  try {
+    const parsed: unknown = JSON.parse(output);
+    if (parsed === null || typeof parsed !== "object") return output;
+    // Do not reserialize values: large numbers and escape sequences must remain exact.
+    const tokens = output.match(/"(?:[^"\\]|\\.)*"|[^\s"{}[\],:]+|[{}[\],:]/g);
+    if (!tokens) return output;
+    let depth = 0;
+    return tokens
+      .map((token, index) => {
+        const previous = tokens[index - 1];
+        if (token === "}" || token === "]") {
+          depth--;
+          return previous === "{" || previous === "[" ? token : `\n${"  ".repeat(depth)}${token}`;
+        }
+        if (token === "{" || token === "[") {
+          depth++;
+          return (
+            token +
+            (tokens[index + 1] === "}" || tokens[index + 1] === "]"
+              ? ""
+              : `\n${"  ".repeat(depth)}`)
+          );
+        }
+        if (token === ",") return `,\n${"  ".repeat(depth)}`;
+        if (token === ":") return ": ";
+        return token;
+      })
+      .join("");
+  } catch {
+    return output;
+  }
+}
+
 /** Presents coding tools with their exact command, proposed changes, and observed outcome. */
 export function ToolCall({
   name,
@@ -150,13 +185,12 @@ export function ToolCall({
   awaitingApproval?: boolean;
 }) {
   const parameters = argumentsOf(args);
-  const { output, exitCode, failed, denied } = toolOutcome(result);
+  const { output, exitCode, failed, denied } = toolOutcome(result, name);
   const [open, setOpen] = useToolDisclosure(awaitingApproval || failed || running);
-  const command = typeof parameters.command === "string" ? parameters.command : undefined;
+  const isTypeScript = name === "execute_typescript";
   const program =
-    name === "execute_typescript" && typeof parameters.typescriptCode === "string"
-      ? parameters.typescriptCode
-      : undefined;
+    typeof parameters.typescriptCode === "string" ? parameters.typescriptCode : undefined;
+  const command = typeof parameters.command === "string" ? parameters.command : undefined;
   const path = typeof parameters.path === "string" ? parameters.path : undefined;
   const patch =
     typeof parameters.patch === "string"
@@ -185,7 +219,7 @@ export function ToolCall({
             ? "Running"
             : "No result";
   const Icon =
-    name === "read_file" || name === "execute_typescript"
+    name === "read_file" || isTypeScript
       ? FileCode
       : patch || name === "write_file"
         ? FileDiff
@@ -200,20 +234,19 @@ export function ToolCall({
                 : Wrench;
   const filePath =
     path ?? (patch ? /^\*\*\* (?:Update|Add|Delete) File: (.+)$/m.exec(patch)?.[1] : undefined);
-  const title =
-    name === "execute_typescript"
-      ? "Run TypeScript"
-      : name === "bash"
-        ? "Run command"
-        : name === "read_file"
-          ? "Read file"
-          : patch
-            ? "Edit file"
-            : name === "write_file"
-              ? "Write file"
-              : name.replaceAll("_", " ");
+  const title = isTypeScript
+    ? "Execute TypeScript"
+    : name === "bash"
+      ? "Run command"
+      : name === "read_file"
+        ? "Read file"
+        : patch
+          ? "Edit file"
+          : name === "write_file"
+            ? "Write file"
+            : name.replaceAll("_", " ");
   const hasPreview = Boolean(
-    program || command || patch || name === "read_file" || name === "write_file",
+    isTypeScript || command || patch || name === "read_file" || name === "write_file",
   );
   const additions =
     patch?.split("\n").filter((line) => line.startsWith("+") && !line.startsWith("+++")).length ??
@@ -284,21 +317,51 @@ export function ToolCall({
           </span>
         </summary>
         <div className="tool-body">
-          {program !== undefined && (
-            <div className="tool-surface">
+          {isTypeScript && (
+            <div className="tool-surface typescript-surface">
               <div className="tool-surface-heading">
-                <FileCode size={14} />
-                <code>TypeScript program</code>
-                <CopyToolText text={program} label="Copy program" />
+                <span>TypeScript</span>
+                {program !== undefined && <CopyToolText text={program} label="Copy TypeScript" />}
               </div>
-              <pre className="file-tool-preview" aria-label="TypeScript program">
-                <code>
-                  <SourceText text={program} />
-                </code>
-              </pre>
+              {program ? (
+                <pre className="typescript-source" aria-label="TypeScript source" tabIndex={0}>
+                  <code>
+                    <SourceText text={program} />
+                  </code>
+                </pre>
+              ) : (
+                <p className="typescript-empty">
+                  {program === ""
+                    ? "Empty TypeScript source"
+                    : running
+                      ? "Receiving TypeScript…"
+                      : "TypeScript source unavailable. Inspect Raw details."}
+                </p>
+              )}
+              <div className="typescript-output">
+                <div className="tool-surface-heading">
+                  <span>{failed ? "Error output" : "Output"}</span>
+                  {output !== undefined && <CopyToolText text={output} label="Copy output" />}
+                </div>
+                {output ? (
+                  <pre className="typescript-result" aria-label="Execution output" tabIndex={0}>
+                    {readableOutput(output)}
+                  </pre>
+                ) : (
+                  <p className="typescript-empty">
+                    {output === ""
+                      ? "No output"
+                      : awaitingApproval
+                        ? "Awaiting approval"
+                        : running
+                          ? "Waiting for output"
+                          : "No result received"}
+                  </p>
+                )}
+              </div>
             </div>
           )}
-          {command && (
+          {!isTypeScript && command && (
             <div className="tool-surface">
               <div className="shell-command">
                 <span aria-hidden="true">$</span>
@@ -346,7 +409,7 @@ export function ToolCall({
               <FileContents content={parameters.content} />
             </div>
           )}
-          {!command && name !== "read_file" && output !== undefined && (
+          {!isTypeScript && !command && name !== "read_file" && output !== undefined && (
             <details className="tool-result" open={failed || undefined}>
               <summary>
                 <ChevronRight size={12} />
@@ -357,7 +420,11 @@ export function ToolCall({
           )}
           <details
             className="tool-arguments"
-            open={(!hasPreview && output === undefined) || undefined}
+            open={
+              (!hasPreview && output === undefined) ||
+              (isTypeScript && program === undefined) ||
+              undefined
+            }
           >
             <summary>
               <ChevronRight size={12} />

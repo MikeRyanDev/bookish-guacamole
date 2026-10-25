@@ -20,6 +20,7 @@ test("Impeccable scans rendered tools and approvals in both themes and sizes", a
     const page = context.pages()[0]!;
     for (const target of [
       "tools",
+      "typescript",
       "activity",
       "approval=bash",
       "approval=patch",
