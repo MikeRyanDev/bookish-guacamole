@@ -193,6 +193,11 @@ body:has(cpk-web-inspector) .workspace-header {
   background: transparent;
   color: var(--muted);
 }
+.header-actions .icon-button:has(> span) {
+  width: auto;
+  padding-inline: 8px;
+  white-space: nowrap;
+}
 .icon-button:hover,
 .icon-button[aria-pressed="true"] {
   color: var(--text);
@@ -3089,4 +3094,139 @@ dialog[open] {
 .console-empty {
   color: var(--muted);
   font-style: italic;
+}
+
+/* Learning follows the existing inspector's flat, compact task layout. */
+.tabs button:has(span) {
+  width: auto;
+  padding-inline: 8px;
+  gap: 6px;
+}
+.learning-panel {
+  padding: 14px 2px 24px;
+}
+.learning-panel p {
+  margin: 8px 0;
+  line-height: 1.6;
+}
+.learning-assignment {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.learning-assignment label,
+.learning-review h2 {
+  font-weight: 600;
+}
+.learning-assignment select {
+  width: 100%;
+  min-height: 36px;
+  padding: 8px;
+  background: var(--bg);
+  color: var(--text);
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+}
+.learning-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.learning-actions button,
+.learning-learn,
+.learning-error button,
+.learning-run > button,
+.learning-back {
+  min-height: 34px;
+  padding: 7px 10px;
+}
+.learning-space-content {
+  margin-top: 24px;
+}
+.learning-learn {
+  width: 100%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-weight: 600;
+}
+.learning-progress {
+  display: grid;
+  gap: 4px;
+  margin-top: 14px;
+}
+.learning-progress span {
+  color: var(--muted);
+}
+.learning-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 24px 0 12px;
+}
+.learning-tabs button {
+  padding: 8px;
+  text-align: left;
+  flex: 1;
+}
+.learning-tabs button[aria-pressed="true"] {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.learning-skill-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 8px;
+  text-align: left;
+  background: transparent;
+}
+.learning-skill-row span {
+  display: grid;
+  gap: 4px;
+}
+.learning-skill-row small {
+  color: var(--muted);
+}
+.learning-skill-row:hover {
+  background: var(--hover);
+}
+.learning-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 18px 0;
+}
+.learning-review h2 {
+  font-size: 15px;
+  margin: 16px 0 8px;
+}
+.learning-review section,
+.learning-review details {
+  margin: 18px 0;
+}
+.learning-review summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+.learning-review pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.learning-evidence h3 {
+  font-size: 13px;
+  margin: 14px 0 6px;
+}
+.learning-evidence blockquote {
+  margin: 10px 0;
+  padding: 10px;
+  background: var(--bg);
+  overflow-wrap: anywhere;
+}
+.learning-evidence small {
+  color: var(--muted);
+}
+.learning-error {
+  color: var(--danger);
 }

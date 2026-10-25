@@ -1,0 +1,62 @@
+{
+  "images": [
+    {
+      "digest": "sha256:2d9edf15590d69d849de2d4b8cad956afa2722749fd059e9ecd3f541fb27f650",
+      "releaseTag": "ghcr-validation/v0.15.2-validation.4a801b8a843b",
+      "repo": "ghcr.io/copilotkit/intelligence/analytics-migrations",
+      "service": "analytics-migrations",
+      "version": "0.15.2-validation.4a801b8a843b"
+    },
+    {
+      "digest": "sha256:3ad9fc64dc4e2ed43daefc117bf0c119a28d41fe557c7979bb4a050a5e66aa0b",
+      "releaseTag": "ghcr-validation/v0.15.2-validation.4a801b8a843b",
+      "repo": "ghcr.io/copilotkit/intelligence/app-api",
+      "service": "app-api",
+      "version": "0.15.2-validation.4a801b8a843b"
+    },
+    {
+      "digest": "sha256:70dfaa171f2cf9cb62568d10c6ea7fe31b59c3768adf91291fefae59c08b7eef",
+      "releaseTag": "ghcr-validation/v0.15.2-validation.4a801b8a843b",
+      "repo": "ghcr.io/copilotkit/intelligence/app-frontend",
+      "service": "app-frontend",
+      "version": "0.15.2-validation.4a801b8a843b"
+    },
+    {
+      "digest": "sha256:5b32a6c0c389b37e325212e42e22ea3096db46eaf59640564a9cb9a5abf00102",
+      "releaseTag": "ghcr-validation/v0.15.2-validation.4a801b8a843b",
+      "repo": "ghcr.io/copilotkit/intelligence/composite",
+      "service": "composite",
+      "version": "0.15.2-validation.4a801b8a843b"
+    },
+    {
+      "digest": "sha256:3d7ba06730b85a7a4fc627af93abc8f1dd2751aeedcd5a23a3093dd2c2c6e944",
+      "releaseTag": "ghcr-validation/v0.15.2-validation.4a801b8a843b",
+      "repo": "ghcr.io/copilotkit/intelligence/db-migrations",
+      "service": "db-migrations",
+      "version": "0.15.2-validation.4a801b8a843b"
+    },
+    {
+      "digest": "sha256:87b46f364ffe1e4be9e6c3535231644ffdf1d25c1b3469fd23bf1999cce35294",
+      "releaseTag": "ghcr-validation/v0.15.2-validation.4a801b8a843b",
+      "repo": "ghcr.io/copilotkit/intelligence/postgres-pgvector",
+      "service": "postgres-pgvector",
+      "version": "0.15.2-validation.4a801b8a843b"
+    },
+    {
+      "digest": "sha256:902811efd1f01096cf511c8a7744a976de5b57ef15f0985b2e7f4c14c3ca014f",
+      "releaseTag": "ghcr-validation/v0.15.2-validation.4a801b8a843b",
+      "repo": "ghcr.io/copilotkit/intelligence/realtime-gateway",
+      "service": "realtime-gateway",
+      "version": "0.15.2-validation.4a801b8a843b"
+    },
+    {
+      "digest": "sha256:fa39d24679562ba8392be4fb7b73a510a8c3ca88d3dc643965b9403c338007ff",
+      "releaseTag": "ghcr-validation/v0.15.2-validation.4a801b8a843b",
+      "repo": "ghcr.io/copilotkit/intelligence/thread-culler",
+      "service": "thread-culler",
+      "version": "0.15.2-validation.4a801b8a843b"
+    }
+  ],
+  "releaseTag": "ghcr-validation/v0.15.2-validation.4a801b8a843b",
+  "version": "0.15.2-validation.4a801b8a843b"
+}

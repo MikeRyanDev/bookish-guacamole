@@ -1,26 +1,26 @@
 {
-  "version": "4.30.0-pre.7cab788",
-  "specifier": "https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@7cab788",
-  "integrity": "sha512-L082J4pfrQMNxbczjcxy8W1EQoOZP4OuGiBJuulPiDlHOhFM57hMXOTA1HezJSlsWyIwvunHwlpjwwYguW0Dqg==",
-  "sha256": "749e19267a466e6bb20245d7cbcde6fa038a5e6759de3e359ebf6ceae5fa2d8d",
+  "version": "4.30.0-pre.4a801b8",
+  "specifier": "https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@4a801b8",
+  "integrity": "sha512-1/PllPe0EIhdG5d1Op8v3qA1yU87lcptnmZ+iHKF+7u2yWB7D9rthnDcIwI65rEL8x25uLHFZw4Gznr1sJS7Uw==",
+  "sha256": "d77b9df7e7f5b9f73697f1a3ee0d6fe2efaa977130bdd5f27833e6d5428f3c45",
   "buildInfo": {
     "schemaVersion": 1,
     "package": {
       "name": "copilotkit",
-      "version": "4.30.0-pre.7cab788"
+      "version": "4.30.0-pre.4a801b8"
     },
     "intelligence": {
-      "commit": "7cab78803075816a27f7ccaa8a753ce828b51628"
+      "commit": "4a801b8a843b5fcb6e171b99a1d3269774ad0580"
     },
     "copilotKit": {
-      "submittedInput": "ba7b11d624915d75df8bf377f10be6f9bfeac84a",
-      "commit": "ba7b11d624915d75df8bf377f10be6f9bfeac84a"
+      "submittedInput": "31af02d9455bd0bd78f4da40a68661bfa9fceb63",
+      "commit": "31af02d9455bd0bd78f4da40a68661bfa9fceb63"
     },
     "channel": "preview",
     "triggeringActor": "MikeRyanDev",
     "workflow": {
-      "runId": "40052975511",
-      "runUrl": "https://github.com/CopilotKit/Intelligence/actions/runs/40052975511"
+      "runId": "40154623137",
+      "runUrl": "https://github.com/CopilotKit/Intelligence/actions/runs/40154623137"
     },
     "validationResult": "passed",
     "ag2": {
@@ -29,6 +29,6 @@
       "revision": "main",
       "pinned": false
     },
-    "builtAt": "2026-10-24T02:11:38Z"
+    "builtAt": "2026-10-25T02:31:00Z"
   }
 }

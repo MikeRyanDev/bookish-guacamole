@@ -1,3 +1,5 @@
+import { WorkspaceError } from "../workspaces/registry.js";
+import { learningRoutes } from "./learning.js";
 import { localAccessError } from "./local-access.js";
 import { Hono } from "hono";
 import type { ApiDependencies } from "./context.js";
@@ -9,8 +11,7 @@ import { fileRoutes } from "./files.js";
 
 /** Builds the API without opening sockets. Local trust checks also guard static serving. */
 export function createApi(dependencies: ApiDependencies) {
-  const { token, workspaces, models, containerId, skillRegistry, runtimeFor, selectedWorkspace } =
-    dependencies;
+  const { token, workspaces, models, learning, runtimeFor, selectedWorkspace } = dependencies;
   const app = new Hono();
   app.onError(handleApiError);
   app.use("*", async (c, next) => {
@@ -41,14 +42,23 @@ export function createApi(dependencies: ApiDependencies) {
       model: models.adapters[models.defaultModel]!.model,
       models: models.publicModels,
       defaultModel: models.defaultModel,
-      containerId,
+      containerId: learning.assignment(workspace.id),
     } satisfies AppConfig & { model: string });
   });
+  app.route("/api/learning", learningRoutes(dependencies));
   app.route("/api", settingsRoutes(dependencies));
   app.route("/api/workspaces", workspaceRoutes(dependencies));
   app.route("/api/workspace", fileRoutes(dependencies));
   app.get("/api/skills", async (c) => {
+    const workspace = selectedWorkspace(new URL(c.req.url));
+    const skillRegistry = learning.registryForWorkspace(workspace.id);
+    if (!skillRegistry) return c.json({ revision: "", skills: [], status: null });
     const snapshot = await skillRegistry.acquireSnapshot();
+    if (skillRegistry.status.stale)
+      throw new WorkspaceError(
+        "Published Skills are unavailable. Retry after checking Intelligence.",
+        502,
+      );
     return c.json({
       revision: snapshot.revision,
       skills: snapshot.skills.map(({ name, description, files }) => ({

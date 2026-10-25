@@ -1,0 +1,48 @@
+{
+  "anonymous": true,
+  "candidateSha256": "f93826a7969332c961e4dd4033b994a2a799bf7a18a014c8533775e288019b80",
+  "chartSha256": "62e09bba7cbadd805c620c271fac86d1d481e2e41778ff5332dd5ac0a4bc7832",
+  "version": "0.15.1-validation.cdbc41f2e28e",
+  "images": [
+    {
+      "service": "analytics-migrations",
+      "digest": "sha256:03c0607eb23e84ebb7167999cd70035d3de8602dce28b386d4ce9292c3eb0673",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "service": "app-api",
+      "digest": "sha256:e101483a356d3812dfc902bdf79ceaa2371937d85059a21a9365991da134be00",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "service": "app-frontend",
+      "digest": "sha256:8aa87fd2a0605636698b63d62f63d8a0833b715a6aa699e4f012bf8084752c07",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "service": "composite",
+      "digest": "sha256:d3910ef41f8d4e84ac62037a03640ab1e5400cda07442b9c726cae3cb05fa695",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "service": "db-migrations",
+      "digest": "sha256:3c9ea4268f9d4f6125fc34c39354c72e1cf1df1d7bcbe10dcb7d1cf3d818ef67",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "service": "postgres-pgvector",
+      "digest": "sha256:adb16b2a659a6f27b540044402c404ccc96b65795b956687c0c17319bb9c9d30",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "service": "realtime-gateway",
+      "digest": "sha256:51b4117d73903127d910b58b2f1693dab7680ae42399910f9f6ec6218fd4e204",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "service": "thread-culler",
+      "digest": "sha256:42f6d6d9aa1e964e4c96ddc03c9cf95f6178409a653c8bf1b7b9f019a1322355",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    }
+  ]
+}

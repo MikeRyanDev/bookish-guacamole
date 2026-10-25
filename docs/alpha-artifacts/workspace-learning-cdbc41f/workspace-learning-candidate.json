@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "version": "0.15.1-validation.cdbc41f2e28e",
+  "cliVersion": "4.30.0-pre.cdbc41f",
+  "chart": {
+    "reference": "oci://ghcr.io/copilotkit/charts/intelligence",
+    "version": "0.15.1-validation.cdbc41f2e28e",
+    "sha256": "62e09bba7cbadd805c620c271fac86d1d481e2e41778ff5332dd5ac0a4bc7832"
+  },
+  "schema": {
+    "version": "app-db-sql-sha256:dcb5c26fea36b5411b1bc1fddc727bb0578d99edee842e90416e4f2b5981a385",
+    "compatibleFrom": []
+  },
+  "images": {
+    "appApi": {
+      "repository": "ghcr.io/copilotkit/intelligence/app-api",
+      "digest": "sha256:e101483a356d3812dfc902bdf79ceaa2371937d85059a21a9365991da134be00"
+    },
+    "appFrontend": {
+      "repository": "ghcr.io/copilotkit/intelligence/app-frontend",
+      "digest": "sha256:8aa87fd2a0605636698b63d62f63d8a0833b715a6aa699e4f012bf8084752c07"
+    },
+    "realtimeGateway": {
+      "repository": "ghcr.io/copilotkit/intelligence/realtime-gateway",
+      "digest": "sha256:51b4117d73903127d910b58b2f1693dab7680ae42399910f9f6ec6218fd4e204"
+    },
+    "migrations": {
+      "repository": "ghcr.io/copilotkit/intelligence/db-migrations",
+      "digest": "sha256:3c9ea4268f9d4f6125fc34c39354c72e1cf1df1d7bcbe10dcb7d1cf3d818ef67"
+    },
+    "bootstrap": {
+      "repository": "ghcr.io/copilotkit/intelligence/db-migrations",
+      "digest": "sha256:3c9ea4268f9d4f6125fc34c39354c72e1cf1df1d7bcbe10dcb7d1cf3d818ef67"
+    },
+    "postgresql": {
+      "repository": "ghcr.io/copilotkit/intelligence/postgres-pgvector",
+      "digest": "sha256:adb16b2a659a6f27b540044402c404ccc96b65795b956687c0c17319bb9c9d30"
+    },
+    "redis": {
+      "repository": "docker.io/bitnamilegacy/redis",
+      "digest": "sha256:a25b5d07a14ec13730022c7cd9bab6308d55ccd86b74af7315553c17be884889"
+    },
+    "objectStorage": {
+      "repository": "ghcr.io/copilotkit/intelligence/local-object-storage",
+      "digest": "sha256:1c2a56bcd21e6ef33b77ddefec998ba09b026c339af1c2827d312ee3df7b7280"
+    },
+    "objectStorageInit": {
+      "repository": "ghcr.io/copilotkit/intelligence/local-object-storage-init",
+      "digest": "sha256:1c2a56bcd21e6ef33b77ddefec998ba09b026c339af1c2827d312ee3df7b7280"
+    },
+    "k3s": {
+      "repository": "docker.io/rancher/k3s",
+      "digest": "sha256:53cf744fe2fabf140cee240d2db70d13a4f2d98f1a13c98f58f457f423096917"
+    },
+    "k3dProxy": {
+      "repository": "ghcr.io/k3d-io/k3d-proxy",
+      "digest": "sha256:d43e6ffd27c216d0b21815c1226c8aeac2e07086ac5a988eb39bd7e308f6e370"
+    },
+    "k3dTools": {
+      "repository": "ghcr.io/k3d-io/k3d-tools",
+      "digest": "sha256:c5ceb2b9e8ff2cf55917b0bee8bc9c54fe1483a16366b734117e2cfac1417bed"
+    }
+  },
+  "kubernetesImages": [
+    {
+      "repository": "docker.io/rancher/klipper-helm",
+      "digest": "sha256:73ff7ef399717ba8339559054557bd427bdafb47db112165a8c0c358d1ca0283",
+      "reference": "docker.io/rancher/klipper-helm:v0.9.3-build20241008"
+    },
+    {
+      "repository": "docker.io/rancher/klipper-lb",
+      "digest": "sha256:dd380f5d89a52f2a07853ff17a6048f805c1f8113b50578f3efc3efb9bcf670a",
+      "reference": "docker.io/rancher/klipper-lb:v0.4.9"
+    },
+    {
+      "repository": "docker.io/rancher/local-path-provisioner",
+      "digest": "sha256:9b914881170048f80ae9302f36e5b99b4a6b18af73a38adc1c66d12f65d360be",
+      "reference": "docker.io/rancher/local-path-provisioner:v0.0.30"
+    },
+    {
+      "repository": "docker.io/rancher/mirrored-coredns-coredns",
+      "digest": "sha256:82979ddf442c593027a57239ad90616deb874e90c365d1a96ad508c2104bdea5",
+      "reference": "docker.io/rancher/mirrored-coredns-coredns:1.12.0"
+    },
+    {
+      "repository": "docker.io/rancher/mirrored-library-busybox",
+      "digest": "sha256:8a45424ddf949bbe9bb3231b05f9032a45da5cd036eb4867b511b00734756d6f",
+      "reference": "docker.io/rancher/mirrored-library-busybox:1.36.1"
+    },
+    {
+      "repository": "docker.io/rancher/mirrored-library-traefik",
+      "digest": "sha256:25df7bff0b414867f16a74c571c0dc84920404e45cc7780976cec77809230e09",
+      "reference": "docker.io/rancher/mirrored-library-traefik:2.11.18"
+    },
+    {
+      "repository": "docker.io/rancher/mirrored-metrics-server",
+      "digest": "sha256:dccf8474fb910fef261d31d9483d7e4c1df7b86cf4d638fb6a7d7c88bd51600a",
+      "reference": "docker.io/rancher/mirrored-metrics-server:v0.7.2"
+    },
+    {
+      "repository": "docker.io/rancher/mirrored-pause",
+      "digest": "sha256:74c4244427b7312c5b901fe0f67cbc53683d06f4f24c6faee65d4182bf0fa893",
+      "reference": "docker.io/rancher/mirrored-pause:3.6"
+    }
+  ],
+  "platforms": [
+    {
+      "os": "darwin",
+      "arch": "x64",
+      "tools": {
+        "k3d": {
+          "version": "5.8.3",
+          "url": "https://github.com/k3d-io/k3d/releases/download/v5.8.3/k3d-darwin-amd64",
+          "sha256": "fd0f8e9e8ea4d8bc3674572ca6ed0833b639bf57c43c708616d937377324cfea"
+        },
+        "helm": {
+          "version": "3.17.3",
+          "url": "https://get.helm.sh/helm-v3.17.3-darwin-amd64.tar.gz",
+          "sha256": "20ef8df4671349a6fc556a621be1170dd709c6c0cf5f7e83a2d9fb0515fd97fc"
+        }
+      }
+    },
+    {
+      "os": "darwin",
+      "arch": "arm64",
+      "tools": {
+        "k3d": {
+          "version": "5.8.3",
+          "url": "https://github.com/k3d-io/k3d/releases/download/v5.8.3/k3d-darwin-arm64",
+          "sha256": "8da468daa7dc7cf7cdd4735f90a9bb05179fa27858250f62e3d8cdf5b5ca0698"
+        },
+        "helm": {
+          "version": "3.17.3",
+          "url": "https://get.helm.sh/helm-v3.17.3-darwin-arm64.tar.gz",
+          "sha256": "89aec43ce07b06239f1bba4a6507236bb48ae487bc5065a8e254d3ce58a16997"
+        }
+      }
+    },
+    {
+      "os": "linux",
+      "arch": "x64",
+      "tools": {
+        "k3d": {
+          "version": "5.8.3",
+          "url": "https://github.com/k3d-io/k3d/releases/download/v5.8.3/k3d-linux-amd64",
+          "sha256": "dbaa79a76ace7f4ca230a1ff41dc7d8a5036a8ad0309e9c54f9bf3836dbe853e"
+        },
+        "helm": {
+          "version": "3.17.3",
+          "url": "https://get.helm.sh/helm-v3.17.3-linux-amd64.tar.gz",
+          "sha256": "ee88b3c851ae6466a3de507f7be73fe94d54cbf2987cbaa3d1a3832ea331f2cd"
+        }
+      }
+    },
+    {
+      "os": "linux",
+      "arch": "arm64",
+      "tools": {
+        "k3d": {
+          "version": "5.8.3",
+          "url": "https://github.com/k3d-io/k3d/releases/download/v5.8.3/k3d-linux-arm64",
+          "sha256": "0b8110f2229631af7402fb828259330985918b08fefd38b7f1b788a1c8687216"
+        },
+        "helm": {
+          "version": "3.17.3",
+          "url": "https://get.helm.sh/helm-v3.17.3-linux-arm64.tar.gz",
+          "sha256": "7944e3defd386c76fd92d9e6fec5c2d65a323f6fadc19bfb5e704e3eee10348e"
+        }
+      }
+    }
+  ]
+}

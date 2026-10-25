@@ -1,0 +1,34 @@
+{
+  "version": "4.30.0-pre.cdbc41f",
+  "specifier": "https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@cdbc41f",
+  "integrity": "sha512-ZmrUUihB8kdYHe4/hEWGdA1C8NCAWVqEofWlpdcY7+tKiCW+NucgSp1jqFp7EWiGNGTX8dY9+VN5KMZ9fEvRnw==",
+  "sha256": "581472c3fc6c7cd66ce107e10c7c11094215eaec0e442ec3e60d16935b32e779",
+  "buildInfo": {
+    "schemaVersion": 1,
+    "package": {
+      "name": "copilotkit",
+      "version": "4.30.0-pre.cdbc41f"
+    },
+    "intelligence": {
+      "commit": "cdbc41f2e28e8d38b01558e2779d7115291a2a2f"
+    },
+    "copilotKit": {
+      "submittedInput": "31af02d9455bd0bd78f4da40a68661bfa9fceb63",
+      "commit": "31af02d9455bd0bd78f4da40a68661bfa9fceb63"
+    },
+    "channel": "preview",
+    "triggeringActor": "MikeRyanDev",
+    "workflow": {
+      "runId": "40151464135",
+      "runUrl": "https://github.com/CopilotKit/Intelligence/actions/runs/40151464135"
+    },
+    "validationResult": "passed",
+    "ag2": {
+      "ownership": "third-party",
+      "repository": "ag2ai/ag2-copilotkit-starter",
+      "revision": "main",
+      "pinned": false
+    },
+    "builtAt": "2026-10-25T01:41:28Z"
+  }
+}

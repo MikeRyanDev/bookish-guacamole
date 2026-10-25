@@ -7,7 +7,7 @@ export interface AppConfig {
   agentId: string;
   defaultModel: string;
   models: Array<{ id: string; label: string; provider: string; model: string }>;
-  containerId: string;
+  containerId: string | null;
 }
 export interface Skill {
   name: string;

@@ -12,14 +12,14 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       '@copilotkit/core':
-        specifier: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d
-        version: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)
+        specifier: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d
+        version: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)
       '@copilotkit/react-core':
-        specifier: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@ba7b11d
-        version: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@ba7b11d(@cfworker/json-schema@4.1.1)(@types/mdast@4.0.4)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(micromark-util-types@2.0.3)(micromark@4.0.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)
+        specifier: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@31af02d
+        version: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@31af02d(@cfworker/json-schema@4.1.1)(@types/mdast@4.0.4)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(micromark-util-types@2.0.3)(micromark@4.0.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)
       '@copilotkit/runtime':
-        specifier: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@ba7b11d
-        version: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@ba7b11d(b04e855ddcf1d7a88a76457735e859ae)
+        specifier: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@31af02d
+        version: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@31af02d(b04e855ddcf1d7a88a76457735e859ae)
       '@fontsource-variable/manrope':
         specifier: 5.3.0
         version: 5.3.0
@@ -78,8 +78,8 @@ importers:
         specifier: 3.14.22
         version: 3.14.22(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       copilotkit:
-        specifier: https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@7cab788
-        version: https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@7cab788(@types/node@22.20.5)
+        specifier: https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@4a801b8
+        version: https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@4a801b8(@types/node@22.20.5)
       fast-xml-parser:
         specifier: 5.11.2
         version: 5.11.2
@@ -387,8 +387,8 @@ packages:
   '@chevrotain/types@11.1.2':
     resolution: {integrity: sha512-U+HFai5+zmJCkK86QsaJtoITlboZHBqrVketcO2ROv865xfCMSFpELQoz1GkX5GzME8pTa+3kbKrZHQtI0gdbw==}
 
-  '@copilotkit/a2ui-renderer@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@ba7b11d':
-    resolution: {integrity: sha512-yPdMoSnZmI436xipHqceQDUqqeeMv0a2RrKFVmGesjD/w/uxKY5AK44pjuxap253LB3MmBzM/gTw2XuVmiZ38A==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@ba7b11d}
+  '@copilotkit/a2ui-renderer@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@31af02d':
+    resolution: {integrity: sha512-yPdMoSnZmI436xipHqceQDUqqeeMv0a2RrKFVmGesjD/w/uxKY5AK44pjuxap253LB3MmBzM/gTw2XuVmiZ38A==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@31af02d}
     version: 1.79.1
     peerDependencies:
       react: ^18 || ^19 || ^19.0.0-rc
@@ -399,8 +399,8 @@ packages:
       react-dom:
         optional: true
 
-  '@copilotkit/channels-core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d':
-    resolution: {integrity: sha512-GQDK8uf1lSMSMAqynRp9Stf8jahuCOgLs3WdEWfiYk0qsocbpKxL+p4+sn4RhIOBjp2+TnIOYk0gvi1AHQe9wQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d}
+  '@copilotkit/channels-core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@31af02d':
+    resolution: {integrity: sha512-THF/r96XuEh9zd8Ii7tuuJSYJUQZn+CHN0OF4sApuyiDseN1LiKR6stN8w+RpDmlHnBuhYLeN9ixEIfPrhQ2Ow==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@31af02d}
     version: 0.11.1
     peerDependencies:
       react: '>=18'
@@ -411,16 +411,16 @@ packages:
       takumi-js:
         optional: true
 
-  '@copilotkit/channels-intelligence@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@ba7b11d':
-    resolution: {integrity: sha512-qIgIWdzfPR5t4dR0ZUBoYSY42cJFnDED7hjU4Qy1V5HXq1pyza7hccM9vUMpDLO+LlJuuEQUZMCLBS4v7evVRg==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@ba7b11d}
+  '@copilotkit/channels-intelligence@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@31af02d':
+    resolution: {integrity: sha512-O4Cr6BOBfBZbsplXd8KcC/2glyp79ew2Z9133NYezCW2fAWZSm1/3xilqtKWTo5335K09MQelpLxDw1VRkrRDQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@31af02d}
     version: 0.11.1
 
-  '@copilotkit/channels-slack@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@ba7b11d':
-    resolution: {integrity: sha512-6BnaAmES+Nv62xNVhvH4sO9HJ2UPAD1G5q9JsPnUmLIvmBsiwUqNznGECrKtxPGMMj2Ov3HlHw4+btNKSG95tg==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@ba7b11d}
+  '@copilotkit/channels-slack@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@31af02d':
+    resolution: {integrity: sha512-oNAp/HHdNzQ8KT8NXS5ddXUZvrqB+nrP+JuqEhC3LOWfsY5d7SQAbmH+NS+Jc85EURAkjbY09hUmt6PqczKGLQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@31af02d}
     version: 0.11.1
 
-  '@copilotkit/channels-teams@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@ba7b11d':
-    resolution: {integrity: sha512-TvM1Crp0NLUfvDG8hpnyM+uNlMQ+shXS0E4uAdtahlv7udlxknGCKOYYnpR6+ahsUb5w0WXiM7ttsVTkfMTnlQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@ba7b11d}
+  '@copilotkit/channels-teams@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@31af02d':
+    resolution: {integrity: sha512-JKvtgZwbqTr/b/p7tv8UgYKWlZGwbgPcjBxDPCD1PrQNutm5Du8SBXulIMNOgfTBJkmmdadvFSEknhyK/pdITQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@31af02d}
     version: 0.11.1
     peerDependencies:
       '@microsoft/agents-activity': ^1.5.3
@@ -434,46 +434,46 @@ packages:
       express:
         optional: true
 
-  '@copilotkit/channels-ui@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d':
-    resolution: {integrity: sha512-6C2q5372zXSJuFuqOxh5B1YJX30pFX7REXxpQdx0hYxJTG89uthUIN0Ddxcyp4bq7LO0/jX1sIcJ//F8Udu8xQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d}
+  '@copilotkit/channels-ui@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@31af02d':
+    resolution: {integrity: sha512-m0FJhVN1fivCm9vyVTj9PzlnKdfTJg8YEcq3ACa8yClH+GuizRplxu4zQryVoJbYkjnQhe8VsB4ZEpexolX4Bw==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@31af02d}
     version: 0.11.1
 
-  '@copilotkit/core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d':
-    resolution: {integrity: sha512-lypfZdWggtmG/ymcqU1ZV2hQKrpg7MmTN0A729D+Xr8ClOeEH9NwvEUX46k9A7HgNEFkMkigE1sRVc94A/d6wQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d}
+  '@copilotkit/core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d':
+    resolution: {integrity: sha512-hTQnt6K1eyvpPF0BnoGVnB9KUDJpmwgh9YZ88TMgfJHQnHDsjxOM71hnfHeEvLLr5ivRunwaI+rHvcKcMtbeJg==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d}
     version: 1.79.1
     engines: {node: '>=20'}
 
-  '@copilotkit/learning@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@ba7b11d':
-    resolution: {integrity: sha512-NtlcJ6T/ZvmL6Lm9b12/gkpT3uaOKNM38hI9apllBLe0DNov8NbAFMem5wZ5P0wgcEORUv1YM7H1sD5XhgXjSg==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@ba7b11d}
+  '@copilotkit/learning@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@31af02d':
+    resolution: {integrity: sha512-NtlcJ6T/ZvmL6Lm9b12/gkpT3uaOKNM38hI9apllBLe0DNov8NbAFMem5wZ5P0wgcEORUv1YM7H1sD5XhgXjSg==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@31af02d}
     version: 1.79.1
     engines: {node: '>=20'}
 
   '@copilotkit/license-verifier@0.5.0':
     resolution: {integrity: sha512-vrwKtIpYwF0FT9ZoYASH8owa2cGV0dhDvJGaCRaRMStwDxpc6DRdydKkhx8cWZXyBRxEYcq/Vygv4JvevhQQdQ==}
 
-  '@copilotkit/mcp-apps-renderer@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@ba7b11d':
-    resolution: {integrity: sha512-WHJduGqBcSFyA6ERco45uuz/LjTKGavfVlFRNds0z6aBwwabMTv83uABrgCtZDOcDJR7lla9ngoy6mk639b+lw==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@ba7b11d}
+  '@copilotkit/mcp-apps-renderer@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@31af02d':
+    resolution: {integrity: sha512-l6avSEeO6p93nWODkC0ZDypwFflv+8LFOjDDTlrhYTeFd8CfiMKY3FVt6xntNjP0+Ex1Q0IpMM6duUW2UXZuyQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@31af02d}
     version: 1.79.1
     peerDependencies:
       '@ag-ui/client': '>=0.0.59'
       zod: '>=3.25'
 
-  '@copilotkit/react-core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@ba7b11d':
-    resolution: {integrity: sha512-s45iyEbLwzquzTjLzMwg6HdhnuPyFPUh4sXvNEeExNlKzdEFk7faOmzM3u5lZUvs8uM9QS8RYosflA7gsqZTOQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@ba7b11d}
+  '@copilotkit/react-core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@31af02d':
+    resolution: {integrity: sha512-+3PJJbcnWhjuNgEB0dbqEaCCQ7tN4Wc9BE5ZtTaUX5wPExcfFBGUDYczquw234m20p/lmqymj9oClMaiZPnlAQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@31af02d}
     version: 1.79.1
     peerDependencies:
       react: ^18 || ^19 || ^19.0.0-rc
       react-dom: ^18 || ^19 || ^19.0.0-rc
       zod: '>=3.25'
 
-  '@copilotkit/runtime-client-gql@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@ba7b11d':
-    resolution: {integrity: sha512-t2fh64KNJixoEOc36i4fKgxtV/8ni/zSO/4MhfQ/0i4rNleOBAdktFUkBkW08GTZZNQEqdWob/TNWJqyo7ep2Q==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@ba7b11d}
+  '@copilotkit/runtime-client-gql@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@31af02d':
+    resolution: {integrity: sha512-CE5Sl3QxXHkY4bj8fvNPIvhcleRjjwa+ssm7Mo0i7MOf2JUT+ZshGR1Cs6YJV2C1wvhnLSHxg7GcgoNDuqlxLw==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@31af02d}
     version: 1.79.1
     peerDependencies:
       react: ^18 || ^19 || ^19.0.0-rc
 
-  '@copilotkit/runtime@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@ba7b11d':
-    resolution: {integrity: sha512-FSNcjCeGsZ0w0t6oLeOyY1kRrcTwD/bZCqk47Q0keLTYqSN6lZ4MWaLiFstIWoHsTMftJ7jMaMdNt6cX6HZycg==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@ba7b11d}
+  '@copilotkit/runtime@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@31af02d':
+    resolution: {integrity: sha512-4h/yNPggNfoubsInhlWa18uqwpZpYPe8ydQHOJoxeiO6MB02rof1KJcLIDaPPKtJ0wXHYCGUUeopW8BXMN/HDQ==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@31af02d}
     version: 1.79.1
     engines: {node: '>=20'}
     peerDependencies:
@@ -508,21 +508,21 @@ packages:
       langchain:
         optional: true
 
-  '@copilotkit/shared@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d':
-    resolution: {integrity: sha512-3ieo2qQrhKWmMbzJluXT/vvkLFxD1Rtht15IfkiQzPGNEbZiTMAVs/xpTD4wvHPG6ZdiYpCdtIwRwt/+91nOeg==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d}
+  '@copilotkit/shared@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d':
+    resolution: {integrity: sha512-3ieo2qQrhKWmMbzJluXT/vvkLFxD1Rtht15IfkiQzPGNEbZiTMAVs/xpTD4wvHPG6ZdiYpCdtIwRwt/+91nOeg==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d}
     version: 1.79.1
     peerDependencies:
       '@ag-ui/core': '>=0.0.48'
 
-  '@copilotkit/web-components@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@ba7b11d':
-    resolution: {integrity: sha512-6fE3n9FYamezF2eRY/q5WuL/b4QN77AWK6sh2PSS2YOPN7s8BxozMH80B9uIKh7gapHWjdA7O1p30urd2QFtUA==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@ba7b11d}
+  '@copilotkit/web-components@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@31af02d':
+    resolution: {integrity: sha512-6fE3n9FYamezF2eRY/q5WuL/b4QN77AWK6sh2PSS2YOPN7s8BxozMH80B9uIKh7gapHWjdA7O1p30urd2QFtUA==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@31af02d}
     version: 1.79.1
     engines: {node: '>=20'}
     peerDependencies:
       lit: ^3.3.2
 
-  '@copilotkit/web-inspector@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@ba7b11d':
-    resolution: {integrity: sha512-7q4nWqgokFbZ3vvXHpl+ucVcIfInpGJxjM4q3HKt+xn520g0BHfm1QG2i0zxtsG3UBYMHMi/75+nkdTpO0F0zA==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@ba7b11d}
+  '@copilotkit/web-inspector@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@31af02d':
+    resolution: {integrity: sha512-pWDaaBCooe8ahCnpSrzyv5PCLMyekbo8BxMIclVpRhnCbjlOT2EcPzmI5Iz0dR5tuNS5ZeOg7BlHZBkmSZBipA==, tarball: https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@31af02d}
     version: 1.79.1
     engines: {node: '>=20'}
 
@@ -2860,9 +2860,9 @@ packages:
     resolution: {integrity: sha512-8BIbcC6tPZMv2/PD4PrB3CtKks7LmAWhA7FRZK/6/b/WJ2RUz00KCga7gq50S4/RhZ22kxefRFGgsuts0v3eoA==}
     engines: {node: '>= 0.8'}
 
-  copilotkit@https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@7cab788:
-    resolution: {integrity: sha512-L082J4pfrQMNxbczjcxy8W1EQoOZP4OuGiBJuulPiDlHOhFM57hMXOTA1HezJSlsWyIwvunHwlpjwwYguW0Dqg==, tarball: https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@7cab788}
-    version: 4.30.0-pre.7cab788
+  copilotkit@https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@4a801b8:
+    resolution: {integrity: sha512-1/PllPe0EIhdG5d1Op8v3qA1yU87lcptnmZ+iHKF+7u2yWB7D9rthnDcIwI65rEL8x25uLHFZw4Gznr1sJS7Uw==, tarball: https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@4a801b8}
+    version: 4.30.0-pre.4a801b8
     engines: {node: '>=20.9.0'}
     hasBin: true
 
@@ -5787,7 +5787,7 @@ snapshots:
 
   '@chevrotain/types@11.1.2': {}
 
-  '@copilotkit/a2ui-renderer@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@ba7b11d(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@copilotkit/a2ui-renderer@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@31af02d(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@a2ui/web_core': 0.10.4
       clsx: 2.1.1
@@ -5797,13 +5797,13 @@ snapshots:
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
 
-  '@copilotkit/channels-core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d(react@19.3.1)(zod@3.25.76)':
+  '@copilotkit/channels-core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@31af02d(react@19.3.1)(zod@3.25.76)':
     dependencies:
       '@ag-ui/client': 1.0.2
       '@ag-ui/core': 1.0.2(zod@3.25.76)
-      '@copilotkit/channels-ui': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))
-      '@copilotkit/core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))(zod@3.25.76)
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/channels-ui': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))
+      '@copilotkit/core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))(zod@3.25.76)
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
       zod-to-json-schema: 3.25.2(zod@3.25.76)
     optionalDependencies:
       react: 19.3.1
@@ -5811,13 +5811,13 @@ snapshots:
       - encoding
       - zod
 
-  '@copilotkit/channels-intelligence@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))(@types/express@5.0.6)(express@5.3.0)(react@19.3.1)(zod@3.25.76)':
+  '@copilotkit/channels-intelligence@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))(@types/express@5.0.6)(express@5.3.0)(react@19.3.1)(zod@3.25.76)':
     dependencies:
       '@ag-ui/client': 1.0.2
-      '@copilotkit/channels-core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d(react@19.3.1)(zod@3.25.76)
-      '@copilotkit/channels-slack': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@ba7b11d(@types/express@5.0.6)(react@19.3.1)(zod@3.25.76)
-      '@copilotkit/channels-teams': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@ba7b11d(express@5.3.0)(react@19.3.1)(zod@3.25.76)
-      '@copilotkit/channels-ui': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))
+      '@copilotkit/channels-core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@31af02d(react@19.3.1)(zod@3.25.76)
+      '@copilotkit/channels-slack': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@31af02d(@types/express@5.0.6)(react@19.3.1)(zod@3.25.76)
+      '@copilotkit/channels-teams': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@31af02d(express@5.3.0)(react@19.3.1)(zod@3.25.76)
+      '@copilotkit/channels-ui': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))
       phoenix: 1.8.16
     transitivePeerDependencies:
       - '@ag-ui/core'
@@ -5834,14 +5834,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@copilotkit/channels-slack@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@ba7b11d(@types/express@5.0.6)(react@19.3.1)(zod@3.25.76)':
+  '@copilotkit/channels-slack@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@31af02d(@types/express@5.0.6)(react@19.3.1)(zod@3.25.76)':
     dependencies:
       '@ag-ui/client': 1.0.2
       '@ag-ui/core': 1.0.2(zod@3.25.76)
-      '@copilotkit/channels-core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d(react@19.3.1)(zod@3.25.76)
-      '@copilotkit/channels-ui': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))
-      '@copilotkit/core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))(zod@3.25.76)
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/channels-core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@31af02d(react@19.3.1)(zod@3.25.76)
+      '@copilotkit/channels-ui': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))
+      '@copilotkit/core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))(zod@3.25.76)
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
       '@slack/bolt': 4.7.3(@types/express@5.0.6)
       '@slack/types': 2.22.0
       '@slack/web-api': 7.19.0
@@ -5857,14 +5857,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@copilotkit/channels-teams@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@ba7b11d(express@5.3.0)(react@19.3.1)(zod@3.25.76)':
+  '@copilotkit/channels-teams@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@31af02d(express@5.3.0)(react@19.3.1)(zod@3.25.76)':
     dependencies:
       '@ag-ui/client': 1.0.2
       '@ag-ui/core': 1.0.2(zod@3.25.76)
-      '@copilotkit/channels-core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d(react@19.3.1)(zod@3.25.76)
-      '@copilotkit/channels-ui': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))
-      '@copilotkit/core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))(zod@3.25.76)
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/channels-core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@31af02d(react@19.3.1)(zod@3.25.76)
+      '@copilotkit/channels-ui': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))
+      '@copilotkit/core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))(zod@3.25.76)
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
       rxjs: 7.8.1
     optionalDependencies:
       express: 5.3.0
@@ -5874,18 +5874,18 @@ snapshots:
       - takumi-js
       - zod
 
-  '@copilotkit/channels-ui@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))':
+  '@copilotkit/channels-ui@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))':
     dependencies:
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
     transitivePeerDependencies:
       - '@ag-ui/core'
       - encoding
 
-  '@copilotkit/core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))(zod@3.25.76)':
+  '@copilotkit/core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))(zod@3.25.76)':
     dependencies:
       '@ag-ui/client': 1.0.2
-      '@copilotkit/learning': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@ba7b11d
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/learning': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@31af02d
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
       '@tanstack/pacer': 0.20.1
       phoenix: 1.8.16
       rxjs: 7.8.1
@@ -5895,11 +5895,11 @@ snapshots:
       - encoding
       - zod
 
-  '@copilotkit/core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)':
+  '@copilotkit/core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)':
     dependencies:
       '@ag-ui/client': 1.0.2
-      '@copilotkit/learning': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@ba7b11d
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/learning': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@31af02d
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
       '@tanstack/pacer': 0.20.1
       phoenix: 1.8.16
       rxjs: 7.8.1
@@ -5909,14 +5909,14 @@ snapshots:
       - encoding
       - zod
 
-  '@copilotkit/learning@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@ba7b11d': {}
+  '@copilotkit/learning@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@31af02d': {}
 
   '@copilotkit/license-verifier@0.5.0': {}
 
-  '@copilotkit/mcp-apps-renderer@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@ba7b11d(@ag-ui/client@1.0.2)(@ag-ui/core@1.0.2(zod@4.6.7))(@cfworker/json-schema@4.1.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)':
+  '@copilotkit/mcp-apps-renderer@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@31af02d(@ag-ui/client@1.0.2)(@ag-ui/core@1.0.2(zod@4.6.7))(@cfworker/json-schema@4.1.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)':
     dependencies:
       '@ag-ui/client': 1.0.2
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
       '@modelcontextprotocol/ext-apps': 1.7.5(@modelcontextprotocol/sdk@1.32.1(@cfworker/json-schema@4.1.1)(zod@4.6.7))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)
       '@modelcontextprotocol/sdk': 1.32.1(@cfworker/json-schema@4.1.1)(zod@4.6.7)
       zod: 4.6.7
@@ -5928,17 +5928,17 @@ snapshots:
       - react-dom
       - supports-color
 
-  '@copilotkit/react-core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@ba7b11d(@cfworker/json-schema@4.1.1)(@types/mdast@4.0.4)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(micromark-util-types@2.0.3)(micromark@4.0.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)':
+  '@copilotkit/react-core@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@31af02d(@cfworker/json-schema@4.1.1)(@types/mdast@4.0.4)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(micromark-util-types@2.0.3)(micromark@4.0.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)':
     dependencies:
       '@ag-ui/client': 1.0.2
       '@ag-ui/core': 1.0.2(zod@4.6.7)
-      '@copilotkit/a2ui-renderer': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@ba7b11d(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      '@copilotkit/core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)
-      '@copilotkit/mcp-apps-renderer': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@ba7b11d(@ag-ui/client@1.0.2)(@ag-ui/core@1.0.2(zod@4.6.7))(@cfworker/json-schema@4.1.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)
-      '@copilotkit/runtime-client-gql': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))(react@19.3.1)
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
-      '@copilotkit/web-components': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@ba7b11d(lit@3.3.3)
-      '@copilotkit/web-inspector': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)
+      '@copilotkit/a2ui-renderer': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@31af02d(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@copilotkit/core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)
+      '@copilotkit/mcp-apps-renderer': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@31af02d(@ag-ui/client@1.0.2)(@ag-ui/core@1.0.2(zod@4.6.7))(@cfworker/json-schema@4.1.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)
+      '@copilotkit/runtime-client-gql': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))(react@19.3.1)
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/web-components': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@31af02d(lit@3.3.3)
+      '@copilotkit/web-inspector': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)
       '@jetbrains/websandbox': 1.4.3
       '@radix-ui/react-dropdown-menu': 2.2.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@radix-ui/react-popover': 1.3.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -5972,9 +5972,9 @@ snapshots:
       - micromark-util-types
       - supports-color
 
-  '@copilotkit/runtime-client-gql@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))(react@19.3.1)':
+  '@copilotkit/runtime-client-gql@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))(react@19.3.1)':
     dependencies:
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.14.2)
       '@urql/core': 5.2.0(graphql@16.14.2)
       graphql: 16.14.2
@@ -5985,7 +5985,7 @@ snapshots:
       - '@ag-ui/core'
       - encoding
 
-  '@copilotkit/runtime@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@ba7b11d(b04e855ddcf1d7a88a76457735e859ae)':
+  '@copilotkit/runtime@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@31af02d(b04e855ddcf1d7a88a76457735e859ae)':
     dependencies:
       '@ag-ui/a2ui-middleware': 0.0.10(@ag-ui/client@1.0.2)(rxjs@7.8.1)
       '@ag-ui/client': 1.0.2
@@ -6000,10 +6000,10 @@ snapshots:
       '@ai-sdk/mcp': 1.0.99(zod@3.25.76)
       '@ai-sdk/openai': 3.0.131(zod@3.25.76)
       '@cfworker/json-schema': 4.1.1
-      '@copilotkit/channels-core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@ba7b11d(react@19.3.1)(zod@3.25.76)
-      '@copilotkit/channels-intelligence': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@ba7b11d(@ag-ui/core@1.0.2(zod@3.25.76))(@types/express@5.0.6)(express@5.3.0)(react@19.3.1)(zod@3.25.76)
+      '@copilotkit/channels-core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@31af02d(react@19.3.1)(zod@3.25.76)
+      '@copilotkit/channels-intelligence': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@31af02d(@ag-ui/core@1.0.2(zod@3.25.76))(@types/express@5.0.6)(express@5.3.0)(react@19.3.1)(zod@3.25.76)
       '@copilotkit/license-verifier': 0.5.0
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
       '@graphql-yoga/plugin-defer-stream': 3.24.6(graphql-yoga@5.24.6(graphql@16.14.2))(graphql@16.14.2)
       '@hono/node-server': 1.19.17(hono@4.13.13)
       '@langchain/core': 1.3.0(@opentelemetry/api@1.10.0)(@opentelemetry/exporter-trace-otlp-proto@0.300.0(@opentelemetry/api@1.10.0))(openai@7.43.0(google-auth-library@10.9.1)(undici@8.12.3)(ws@8.22.0)(zod@4.6.7))(ws@8.22.0)
@@ -6053,7 +6053,7 @@ snapshots:
       - takumi-js
       - utf-8-validate
 
-  '@copilotkit/shared@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))':
+  '@copilotkit/shared@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))':
     dependencies:
       '@ag-ui/a2ui-middleware': 0.0.10(@ag-ui/client@1.0.2)(rxjs@7.8.1)
       '@ag-ui/client': 1.0.2
@@ -6071,15 +6071,15 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@copilotkit/web-components@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@ba7b11d(lit@3.3.3)':
+  '@copilotkit/web-components@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@31af02d(lit@3.3.3)':
     dependencies:
       lit: 3.3.3
 
-  '@copilotkit/web-inspector@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)':
+  '@copilotkit/web-inspector@https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)':
     dependencies:
       '@ag-ui/client': 1.0.2
-      '@copilotkit/core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)
-      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@ba7b11d(@ag-ui/core@1.0.2(zod@4.6.7))
+      '@copilotkit/core': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))(zod@4.6.7)
+      '@copilotkit/shared': https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@31af02d(@ag-ui/core@1.0.2(zod@4.6.7))
       lit: 3.3.3
       lucide: 0.525.0
       marked: 12.0.2
@@ -8289,7 +8289,7 @@ snapshots:
       depd: 2.0.0
       keygrip: 1.1.0
 
-  copilotkit@https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@7cab788(@types/node@22.20.5):
+  copilotkit@https://pkg.pr.new/CopilotKit/Intelligence/copilotkit@4a801b8(@types/node@22.20.5):
     dependencies:
       oidc-provider: 9.12.2
     optionalDependencies:

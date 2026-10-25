@@ -97,3 +97,34 @@ Undo and Redo run through CopilotKit with `forwardedProps.starterHistory = { act
 The bridge checks the preview again and emits a deliberate outer `MESSAGES_SNAPSHOT` after native restoration.
 Normal harness snapshots remain private. The browser must not mutate its own message array to simulate recovery.
 See [execution behavior and limits](EXECUTION.md).
+
+## Workspace Learning
+
+These routes require the local bearer and existing Host/Origin protections.
+The server retains the Intelligence project key. Browser input cannot select another project.
+The `workspace` query selects a registered workspace.
+
+| Method and path                            | Input                                                         | Result                                           |
+| ------------------------------------------ | ------------------------------------------------------------- | ------------------------------------------------ |
+| GET `/api/learning/spaces`                 | Optional `cursor`                                             | Named spaces and `nextCursor`                    |
+| GET `/api/learning`                        | `workspace`                                                   | `{ containerId, inherited, space }`              |
+| PUT `/api/learning`                        | `workspace`, `{ containerId: string \| null }`                | Verified, saved assignment                       |
+| GET `/api/learning/runs`                   | `workspace`                                                   | Recent run summaries                             |
+| POST `/api/learning/runs`                  | `workspace`, `{ containerId }`                                | 202 with the admitted run                        |
+| GET `/api/learning/candidates`             | `workspace`                                                   | Proposal summaries                               |
+| GET `/api/learning/candidates/:id`         | `workspace`, candidate UUID                                   | Instructions, files, and supporting insights     |
+| POST `/api/learning/candidates/:id/review` | `workspace`, `{ containerId, action: "approve" \| "reject" }` | Review outcome                                   |
+| GET `/api/learning/insights/:id/evidence`  | `workspace`, insight UUID                                     | Source availability and cited evidence           |
+| GET `/api/skills`                          | `workspace`                                                   | Verified published Skills for the assigned space |
+
+Assignment writes verify that the space exists before saving it. Null disables Learning for new conversations.
+An absent assignment inherits the application default. Existing conversations retain their backend assignment.
+Run and review writes reject a changed workspace assignment with 409 before calling Intelligence.
+Bodies are strict JSON objects. Unknown fields, invalid IDs, and invalid cursors return 400.
+Intelligence enforces project scope, entitlements, run admission, and candidate review transitions.
+
+Learn starts a run over saved conversations in the selected shared space.
+It does not scan workspace files or start a coding session.
+Approval publishes the proposal to that space. Rejection leaves it unpublished.
+Responses exclude internal job names and project credentials. Evidence remains private to authenticated local users.
+Published Skill reads reject stale snapshots. Disabled Learning returns an empty Skill list.

@@ -166,3 +166,23 @@ No second React transcript or product-message database is introduced.
 Native reload waits for active work; the UI polls application status. OAuth uses a host-memory credential store.
 `code-mode.ts` gates native code mode per turn and restricts isolate bindings to inspection tools.
 See [Execution and connections](EXECUTION.md) for defaults, procedures, and recovery limits.
+
+## Workspace Learning assignments
+
+The workspace registry stores the default Learning space for new conversations.
+An absent row inherits the application default. Null explicitly disables Learning.
+The browser edits this choice through authenticated local routes and shows the confirmed server value.
+The Intelligence SDK validates runtime management responses and keeps project credentials on the server.
+
+The assignment selector reads the existing conversation from Intelligence before each run.
+It verifies the workspace agent identity and preserves established memberships, including multiple spaces.
+A missing conversation uses the current workspace choice. Unavailable or malformed backend state fails without guessing an assignment.
+
+The Skill plugin resolves the conversation's backend memberships before each turn.
+It obtains a fresh verified snapshot for those memberships and clears the previous snapshot before a refresh.
+Disabled Learning supplies no Skills. Failed refreshes supply a limitation message without stale instructions.
+The workspace inspector separately reads the currently selected space. Changing that choice does not move an existing conversation.
+
+The Learn action reuses Intelligence run admission over saved evidence in the shared space.
+Candidate review reuses its existing publication path. SQLite stores the workspace choice, but does not copy transcripts or Learning output.
+The browser refreshes proposals after run completion and reconciles review outcomes before another decision.

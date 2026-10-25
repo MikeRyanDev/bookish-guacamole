@@ -1,3 +1,4 @@
+import type { ConversationSkillRegistry } from "./learned-skills.js";
 import { createConversationDefaults } from "./conversation-defaults.js";
 import { resolve } from "node:path";
 import { CopilotRuntime, type CopilotKitIntelligence } from "@copilotkit/runtime/v2";
@@ -29,6 +30,7 @@ export function createWorkspaceRuntime(
     dataDirectory: string;
     intelligence: CopilotKitIntelligence;
     containerId: string;
+    skillsForThread?: ConversationSkillRegistry;
     models: ModelCatalog;
   },
 ) {
@@ -64,6 +66,7 @@ export function createWorkspaceRuntime(
     root: workspace.path,
     intelligence,
     containerId,
+    skillsForThread: dependencies.skillsForThread,
     models,
     history,
     execution: { settings: executionSettings, ledger: executionUsage, recovery },

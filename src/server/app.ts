@@ -1,3 +1,4 @@
+import { createWorkspaceLearning } from "./workspaces/learning.js";
 import { localUrl, required } from "./config.js";
 import { createWorkspaceRuntime } from "./agent/runtime.js";
 import { createApi } from "./http/router.js";
@@ -13,7 +14,6 @@ import { randomBytes } from "node:crypto";
 import { once } from "node:events";
 import { mkdir } from "node:fs/promises";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-import { SkillRegistry } from "@copilotkit/runtime/internal/learned-skills";
 import { resolve } from "node:path";
 import { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 
@@ -36,13 +36,21 @@ export async function startApp(
   const dataDirectory = options.dataDirectory ?? ".data";
   await mkdir(dataDirectory, { recursive: true, mode: 0o700 });
   const workspaces = await openWorkspaceRegistry(dataDirectory, root);
-  const intelligence = new CopilotKitIntelligence({
+  const intelligence: CopilotKitIntelligence = new CopilotKitIntelligence({
     apiKey,
     apiUrl,
     wsUrl,
-    getLearningContainerId: () => containerId,
+    getLearningContainerId: ({ agentId, input }) => {
+      const workspaceId =
+        agentId === "coder" ? "default" : agentId.startsWith("coder-") ? agentId.slice(6) : "";
+      return learning.containerForRun(workspaceId, input.threadId);
+    },
   });
-  const skillRegistry = new SkillRegistry({ client: intelligence, containerId });
+  const learning = createWorkspaceLearning({
+    intelligence,
+    workspaces,
+    defaultContainerId: containerId,
+  });
   const token = randomBytes(32).toString("hex");
   const runtimes = new Map<string, ReturnType<typeof createWorkspaceRuntime>>();
   /** Lazily opens the selected workspace; switching never changes a running harness root. */
@@ -53,6 +61,7 @@ export async function startApp(
         dataDirectory,
         intelligence,
         containerId,
+        skillsForThread: (threadId) => learning.registryForThread(workspace.id, threadId),
         models,
       });
       runtimes.set(workspace.id, selected);
@@ -67,10 +76,10 @@ export async function startApp(
   }
   const api = createApi({
     token,
+    intelligence,
+    learning,
     workspaces,
     models,
-    containerId,
-    skillRegistry,
     runtimeFor,
     selectedWorkspace,
   });

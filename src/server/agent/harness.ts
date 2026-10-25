@@ -8,7 +8,7 @@ import { permissions, todos, usage } from "@tanstack/ai-harness/plugins";
 import { workspaceTools, snapshots } from "@tanstack/ai-harness/plugins/coding";
 import { projectCompaction } from "@tanstack/ai-compaction";
 import { projectInstructions } from "@tanstack/ai-harness/plugins/node";
-import { learnedSkills } from "./learned-skills.js";
+import { learnedSkills, type ConversationSkillRegistry } from "./learned-skills.js";
 import { loadModelCatalog, type ModelCatalog } from "./models.js";
 import { selectedModelGoal } from "./model-settings.js";
 import { contextManagement } from "./context-management.js";
@@ -23,6 +23,7 @@ export function createCodingHarness(options: {
   root: string;
   intelligence: CopilotKitIntelligence;
   containerId: string;
+  skillsForThread?: ConversationSkillRegistry;
   adapter?: AnyTextAdapter;
   models?: ModelCatalog;
   snapshotDirectory?: string;
@@ -59,7 +60,7 @@ export function createCodingHarness(options: {
       "Make small changes. Run the relevant tests. Report what changed and the actual test result. Never claim a test ran if it did not.",
     ],
     plugins: () => [
-      learnedSkills(skills),
+      learnedSkills(options.skillsForThread ?? skills),
       workspaceTools({
         root: options.root,
         outside: "deny",

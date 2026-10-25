@@ -215,3 +215,17 @@ YOLO does not change saved rules. [The design study](docs/design/permissions/STU
 Use **Settings → Execution** for durable context summaries, conversation limits, retries, and opt-in code mode.
 Use **Connections** for MCP servers or the bundled read-only guide. **Usage** and **Undo last turn** stay beside the conversation.
 See [Execution and connections](docs/EXECUTION.md) for setup, defaults, and recovery boundaries.
+
+### Workspace Learning
+
+1. Open **Learning** beside **Files**.
+2. Select a **Learning space**, then click **Save**.
+3. Click **Learn** to process saved conversations in that shared space.
+4. Open a proposal under **Review skills**.
+5. Read its instructions and **Supporting evidence**.
+6. Click **Approve** to publish it, or **Reject** to leave it unpublished.
+7. Open **Published skills** to read the verified instructions.
+
+New conversations use the saved space. Existing conversations keep their assignment.
+**Off for new conversations** disables Learning for new conversations in that workspace.
+Learn uses saved conversations across the shared space. It does not scan workspace files.

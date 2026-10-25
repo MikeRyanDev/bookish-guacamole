@@ -176,6 +176,17 @@ function Shell({ config }: { config: AppConfig }) {
             <Settings size={16} />
           </IconButton>
           <IconButton
+            label="Learning"
+            aria-pressed={inspector && search.panel === "skills"}
+            onClick={() => {
+              setInspector(!inspector || search.panel !== "skills");
+              if (compact) setSidebar(false);
+              void navigate({ search: (previous) => ({ ...previous, panel: "skills" }) });
+            }}
+          >
+            <span>Learning</span>
+          </IconButton>
+          <IconButton
             label="Toggle files"
             aria-pressed={inspector && search.panel !== "skills"}
             onClick={toggleInspector}

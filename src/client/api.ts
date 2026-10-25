@@ -35,11 +35,15 @@ export const filesQuery = (token: string, workspace: string) =>
       ),
     staleTime: 2000,
   });
-export const skillsQuery = (token: string) =>
+export const skillsQuery = (token: string, workspace = "default") =>
   queryOptions({
-    queryKey: ["skills"],
+    queryKey: ["skills", workspace],
     queryFn: ({ signal }) =>
-      request<{ revision: string; skills: Skill[] }>("/api/skills", token, signal),
+      request<{ revision: string; skills: Skill[] }>(
+        `/api/skills?workspace=${encodeURIComponent(workspace)}`,
+        token,
+        signal,
+      ),
     staleTime: 10000,
   });
 

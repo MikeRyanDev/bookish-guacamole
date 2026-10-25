@@ -1,3 +1,4 @@
+import { LearningPanel } from "./learning-panel";
 import { lazy, Suspense, useRef, useState } from "react";
 import { useQuery, useQueryClient, useIsFetching } from "@tanstack/react-query";
 import {
@@ -11,8 +12,7 @@ import {
   Search,
   X,
 } from "lucide-react";
-import Markdown from "react-markdown";
-import { type AppConfig, skillsQuery, request } from "../api";
+import { type AppConfig, request } from "../api";
 import { IconButton } from "./icon-button";
 import { WorkspaceFileBrowser } from "./workspace-file-browser";
 import { FileViewer } from "./file-viewer";
@@ -42,7 +42,6 @@ function WorkspaceInspector({
   const [copyStatus, setCopyStatus] = useState<{ path: string; text: string }>();
   const searchInput = useRef<HTMLInputElement>(null);
   const filesFetching = useIsFetching({ queryKey: ["files", config.workspaceId] });
-  const skills = useQuery(skillsQuery(config.token));
   const preview = useQuery({
     queryKey: ["file", config.workspaceId, file],
     queryFn: ({ signal }) =>
@@ -78,11 +77,12 @@ function WorkspaceInspector({
             <FileCode2 size={15} />
           </IconButton>
           <IconButton
-            label="Learned skills"
+            label="Learning"
             aria-pressed={panel === "skills"}
             onClick={() => onPanel("skills")}
           >
             <BookOpen size={15} />
+            <span>Learning</span>
           </IconButton>
         </div>
         <div className="inspector-utilities">
@@ -98,11 +98,15 @@ function WorkspaceInspector({
           )}
           <IconButton
             label="Refresh inspector"
-            disabled={panel === "files" ? filesFetching > 0 : skills.isFetching}
+            disabled={panel === "files" && filesFetching > 0}
             onClick={() => {
               if (panel === "files")
                 void queryClient.invalidateQueries({ queryKey: ["files", config.workspaceId] });
-              else void skills.refetch();
+              else {
+                void queryClient.invalidateQueries({ queryKey: ["learning", config.workspaceId] });
+                void queryClient.invalidateQueries({ queryKey: ["skills", config.workspaceId] });
+                void queryClient.invalidateQueries({ queryKey: ["learning-spaces"] });
+              }
               if (panel === "files" && file) {
                 if (kind === "text") void preview.refetch();
                 else
@@ -213,27 +217,7 @@ function WorkspaceInspector({
             )}
           </>
         ) : (
-          <>
-            {skills.isLoading && (
-              <p role="status" className="muted">
-                Loading…
-              </p>
-            )}
-            {skills.error && <p role="alert">{skills.error.message}</p>}
-            {skills.data?.skills.length === 0 && <p className="muted">No published Skills yet.</p>}
-            {skills.data?.skills.map((skill) => (
-              <details className="skill" key={skill.name}>
-                <summary>
-                  <BookOpen size={14} />
-                  {skill.name}
-                </summary>
-                <p className="muted">{skill.description}</p>
-                <div className="markdown">
-                  <Markdown>{skill.content}</Markdown>
-                </div>
-              </details>
-            ))}
-          </>
+          <LearningPanel config={config} />
         )}
       </div>
     </aside>
