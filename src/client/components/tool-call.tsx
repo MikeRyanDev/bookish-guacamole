@@ -1,7 +1,7 @@
 import { toolOutcome } from "./tool-outcome";
 import { revealToolContent, useToolDisclosure } from "./tool-disclosure";
-import { useState } from "react";
-import { IconButton } from "./icon-button";
+import { CopyToolText } from "./tool-copy";
+import { TypeScriptOutput } from "./typescript-output";
 import {
   Terminal,
   Check,
@@ -10,39 +10,11 @@ import {
   FileDiff,
   CircleAlert,
   ShieldCheck,
-  Copy,
   Search,
   FolderSearch,
   BookOpen,
   Wrench,
 } from "lucide-react";
-
-function CopyToolText({ text, label }: { text: string; label: string }) {
-  const [feedback, setFeedback] = useState<{ text: string; status: "copied" | "error" }>();
-  const status = feedback?.text === text ? feedback.status : "idle";
-  return (
-    <>
-      <IconButton
-        label={status === "copied" ? "Copied" : label}
-        onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(text);
-            setFeedback({ text, status: "copied" });
-          } catch {
-            setFeedback({ text, status: "error" });
-          }
-        }}
-      >
-        {status === "copied" ? <Check size={14} /> : <Copy size={14} />}
-      </IconButton>
-      {status === "error" && (
-        <span className="tool-copy-error" role="status">
-          Copy failed. Select the text to copy it.
-        </span>
-      )}
-    </>
-  );
-}
 
 /** Reads complete tool arguments; partial streaming JSON stays available in the raw view. */
 function argumentsOf(value: string): Record<string, unknown> {
@@ -150,13 +122,12 @@ export function ToolCall({
   awaitingApproval?: boolean;
 }) {
   const parameters = argumentsOf(args);
-  const { output, exitCode, failed, denied } = toolOutcome(result);
+  const { output, exitCode, failed, denied } = toolOutcome(result, name);
   const [open, setOpen] = useToolDisclosure(awaitingApproval || failed || running);
-  const command = typeof parameters.command === "string" ? parameters.command : undefined;
+  const isTypeScript = name === "execute_typescript";
   const program =
-    name === "execute_typescript" && typeof parameters.typescriptCode === "string"
-      ? parameters.typescriptCode
-      : undefined;
+    typeof parameters.typescriptCode === "string" ? parameters.typescriptCode : undefined;
+  const command = typeof parameters.command === "string" ? parameters.command : undefined;
   const path = typeof parameters.path === "string" ? parameters.path : undefined;
   const patch =
     typeof parameters.patch === "string"
@@ -185,7 +156,7 @@ export function ToolCall({
             ? "Running"
             : "No result";
   const Icon =
-    name === "read_file" || name === "execute_typescript"
+    name === "read_file" || isTypeScript
       ? FileCode
       : patch || name === "write_file"
         ? FileDiff
@@ -200,20 +171,19 @@ export function ToolCall({
                 : Wrench;
   const filePath =
     path ?? (patch ? /^\*\*\* (?:Update|Add|Delete) File: (.+)$/m.exec(patch)?.[1] : undefined);
-  const title =
-    name === "execute_typescript"
-      ? "Run TypeScript"
-      : name === "bash"
-        ? "Run command"
-        : name === "read_file"
-          ? "Read file"
-          : patch
-            ? "Edit file"
-            : name === "write_file"
-              ? "Write file"
-              : name.replaceAll("_", " ");
+  const title = isTypeScript
+    ? "Execute TypeScript"
+    : name === "bash"
+      ? "Run command"
+      : name === "read_file"
+        ? "Read file"
+        : patch
+          ? "Edit file"
+          : name === "write_file"
+            ? "Write file"
+            : name.replaceAll("_", " ");
   const hasPreview = Boolean(
-    program || command || patch || name === "read_file" || name === "write_file",
+    isTypeScript || command || patch || name === "read_file" || name === "write_file",
   );
   const additions =
     patch?.split("\n").filter((line) => line.startsWith("+") && !line.startsWith("+++")).length ??
@@ -284,21 +254,37 @@ export function ToolCall({
           </span>
         </summary>
         <div className="tool-body">
-          {program !== undefined && (
-            <div className="tool-surface">
+          {isTypeScript && (
+            <div className="tool-surface typescript-surface">
               <div className="tool-surface-heading">
-                <FileCode size={14} />
-                <code>TypeScript program</code>
-                <CopyToolText text={program} label="Copy program" />
+                <span>TypeScript</span>
+                {program !== undefined && <CopyToolText text={program} label="Copy TypeScript" />}
               </div>
-              <pre className="file-tool-preview" aria-label="TypeScript program">
-                <code>
-                  <SourceText text={program} />
-                </code>
-              </pre>
+              {program ? (
+                <pre className="typescript-source" aria-label="TypeScript source" tabIndex={0}>
+                  <code>
+                    <SourceText text={program} />
+                  </code>
+                </pre>
+              ) : (
+                <p className="typescript-empty">
+                  {program === ""
+                    ? "Empty TypeScript source"
+                    : running
+                      ? "Receiving TypeScript…"
+                      : "TypeScript source unavailable. Inspect Raw details."}
+                </p>
+              )}
+              <TypeScriptOutput
+                output={output}
+                running={running}
+                awaitingApproval={awaitingApproval}
+                failed={failed}
+                denied={denied}
+              />
             </div>
           )}
-          {command && (
+          {!isTypeScript && command && (
             <div className="tool-surface">
               <div className="shell-command">
                 <span aria-hidden="true">$</span>
@@ -346,7 +332,7 @@ export function ToolCall({
               <FileContents content={parameters.content} />
             </div>
           )}
-          {!command && name !== "read_file" && output !== undefined && (
+          {!isTypeScript && !command && name !== "read_file" && output !== undefined && (
             <details className="tool-result" open={failed || undefined}>
               <summary>
                 <ChevronRight size={12} />
@@ -357,7 +343,11 @@ export function ToolCall({
           )}
           <details
             className="tool-arguments"
-            open={(!hasPreview && output === undefined) || undefined}
+            open={
+              (!hasPreview && output === undefined) ||
+              (isTypeScript && program === undefined) ||
+              undefined
+            }
           >
             <summary>
               <ChevronRight size={12} />

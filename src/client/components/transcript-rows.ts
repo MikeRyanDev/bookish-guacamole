@@ -37,7 +37,7 @@ export function transcriptRows(
       }
       const result = results.get(call.id);
       const entry = { call, result };
-      if (!result || toolOutcome(contentToText(result.content)).failed) {
+      if (!result || toolOutcome(contentToText(result.content), call.function.name).failed) {
         group = undefined;
         rows.push({ id: `call:${call.id}`, kind: "call", entry });
       } else {

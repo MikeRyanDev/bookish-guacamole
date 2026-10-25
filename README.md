@@ -99,7 +99,7 @@ The choice survives reloads and server restarts. New conversations use the works
 Coding and goal checks use this selection; Intelligence Learning keeps its separate configuration.
 
 Review each approval card before choosing **Allow once** or **Reject**. Consecutive completed tools share a compact activity summary. Expand it to see individual calls, then open a call for its exact evidence. Failed, denied, running, and missing-result calls remain visible outside completed groups. Bash previews show the exact command; patch previews show added and removed lines.
-Use the copy controls for exact payloads and **Raw details** for original arguments. Completed calls start collapsed. Your expansion choices last while the conversation stays open, including when you scroll through a long history. Approval applies only to that tool call. If submitting a decision fails, retry it from the same card.
+Use the copy controls for exact payloads and **Raw details** for original arguments. Completed calls start collapsed. Your expansion choices last while the conversation stays open, including when you scroll through a long history. Execute TypeScript calls show submitted source and output together when expanded. Copy actions retain exact source and response text; structured output is indented for reading. Approval applies only to that tool call. If submitting a decision fails, retry it from the same card.
 
 Choose **Create goal**, enter an objective, then choose **Start goal**. **Cancel** returns to your unchanged message draft.
 Goal mode continues for up to 20 rounds, with an additional model check after each round.

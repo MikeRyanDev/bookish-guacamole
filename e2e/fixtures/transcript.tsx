@@ -1,3 +1,4 @@
+import { TypeScriptFixture } from "./typescript";
 import { ToolActivityFixture } from "./tool-activity";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -10,6 +11,7 @@ import { Permission } from "../../src/client/components/tool-approval";
 import { ToolCall } from "../../src/client/components/tool-call";
 
 function Fixture() {
+  if (new URLSearchParams(location.search).has("typescript")) return <TypeScriptFixture />;
   if (new URLSearchParams(location.search).has("activity")) return <ToolActivityFixture />;
   const [decision, setDecision] = useState("");
   const [streamCommand, setStreamCommand] = useState("npm test");
