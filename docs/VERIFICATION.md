@@ -666,4 +666,19 @@ The fixture simulates Learning writes. The application preview uses the existing
 No new model call, Learning run, or Skill approval was made against the user's main workspace for this redesign.
 No server, SDK, dependency preview, upstream PR, or shared deployment changed.
 The existing build chunk warning and pre-existing Impeccable sidecar drift remain.
-Merged-main and active-app verification follow after integration.
+### Merged main and active app
+
+Implementation commit `9c71af9` fast-forwarded into local `main`.
+The user's existing Monday checklist patch remained identical after the merge.
+On merged main, `pnpm check` passed with 212 tests and 47 declared skips, including lint, design checks, types, and production builds.
+`node --test example/greet.test.js` passed one test.
+
+`CI=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4173 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4198 pnpm exec playwright test e2e/learning-dialog.spec.ts e2e/learning.spec.ts e2e/workspace.spec.ts e2e/design.spec.ts --output=.data/learning-dialog-main-browser` passed all 38 tests.
+This includes the rendered design matrix and actual application shell in both themes and widths.
+The development-only file entry and file viewer checks passed in the 48-test preview run above; they were not repeated against production.
+
+The production app on port 4173 runs from the main checkout, verified through process 51911's working directory.
+The user's Chrome tab retained the CPK Intelligence workspace and Repo Overview conversation.
+Its legacy Learning URL opened the workspace dialog and normalized the file-panel selection.
+The visible Learning control sits beside the workspace name. The large reader loaded an existing published Skill from the installed backend.
+No new model call, Learning run, or review decision was made during this final check.
