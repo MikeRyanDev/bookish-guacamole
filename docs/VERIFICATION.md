@@ -682,3 +682,43 @@ The user's Chrome tab retained the CPK Intelligence workspace and Repo Overview 
 Its legacy Learning URL opened the workspace dialog and normalized the file-panel selection.
 The visible Learning control sits beside the workspace name. The large reader loaded an existing published Skill from the installed backend.
 No new model call, Learning run, or review decision was made during this final check.
+
+## Learning reading layout refinement — 2026-10-24
+
+The user's nine-step plan replaces the rejected composition while preserving workspace scope and backend contracts.
+[The plan](design/learning-refinement/PLAN.md) records the interaction and state matrix, pre-build previews, description source, and limits.
+[Usability evidence](design/learning-refinement/USABILITY.md) separates task completion from visual and technical review.
+
+The compact header keeps assignment guidance in the editor. List previews use two lines.
+The title, description, and Markdown share one left edge. Desktop removes Back to skills.
+One library refresh replaces the header and run refresh controls. Failed refreshes retain readable content.
+The presentation helper removes only exact repeated generated prefixes. It preserves stored Skill source.
+
+| Command | Result |
+| --- | --- |
+| `pnpm install --frozen-lockfile` | Passed in the isolated worktree. Pins unchanged. |
+| `pnpm check` | Passed lint, source design checks, type checks, 43 test files, 214 tests, and production builds. 47 declared skips. |
+| `node --test example/greet.test.js` | One passed. |
+| `FILE_VIEWER_APP_URL=http://127.0.0.1:4197 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4196 pnpm exec playwright test e2e/learning-dialog.spec.ts e2e/learning.spec.ts e2e/learning-refinement.spec.ts e2e/workspace.spec.ts e2e/design.spec.ts --output=.data/learning-refinement/final` | 55 passed, including the rendered design matrix. |
+| `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4196 pnpm exec playwright test e2e/learning-refinement.spec.ts -g 'list, loading' --output=.data/learning-refinement/states` | One additional state test passed. |
+| `.agents/skills/impeccable/scripts/impeccable detect --json src/client/components/learning-panel.tsx src/client/components/learning-dialog.tsx src/client/styles.css` | No blocking findings. Advisories cover local reader sizes and pre-existing color/radius values. |
+| `git diff --check` | Passed. |
+
+The browser matrix covers 320, 390, 768, 1440, 1512, and 2048px in both themes with long titles and documents.
+It covers alignment, preview length, focus, metadata, visible decisions, and axe accessibility checks.
+Existing tests cover assignment errors, save/cancel/reload, list and detail errors, missing evidence, unavailable sources, failed runs, uncertain decisions, publication, rejection, and removal.
+Regression checks failed before fixes for the rejected layout, missing unified refresh, stale review error after recovery, and clipped decisions in a short viewport.
+An initial run used old expectations for desktop Back and editor tab order. The updated interaction tests passed in the final run.
+
+Chrome's native zoom control confirmed 200 percent zoom, with a 756 by 370 CSS viewport.
+The first zoom inspection found clipped decisions. Short viewports now use the single-pane layout.
+The corrected live capture shows both decisions within the viewport and a scrollable document. Zoom returned to 100 percent.
+The independent usability reviewer found stale error text after a successful retry. The correction passed a fresh recovery walkthrough.
+
+The full application preview read an existing published Skill from the installed backend.
+No model call, Learning run, or review decision was made against the user's workspace for this refinement.
+Synthetic fixture writes do not establish new backend or model evidence.
+SDK packages, server contracts, shared deployments, and upstream pull requests remain unchanged.
+The fresh full visual review matched all UI elements and required only documentation reconciliation.
+The documenter updated the Learning subsection; the reviewer scored that fix resolved with disposition ship.
+The final ship verdict covers the documentation fix. Merged-main verification follows after integration.

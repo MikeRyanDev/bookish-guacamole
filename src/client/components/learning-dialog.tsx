@@ -1,17 +1,11 @@
 import { useEffect, useRef } from "react";
-import { RefreshCw, X } from "lucide-react";
-import { useIsFetching, useQueryClient } from "@tanstack/react-query";
+import { X } from "lucide-react";
 import type { AppConfig } from "../api";
 import { IconButton } from "./icon-button";
 import { LearningPanel } from "./learning-panel";
 
 /** A workspace-scoped, native modal. Mount to open; closing discards unsaved UI drafts. */
 export function LearningDialog({ config, onClose }: { config: AppConfig; onClose: () => void }) {
-  const client = useQueryClient();
-  const fetching = useIsFetching({
-    predicate: (query) =>
-      ["learning", "learning-spaces", "skills"].includes(String(query.queryKey[0])),
-  });
   const heading = useRef<HTMLHeadingElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -34,18 +28,6 @@ export function LearningDialog({ config, onClose }: { config: AppConfig; onClose
           Learning · {config.workspaceName}
         </h1>
         <div className="learning-dialog-actions">
-          <IconButton
-            label="Refresh Learning"
-            disabled={fetching > 0}
-            onClick={() => {
-              void client.invalidateQueries({
-                predicate: (query) =>
-                  ["learning", "learning-spaces", "skills"].includes(String(query.queryKey[0])),
-              });
-            }}
-          >
-            <RefreshCw size={16} />
-          </IconButton>
           <IconButton
             label="Close Learning"
             onClick={() => {

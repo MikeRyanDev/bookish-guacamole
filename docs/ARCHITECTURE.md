@@ -191,3 +191,7 @@ The Learning dialog keeps its open state and document selection in React. Query 
 Legacy `panel=skills` links open the dialog and normalize to `panel=files`, preserving the selected conversation and file.
 Assignment drafts hide Learning actions until Save or Cancel. Review decisions remain disabled during a write or an uncertain state refresh.
 The native dialog traps focus. Opening focuses its heading, and closing restores focus to the workspace entry.
+The Learning reader keeps one left alignment across its title, description, and Markdown.
+The library shows two-line previews. Mobile and short viewports use a single pane with Back to skills.
+One library refresh updates the workspace reads. Failed refreshes retain cached documents and expose a local Retry.
+Display-only description cleanup removes exact repeated generated prefixes. Stored Markdown and frontmatter remain unchanged.

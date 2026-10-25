@@ -121,7 +121,7 @@ for (const theme of ["light", "dark"]) {
       await expect(page.getByRole("heading", { name: /^Learning ·/ })).toBeFocused();
       await expect(page.getByText("Loading Learning…", { exact: true })).not.toBeVisible();
       await expect(page.getByText("Loading proposals…", { exact: true })).not.toBeVisible();
-      await expect(page.getByRole("button", { name: "Refresh Learning" })).toBeEnabled();
+      await expect(page.getByRole("button", { name: "Refresh skills" })).toBeEnabled();
       await page.screenshot({ path: `.impeccable/review/shell-dialog-${theme}-${width}.png` });
       expect(
         (await new AxeBuilder({ page }).include(".learning-dialog").analyze()).violations,

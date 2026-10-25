@@ -59,8 +59,13 @@ for (const theme of ["light", "dark"]) {
         page.getByText("Please run the tests first so we know which behavior is broken."),
       ).toBeVisible();
       await page.screenshot({ path: `.impeccable/review/dialog-evidence-${theme}-${width}.png` });
-      await page.getByRole("button", { name: "Back to skills" }).click();
-      await expect(page.getByRole("button", { name: "Test before editing" })).toBeFocused();
+      if (width === 390) {
+        await page.getByRole("button", { name: "Back to skills" }).click();
+        await expect(page.getByRole("button", { name: "Test before editing" })).toBeFocused();
+      } else {
+        await expect(page.getByRole("button", { name: "Back to skills" })).not.toBeVisible();
+        await expect(page.getByRole("button", { name: "Test before editing" })).toBeVisible();
+      }
       await page.keyboard.press("Escape");
       await expect(page.getByRole("button", { name: "Learning", exact: true })).toBeFocused();
     });
@@ -141,9 +146,9 @@ test("empty spaces, failed runs, and empty published lists explain the next acti
   await page.goto(`${fixture}/learning.html?empty=1`);
   await page.getByRole("button", { name: "Learning", exact: true }).click();
   await expect(
-    page.getByText("No Learning spaces yet. Create one in Intelligence, then refresh."),
+    page.getByText("No Learning spaces yet. Create one in Intelligence, then refresh the spaces."),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "Refresh Learning" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Refresh spaces" })).toBeEnabled();
   await page.screenshot({ path: ".impeccable/review/dialog-empty.png" });
   await page.goto(`${fixture}/learning.html?ready=1&runfailed=1`);
   await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
@@ -160,6 +165,7 @@ test("empty spaces, failed runs, and empty published lists explain the next acti
 });
 
 test("removal proposals and unavailable evidence state their consequences", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
   await page.goto(`${fixture}/learning.html?ready=1&remove=1&unavailable=1`);
   await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
   await page.getByRole("button", { name: "Learning", exact: true }).click();

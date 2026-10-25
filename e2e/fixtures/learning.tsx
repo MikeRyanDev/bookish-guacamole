@@ -30,8 +30,12 @@ let fail = params.get("failure");
 const states = new Map<string, { started: number; reviewed?: "approved" | "rejected" }>();
 const proposal = {
   id,
-  title: "Test before editing",
-  description: "Check behavior before changing code",
+  title: params.has("longtitle")
+    ? "Preserve workspace changes during multi-package release preparation and final verification"
+    : "Test before editing",
+  description: params.has("duplicate")
+    ? "Use when When implementing or updating a greet-like function that receives user-supplied names. Do not use for Do not use for non-greet functions or when input names are never user-supplied."
+    : "Check behavior before changing code",
   reason: "Repeated corrections in saved conversations",
   operation: params.has("remove") ? "remove" : "add",
   status: "pending_review",
@@ -98,7 +102,7 @@ window.fetch = async (input, init) => {
     return Response.json({
       revision: "1",
       skills:
-        reviewed === "approved"
+        reviewed === "approved" || params.has("published")
           ? [
               {
                 name: "test-first",

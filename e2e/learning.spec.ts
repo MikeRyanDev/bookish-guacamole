@@ -102,9 +102,7 @@ test("assigns a named space, starts Learning, and reviews a proposal with eviden
   await page.getByLabel("Learning space", { exact: true }).selectOption("coding");
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByText("Learning space saved.", { exact: true })).toBeVisible();
-  await expect(
-    page.getByText("Learning uses saved conversations across this shared space."),
-  ).toBeVisible();
+  await expect(page.getByText("Uses saved conversations in Coding lessons.")).toBeVisible();
   await page.getByRole("button", { name: "Learn", exact: true }).click();
   await expect(page.getByText("Learning finished")).toBeVisible();
   await page.getByRole("button", { name: "Test before editing" }).click();
@@ -113,7 +111,7 @@ test("assigns a named space, starts Learning, and reviews a proposal with eviden
   await expect(page.getByText("Please run the tests first.")).toBeVisible();
   await page.getByRole("button", { name: "Approve skill", exact: true }).click();
   await expect(page.getByText("Approved. Published to Coding lessons.")).toBeVisible();
-  await page.getByRole("button", { name: "Back to skills" }).click();
+  await expect(page.getByRole("button", { name: "Back to skills" })).not.toBeVisible();
   await page.getByRole("button", { name: /Published skills/ }).click();
   await page.getByText("test-first", { exact: true }).click();
   await expect(page.getByText("Run the tests before editing.")).toBeVisible();
@@ -256,7 +254,7 @@ for (const theme of ["light", "dark"]) {
       await page.getByRole("button", { name: "Test before editing" }).click();
       await page.getByRole("button", { name: "Approve skill", exact: true }).click();
       await expect(page.getByText("Approved. Published to Coding lessons.")).toBeVisible();
-      await page.getByRole("button", { name: "Back to skills" }).click();
+      if (width === 390) await page.getByRole("button", { name: "Back to skills" }).click();
       await page.getByRole("button", { name: "Published skills" }).click();
       await page.getByText("test-first", { exact: true }).click();
       await expect(

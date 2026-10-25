@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   useInfiniteQuery,
+  useIsFetching,
   useMutation,
   useQuery,
   useQueryClient,
@@ -8,7 +9,9 @@ import {
 } from "@tanstack/react-query";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ArrowLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, RefreshCw } from "lucide-react";
+import { IconButton } from "./icon-button";
+import { learningDescription } from "../learning-description";
 import { changeWorkspace, request, skillsQuery, type AppConfig } from "../api";
 import type {
   LearningSpace,
@@ -28,12 +31,20 @@ function learningQuery<T>(config: AppConfig, path: string, containerId: string |
     retry: false,
   });
 }
-function QueryError({ error, retry }: { error: Error; retry: () => void }) {
+function QueryError({
+  error,
+  retry,
+  pending = false,
+}: {
+  error: Error;
+  retry: () => void;
+  pending?: boolean;
+}) {
   return (
     <div className="learning-error" role="alert">
       <p>{error.message}</p>
-      <button type="button" onClick={retry}>
-        Retry
+      <button type="button" onClick={retry} disabled={pending}>
+        {pending ? "Retrying…" : "Retry"}
       </button>
     </div>
   );
@@ -55,6 +66,7 @@ export function LearningPanel({ config }: { config: AppConfig }) {
     getNextPageParam: (page) => page.nextCursor ?? undefined,
     retry: false,
   });
+  const changeButton = useRef<HTMLButtonElement>(null);
   const [draft, setDraft] = useState<string>();
   const [saved, setSaved] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -68,6 +80,7 @@ export function LearningPanel({ config }: { config: AppConfig }) {
       setDraft(undefined);
       setSaved(true);
       setEditing(false);
+      requestAnimationFrame(() => changeButton.current?.focus());
       await Promise.all([
         client.invalidateQueries({ queryKey: ["config"] }),
         client.invalidateQueries({ queryKey: ["skills", config.workspaceId] }),
@@ -84,6 +97,7 @@ export function LearningPanel({ config }: { config: AppConfig }) {
               Learning space <strong>{settings.data?.space?.name ?? "Current space"}</strong>
             </span>
             <button
+              ref={changeButton}
               onClick={() => {
                 setEditing(true);
                 setSaved(false);
@@ -129,7 +143,11 @@ export function LearningPanel({ config }: { config: AppConfig }) {
             </select>
             {spaces.isPending && <p role="status">Loading spaces…</p>}
             {spaces.error && (
-              <QueryError error={spaces.error} retry={() => void spaces.refetch()} />
+              <QueryError
+                error={spaces.error}
+                pending={spaces.isFetching}
+                retry={() => void spaces.refetch()}
+              />
             )}
             {spaces.hasNextPage && (
               <button
@@ -142,8 +160,17 @@ export function LearningPanel({ config }: { config: AppConfig }) {
             )}
             {!spaces.isPending && !spaces.error && choices.length === 0 && (
               <p className="muted">
-                No Learning spaces yet. Create one in Intelligence, then refresh.
+                No Learning spaces yet. Create one in Intelligence, then refresh the spaces.
               </p>
+            )}
+            {choices.length === 0 && !spaces.error && (
+              <button
+                type="button"
+                disabled={spaces.isFetching}
+                onClick={() => void spaces.refetch()}
+              >
+                Refresh spaces
+              </button>
             )}
             <p className="muted">
               New conversations use this space. Existing conversations keep their assignment.
@@ -170,24 +197,31 @@ export function LearningPanel({ config }: { config: AppConfig }) {
                   setDraft(undefined);
                   setEditing(false);
                   save.reset();
+                  requestAnimationFrame(() => changeButton.current?.focus());
                 }}
               >
                 Cancel
               </button>
             </div>
+            {!save.isPending &&
+              !settings.isPending &&
+              !settings.isError &&
+              !spaces.isError &&
+              selection === confirmed && (
+                <p className="muted">Choose a different space to enable Save.</p>
+              )}
             {save.error && <p role="alert">{save.error.message}</p>}
           </form>
-        )}
-        {confirmed && !editing && (
-          <p className="muted">
-            New conversations use this space. Existing conversations keep their assignment.
-          </p>
         )}
         {saved && <p role="status">Learning space saved.</p>}
       </div>
       {settings.isPending && <p role="status">Loading Learning…</p>}
       {settings.error && (
-        <QueryError error={settings.error} retry={() => void settings.refetch()} />
+        <QueryError
+          error={settings.error}
+          pending={settings.isFetching}
+          retry={() => void settings.refetch()}
+        />
       )}
       {editing && <p className="muted">Save or cancel your space change to continue.</p>}
       {settings.data?.space ? (
@@ -216,6 +250,11 @@ const runLabel: Record<LearningRun["status"], string> = {
 };
 function SpaceLearning({ config, space }: { config: AppConfig; space: LearningSpace }) {
   const client = useQueryClient();
+  const refreshing = useIsFetching({
+    predicate: (query) =>
+      query.queryKey[1] === config.workspaceId &&
+      ["learning", "skills"].includes(String(query.queryKey[0])),
+  });
   const [tab, setTab] = useState<"review" | "published">("review");
   const [candidate, setCandidate] = useState<string>();
   const [published, setPublished] = useState<string>();
@@ -263,43 +302,62 @@ function SpaceLearning({ config, space }: { config: AppConfig; space: LearningSp
     <div className={`learning-space-content${candidate || selectedSkill ? " has-selection" : ""}`}>
       <nav className="learning-library" aria-label="Learning Skills" ref={list}>
         <div className="learning-run">
-          <p className="muted">Learning uses saved conversations across this shared space.</p>
-          <button
-            className="learning-learn"
-            disabled={
-              start.isPending ||
-              runs.isPending ||
-              runs.isError ||
-              runs.isFetching ||
-              runs.data?.runs.some(activeRun)
-            }
-            onClick={() => start.mutate()}
-          >
-            {start.isPending ? "Starting Learning…" : "Learn"}
-          </button>
-          {start.error && (
-            <p role="alert">{start.error.message} Refresh status before trying again.</p>
-          )}
-          {runs.isPending && <p role="status">Loading Learning status…</p>}
-          {runs.error && <QueryError error={runs.error} retry={() => void runs.refetch()} />}
-          {latest && (
-            <div className="learning-progress" role="status">
-              <strong>{runLabel[latest.status]}</strong>
-              {latest.status === "succeeded" && latest.candidateCount !== null && (
-                <span>
-                  {latest.candidateCount} proposed{" "}
-                  {latest.candidateCount === 1 ? "Skill" : "Skills"}
-                </span>
-              )}
-              {latest.status === "failed" && (
-                <span>Check Learning in Intelligence, then try again.</span>
+          <div className="learning-run-line">
+            <button
+              className="learning-learn"
+              aria-describedby="learning-run-status learning-run-scope"
+              disabled={
+                start.isPending ||
+                runs.isPending ||
+                runs.isError ||
+                runs.isFetching ||
+                runs.data?.runs.some(activeRun)
+              }
+              onClick={() => start.mutate()}
+            >
+              Learn
+            </button>
+            <div id="learning-run-status" className="learning-progress" role="status">
+              {start.isPending ? (
+                "Starting Learning…"
+              ) : runs.isPending ? (
+                "Loading Learning status…"
+              ) : runs.isError ? (
+                "Status unavailable"
+              ) : runs.isFetching ? (
+                "Refreshing status…"
+              ) : latest ? (
+                <>
+                  <span>{runLabel[latest.status]}</span>
+                  {latest.status === "succeeded" && latest.candidateCount !== null && (
+                    <span>
+                      {latest.candidateCount} proposed{" "}
+                      {latest.candidateCount === 1 ? "Skill" : "Skills"}
+                    </span>
+                  )}
+                </>
+              ) : (
+                "Ready to learn"
               )}
             </div>
+          </div>
+          <p id="learning-run-scope" className="muted">
+            Uses saved conversations in {space.name}.
+          </p>
+          {start.error && (
+            <p role="alert">
+              {start.error.message} Use Refresh skills to check the run before trying again.
+            </p>
           )}
-          {(latest || start.error) && (
-            <button disabled={runs.isFetching} onClick={() => void runs.refetch()}>
-              Refresh status
-            </button>
+          {runs.error && (
+            <QueryError
+              error={runs.error}
+              pending={runs.isFetching}
+              retry={() => void runs.refetch()}
+            />
+          )}
+          {!runs.error && latest?.status === "failed" && (
+            <p className="muted">Check Learning in Intelligence, then try again.</p>
           )}
         </div>
         <div className="learning-tabs" aria-label="Skills">
@@ -323,12 +381,30 @@ function SpaceLearning({ config, space }: { config: AppConfig; space: LearningSp
           >
             Published skills
           </button>
+          <IconButton
+            label="Refresh skills"
+            disabled={refreshing > 0 || start.isPending}
+            onClick={() => {
+              start.reset();
+              void client.invalidateQueries({
+                predicate: (query) =>
+                  query.queryKey[1] === config.workspaceId &&
+                  ["learning", "skills"].includes(String(query.queryKey[0])),
+              });
+            }}
+          >
+            <RefreshCw size={14} />
+          </IconButton>
         </div>
         {tab === "review" ? (
           <>
             {proposals.isPending && <p role="status">Loading proposals…</p>}
             {proposals.error && (
-              <QueryError error={proposals.error} retry={() => void proposals.refetch()} />
+              <QueryError
+                error={proposals.error}
+                pending={proposals.isFetching}
+                retry={() => void proposals.refetch()}
+              />
             )}
             {proposals.data && pending.length === 0 && (
               <p className="muted">
@@ -345,10 +421,11 @@ function SpaceLearning({ config, space }: { config: AppConfig; space: LearningSp
                 <span>
                   <strong>{item.title}</strong>
                   <small>
-                    {item.operation === "remove" ? "Proposed removal" : item.description}
+                    {item.operation === "remove"
+                      ? "Proposed removal"
+                      : learningDescription(item.description)}
                   </small>
                 </span>
-                <ChevronRight size={15} />
               </button>
             ))}
           </>
@@ -356,7 +433,11 @@ function SpaceLearning({ config, space }: { config: AppConfig; space: LearningSp
           <>
             {skills.isPending && <p role="status">Loading published Skills…</p>}
             {skills.error && (
-              <QueryError error={skills.error} retry={() => void skills.refetch()} />
+              <QueryError
+                error={skills.error}
+                pending={skills.isFetching}
+                retry={() => void skills.refetch()}
+              />
             )}
             {skills.data?.skills.length === 0 && (
               <p className="muted">
@@ -373,9 +454,8 @@ function SpaceLearning({ config, space }: { config: AppConfig; space: LearningSp
               >
                 <span>
                   <strong>{skill.name}</strong>
-                  <small>{skill.description}</small>
+                  <small>{learningDescription(skill.description)}</small>
                 </span>
-                <ChevronRight size={15} />
               </button>
             ))}
           </>
@@ -393,7 +473,9 @@ function SpaceLearning({ config, space }: { config: AppConfig; space: LearningSp
         <article className="learning-review" key={selectedSkill.name}>
           <ReaderHeading title={selectedSkill.name} back={back} />
           <div className="learning-document" tabIndex={0} aria-label="Published Skill instructions">
-            <p className="muted">{selectedSkill.description}</p>
+            <p className="learning-description muted">
+              {learningDescription(selectedSkill.description)}
+            </p>
             <SkillMarkdown content={selectedSkill.content} />
           </div>
         </article>
@@ -501,11 +583,20 @@ function CandidateReview({
       >
         {candidate.isPending && <p role="status">Loading proposal…</p>}
         {candidate.error && (
-          <QueryError error={candidate.error} retry={() => void candidate.refetch()} />
+          <QueryError
+            error={candidate.error}
+            pending={candidate.isFetching}
+            retry={() => {
+              void candidate.refetch().then((result) => {
+                if (result.isSuccess) review.reset();
+              });
+            }}
+          />
         )}
         {data && (
           <>
-            <p className="muted">{data.reason}</p>
+            <p className="learning-description muted">{learningDescription(data.description)}</p>
+            {evidence && <p className="muted">{data.reason}</p>}
             {data.operation === "remove" && <p>This proposal removes the published Skill.</p>}
             {evidence ? (
               data.supportingInsights.length ? (
@@ -544,7 +635,11 @@ function CandidateReview({
               <p className="muted" role={review.isPending ? "status" : undefined}>
                 {review.isPending
                   ? "Saving review…"
-                  : `${data.operation === "remove" ? "Approve removes this Skill from" : "Approve publishes to"} ${space.name}.`}
+                  : candidate.isError
+                    ? "Refresh the proposal before another decision."
+                    : candidate.isFetching
+                      ? "Refreshing review state…"
+                      : `${data.operation === "remove" ? "Approve removes this Skill from" : "Approve publishes to"} ${space.name}.`}
               </p>
               <div className="learning-actions">
                 <button
@@ -639,7 +734,13 @@ function Evidence({
       <p>{insight.statement}</p>
       <p className="muted">{insight.impact}</p>
       {sources.isPending && <p role="status">Loading evidence…</p>}
-      {sources.error && <QueryError error={sources.error} retry={() => void sources.refetch()} />}
+      {sources.error && (
+        <QueryError
+          error={sources.error}
+          pending={sources.isFetching}
+          retry={() => void sources.refetch()}
+        />
+      )}
       {sources.data?.sources.map((source) => (
         <div key={source.id}>
           <h3>{source.label}</h3>
