@@ -45,9 +45,12 @@ test("mobile file entry remains visible and pointer-accessible beside the develo
     );
     await page.getByRole("button", { name: "Back to files", exact: true }).click();
     await page.getByRole("button", { name: "Clear file search", exact: true }).click();
-    await page.locator(".inspector").getByRole("button", { name: "Learning", exact: true }).click();
-    await expect(toggle).toHaveAttribute("aria-pressed", "false");
-    await toggle.click();
+    await page
+      .locator(".header-left")
+      .getByRole("button", { name: "Learning", exact: true })
+      .click();
+    await expect(page.getByRole("dialog", { name: /^Learning ·/ })).toBeVisible();
+    await page.keyboard.press("Escape");
     await expect(page.getByRole("textbox", { name: "Search files", exact: true })).toBeVisible();
     await expect(toggle).toHaveAttribute("aria-pressed", "true");
     await toggle.click();

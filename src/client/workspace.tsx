@@ -1,3 +1,4 @@
+import { LearningDialog } from "./components/learning-dialog";
 import { ThreadHistory } from "./components/thread-history";
 import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -95,12 +96,16 @@ function Shell({ config }: { config: AppConfig }) {
     if (compact) setInspector(false);
   }
   function toggleInspector() {
-    const openFiles = !inspector || search.panel === "skills";
-    setInspector(openFiles);
-    if (openFiles && search.panel === "skills")
-      void navigate({ search: (previous) => ({ ...previous, panel: "files" }) });
+    setInspector(!inspector);
     if (compact) setSidebar(false);
   }
+  const [learningOpen, setLearningOpen] = useState(search.panel === "skills");
+  useEffect(() => {
+    if (search.panel === "skills") {
+      setLearningOpen(true);
+      void navigate({ search: (previous) => ({ ...previous, panel: "files" }), replace: true });
+    }
+  }, [search.panel, navigate]);
   const [filter, setFilter] = useState("");
   const [busy, setBusy] = useState(false);
   const onBusy = useCallback((value: boolean) => setBusy(value), []);
@@ -121,13 +126,14 @@ function Shell({ config }: { config: AppConfig }) {
     function key(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {
         event.preventDefault();
+        if (learningOpen) return;
         setModal("commands");
         dialog.current?.showModal();
       }
     }
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, []);
+  }, [learningOpen]);
   function newThread() {
     if (busy) return;
     if (compact) setSidebar(false);
@@ -161,6 +167,13 @@ function Shell({ config }: { config: AppConfig }) {
               })
             }
           />
+          <button
+            className="workspace-learning-entry"
+            aria-haspopup="dialog"
+            onClick={() => setLearningOpen(true)}
+          >
+            Learning
+          </button>
         </div>
         <div className="header-actions">
           <IconButton label="Command menu" onClick={() => showModal("commands")}>
@@ -175,22 +188,7 @@ function Shell({ config }: { config: AppConfig }) {
           <IconButton label="Settings" onClick={() => showModal("settings")}>
             <Settings size={16} />
           </IconButton>
-          <IconButton
-            label="Learning"
-            aria-pressed={inspector && search.panel === "skills"}
-            onClick={() => {
-              setInspector(!inspector || search.panel !== "skills");
-              if (compact) setSidebar(false);
-              void navigate({ search: (previous) => ({ ...previous, panel: "skills" }) });
-            }}
-          >
-            <span>Learning</span>
-          </IconButton>
-          <IconButton
-            label="Toggle files"
-            aria-pressed={inspector && search.panel !== "skills"}
-            onClick={toggleInspector}
-          >
+          <IconButton label="Toggle files" aria-pressed={inspector} onClick={toggleInspector}>
             <span>Files</span>
           </IconButton>
         </div>
@@ -277,11 +275,10 @@ function Shell({ config }: { config: AppConfig }) {
       </main>
       <Inspector
         config={config}
-        panel={search.panel}
         file={search.file}
-        onPanel={(panel) => navigate({ search: (previous) => ({ ...previous, panel }) })}
         onFile={(file) => navigate({ search: (previous) => ({ ...previous, file }) })}
       />
+      {learningOpen && <LearningDialog config={config} onClose={() => setLearningOpen(false)} />}
       <dialog
         ref={dialog}
         className={`command-dialog${modal === "settings" ? " settings-dialog" : ""}`}

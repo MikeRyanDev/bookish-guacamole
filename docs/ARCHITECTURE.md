@@ -25,7 +25,7 @@ flowchart LR
 | Surface         | Owns                                                               | Entry                                                                  |
 | --------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
 | CopilotKit v2   | Browser transcript, streaming, interrupts, tool renderers, history | `src/client/components/conversation.tsx`                               |
-| TanStack Router | Shareable workspace, thread, selected file, inspector tab          | `src/client/router.tsx`                                                |
+| TanStack Router | Shareable workspace, thread, selected file                         | `src/client/router.tsx`                                                |
 | TanStack Query  | Workspace management, file/Skill reads and invalidation            | `src/client/api.ts`                                                    |
 | React           | Draft, theme, panel toggles, dialogs                               | `src/client/workspace.tsx`                                             |
 | Runtime         | Local HTTP auth, user identity, Learning assignment                | `src/server/app.ts`                                                    |
@@ -40,7 +40,7 @@ The harness emits private message snapshots when it pauses. Their IDs differ fro
 
 The Skill plugin adapts Intelligence to the portable loader in `@tanstack/ai-skills`. Intelligence owns published Skills and verifies archive checksums, paths, sizes, and manifests. TanStack `withSkills` adds the catalog and `load_skill`. `createResourceTool` adds `read_skill_resource`. This replaces the custom list/load/read tools. TanStack Intent remains separate development guidance.
 
-The coding harness sets the SDK's `freshnessWindowMs` to zero. Before each turn, the plugin clears its previous snapshot and acquires a new snapshot. An unchanged response can reuse verified bytes. A rejected refresh or `registry.status.stale` leaves Skills unavailable for that turn. The model receives a limitation message and must not claim Skill use. The next turn attempts refresh again. The browser's independent Skill inspector retains its own SDK cache policy.
+The coding harness sets the SDK's `freshnessWindowMs` to zero. Before each turn, the plugin clears its previous snapshot and acquires a new snapshot. An unchanged response can reuse verified bytes. A rejected refresh or `registry.status.stale` leaves Skills unavailable for that turn. The model receives a limitation message and must not claim Skill use. The next turn attempts refresh again. The browser's independent Learning dialog retains its own SDK cache policy.
 
 Each session holds its own snapshot reference. The catalog, raw `SKILL.md`, and supporting text all use that reference throughout the turn. Tool calls never fetch a separate revision. The adapter reads raw text through `readSkillFile`, because the SDK's `loadSkill` helper returns a JSON wrapper. Supporting text files can live at the skill root or in subfolders. TanStack rejects unsafe paths and checks the resource inventory before each read. Binary files remain unavailable, as in the previous integration.
 
@@ -70,7 +70,7 @@ Vite 8 uses Rolldown/Oxc for the browser. tsdown builds the Node entry and leave
 
 Configure coding models in `models.json`; extend adapters in `src/server/agent/models.ts`. See [model architecture](MODELS.md#code-level-design-and-extension). Add tools/plugins in `src/server/agent/harness.ts`. Render tool output with v2 `useDefaultRenderTool`/`useRenderToolCall`, or add a typed `useRenderTool` renderer. Use `useInterrupt` for permission decisions. Do not introduce a second chat client or message store.
 
-The CopilotKit Inspector is explicitly enabled. The SDK shows it only on local development builds; production and remote hosts keep its built-in restrictions. The workspace's Files/Skills inspector is a separate app panel.
+The CopilotKit Inspector is explicitly enabled. The SDK shows it only on local development builds; production and remote hosts keep its built-in restrictions. The workspace file inspector is a separate app panel. Learning opens in a workspace-scoped native dialog.
 
 Temporary branch-image support is isolated in [TEMPORARY-INTELLIGENCE.md](TEMPORARY-INTELLIGENCE.md). Default app startup never patches or selects a backend image.
 
@@ -181,8 +181,13 @@ A missing conversation uses the current workspace choice. Unavailable or malform
 The Skill plugin resolves the conversation's backend memberships before each turn.
 It obtains a fresh verified snapshot for those memberships and clears the previous snapshot before a refresh.
 Disabled Learning supplies no Skills. Failed refreshes supply a limitation message without stale instructions.
-The workspace inspector separately reads the currently selected space. Changing that choice does not move an existing conversation.
+The workspace Learning dialog separately reads the currently selected space. Changing that choice does not move an existing conversation.
 
 The Learn action reuses Intelligence run admission over saved evidence in the shared space.
 Candidate review reuses its existing publication path. SQLite stores the workspace choice, but does not copy transcripts or Learning output.
 The browser refreshes proposals after run completion and reconciles review outcomes before another decision.
+
+The Learning dialog keeps its open state and document selection in React. Query owns assignment, proposals, evidence, and published Skills.
+Legacy `panel=skills` links open the dialog and normalize to `panel=files`, preserving the selected conversation and file.
+Assignment drafts hide Learning actions until Save or Cancel. Review decisions remain disabled during a write or an uncertain state refresh.
+The native dialog traps focus. Opening focuses its heading, and closing restores focus to the workspace entry.

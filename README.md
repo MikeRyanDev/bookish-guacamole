@@ -111,7 +111,7 @@ Use the stop control to cancel a run. Click a session name to reopen its convers
 
 The workspace picker opens existing folders or creates named workspaces. Switch, rename, or remove entries there. Removing an entry keeps its files and conversations; opening the same folder restores its identity. Files and sessions stay scoped to the selected workspace.
 
-The right panel previews files and published Skills. Folders start collapsed and load on expansion. Directory pages contain up to 100 entries, with a control to load more. Search runs across workspace file paths, including unopened folders. Search results also load in pages; neither browsing nor search stops at 1,000 files. Folders sort before files. Git colors and status badges show file changes and aggregate folder changes. Search file paths, open a file, and expand the viewer for more reading space. Code supports syntax highlighting, find, line navigation, wrap, copy, and download. Markdown and HTML have Source and Preview modes. HTML runs unchanged in an isolated iframe; scripts work, while parent access, popups, forms, and top navigation stay blocked. Network requests remain possible. Images support fit, zoom, and rotation; PDFs support page navigation and extracted page text. DOCX, XLSX, and PPTX have local reading previews with an original-file download. Legacy Office formats download without a preview. Office layout and advanced formatting can differ; workbook formulas show saved values.
+The right panel previews files. **Learning** beside the workspace name opens workspace Learning and published Skills. Folders start collapsed and load on expansion. Directory pages contain up to 100 entries, with a control to load more. Search runs across workspace file paths, including unopened folders. Search results also load in pages; neither browsing nor search stops at 1,000 files. Folders sort before files. Git colors and status badges show file changes and aggregate folder changes. Search file paths, open a file, and expand the viewer for more reading space. Code supports syntax highlighting, find, line navigation, wrap, copy, and download. Markdown and HTML have Source and Preview modes. HTML runs unchanged in an isolated iframe; scripts work, while parent access, popups, forms, and top navigation stay blocked. Network requests remain possible. Images support fit, zoom, and rotation; PDFs support page navigation and extracted page text. DOCX, XLSX, and PPTX have local reading previews with an original-file download. Legacy Office formats download without a preview. Office layout and advanced formatting can differ; workbook formulas show saved values.
 
 Text previews are limited to 256 KiB; assets and downloads to 20 MiB. Use the header controls for panels and settings.
 Settings uses a left-side menu for **Appearance**, **Models**, and **Permissions**.
@@ -120,10 +120,11 @@ In **Settings → Appearance**, choose **Light**, **Dark**, or **System**. Syste
 ## Teach it a reusable lesson
 
 1. Complete tasks in separate sessions and give specific feedback about useful conventions or mistakes.
-2. Run `pnpm intelligence local login` to open the local dashboard.
-3. Open `coding-lessons`, start a manual Learning run, and inspect its status and evidence.
-4. Review a proposed Skill and approve it when the evidence supports it.
-5. Start another relevant task in the browser. The agent receives the updated catalog automatically and can load the Skill without a restart.
+2. Open **Learning** beside the workspace name.
+3. Click **Learn** to process the saved conversations in its Learning space.
+4. Open a proposed Skill and read its instructions and **Supporting evidence**.
+5. If the evidence supports the Skill, click **Approve skill**.
+6. Start another relevant task in the browser. The agent receives the updated catalog automatically and can load the Skill without a restart.
 
 The catalog is refreshed through the SDK before each turn. Skills are not copied into the starter's source tree. Repository development skills under `.agents/skills/` are separate: they guide the assistant changing this template.
 
@@ -218,14 +219,18 @@ See [Execution and connections](docs/EXECUTION.md) for setup, defaults, and reco
 
 ### Workspace Learning
 
-1. Open **Learning** beside **Files**.
-2. Select a **Learning space**, then click **Save**.
+1. Open **Learning** beside the workspace name.
+2. Select a **Learning space**. Click **Save**. Use **Change space** to edit a saved choice.
 3. Click **Learn** to process saved conversations in that shared space.
 4. Open a proposal under **Review skills**.
 5. Read its instructions and **Supporting evidence**.
-6. Click **Approve** to publish it, or **Reject** to leave it unpublished.
+6. Click **Approve skill** to publish it, or **Reject skill** to leave it unpublished.
 7. Open **Published skills** to read the verified instructions.
 
 New conversations use the saved space. Existing conversations keep their assignment.
 **Off for new conversations** disables Learning for new conversations in that workspace.
 Learn uses saved conversations across the shared space. It does not scan workspace files.
+
+The dialog names the current workspace. Skill instructions scroll separately from the review decisions.
+On mobile, **Back to skills** returns to the list. **Close Learning** or Escape returns to the conversation.
+**Change space** hides Learning actions until you save or cancel the draft.

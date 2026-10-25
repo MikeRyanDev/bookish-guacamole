@@ -17,8 +17,10 @@ Approved shell commands can access the host. The workspace is not a sandbox.
 - Ask the agent to inspect code and propose changes.
 - Review each command, patch, or file operation before approval.
 - Follow streaming output, or scroll back without losing the reading position.
-- Inspect files and published Skills beside the conversation.
-- Review Learning evidence in Intelligence and reuse approved lessons on later turns.
+- Inspect files beside the conversation.
+- Manage workspace Learning in a focused dialog beside the workspace name.
+- Read complete Skill instructions and evidence, then approve or reject proposals.
+- Reuse approved lessons on later turns.
 
 ## Constraints and voice
 

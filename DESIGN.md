@@ -245,7 +245,7 @@ Keep headings subordinate to the developer task; larger empty-state headings are
 
 ## Layout
 
-The desktop workspace has session navigation, a central transcript and anchored composer, and file/Skill inspection.
+The desktop workspace has session navigation, a central transcript and anchored composer, and file inspection. Workspace Learning opens separately from the visible Learning action beside the workspace name.
 Its grid is 224px / flexible (minimum 320px) / 290px beneath a 48px header. At 1100px, side panes narrow to 200px and 250px.
 At 850px, panes occupy one shared content area and navigation selects the visible pane; icon hit areas grow from 32px to 40px.
 When the development Inspector is present, the header reserves 72px at its end for the floating badge. Workspace names truncate before app controls overlap it.
@@ -328,6 +328,26 @@ Mode and accent persist locally and apply before React mounts. Restricted storag
 Models contains Default model. Permissions contains Default permissions above saved workspace rules. These labeled selectors save defaults for the selected workspace. Model choices come from configured models; this task-specific choice is not decorative runtime metadata.
 Default permissions offers Require permissions and YOLO — skip approvals. Changes apply only to new conversations; existing conversations retain their settings. Initial reads use stable skeletons. Each save updates only its field and disables both defaults while pending, with a local spinner. A failed write restores the confirmed selection; Retry repeats the attempted write. Read errors have a disabled Unavailable selector and Retry. An empty model catalog shows a disabled No models configured selector. Selection communicates success without an idle saved label.
 Harness documentation remains accessible from the command menu. The [settings study](docs/design/settings/STUDY.md) records the interaction contract and evidence limits.
+
+### Workspace Learning
+
+Learning is a local extension of the incumbent system. Its native dialog identifies the workspace in its title. Files remains a separate inspector task. Use the existing neutral surfaces, accent selection, focus outlines, and functional icons; the larger reader does not establish a new global type or spacing scale.
+
+The desktop dialog is at most 1200px wide and 900px tall, with 48px removed from each viewport dimension before those caps apply. It has a local 12px corner radius, no outline, a `0 24px 80px #0005` overlay shadow, and a `#0008` backdrop. The header and assignment stay above a 260px library rail and a flexible reader. The rail and document scroll independently; the reader heading, content switches, and decision footer remain outside document scrolling. Assignment and footer regions cap their height at 40% and scroll when needed.
+
+At 700px and below, the dialog fills the dynamic viewport with square corners. The list uses the available width until a document is selected. Selection hides assignment and library; Back to skills restores the list and its selected control's focus. Reader side padding drops from 28px to 16px. The footer retains its decisions, gives both buttons equal width and at least 40px height, and respects the bottom safe area. At 600px and below the workspace header wraps to keep the Learning entry available.
+
+The dialog title is 18px on desktop and 16px on mobile. The document title is 22px and 20px respectively. Markdown uses Manrope at 15px with a 1.75 line height; the panel paragraph rule supplies 1.6 line height for paragraphs. Reader children have a maximum width of 75ch. Markdown heading levels are lowered beneath the document title, with the first three rendered heading sizes at 21px, 18px, and 16px. Source stays in IBM Plex Mono. Preformatted blocks and tables scroll horizontally inside the reader; images stay within its width. YAML frontmatter is available through the initially collapsed Skill metadata disclosure.
+
+A saved Learning space appears as a compact summary with Change space. The editor provides an explicit Save and Cancel, explains that existing conversations retain their assignment, and preserves failed-save drafts. While editing, Learn and Skill navigation are hidden until Save or Cancel resolves the draft. Loading and failed assignment reads disable the selector. Empty spaces explain how to create a space and refresh; Off for new conversations remains an explicit choice.
+
+Learn describes its shared-space scope, reports starting and run status, and disables duplicate starts during pending requests, active runs, or unavailable status. Refresh status is a separate action. Review skills and Published skills use pressed states with the existing soft accent fill; selected rows use the same treatment. List and unselected-reader messages distinguish loading, failure, empty, and populated states. Do not instruct the reader to choose a document when the list has none.
+
+Proposal instructions and supporting evidence have separate controls. Loading content, local errors with Retry, missing instruction files, missing supporting insights, and unavailable source conversations receive explicit text. Published Skills open without proposal decisions. The decision footer names the publishing or removal destination. Reject skill stays neutral; Approve skill uses the primary accent. Saving review replaces the contextual text without adding a third footer item, preserving the action pair's position. Both decisions disable during the write and uncertain-state refresh; confirmed approval or rejection replaces the decisions with the outcome.
+
+Opening focuses the dialog heading without scrolling. Selecting a document focuses its heading; the document scroll region is keyboard focusable. Native modal behavior contains interaction, and Close Learning or Escape restores entry focus. Refresh Learning disables while relevant queries fetch. The dialog opens without animation; state changes do not animate document layout.
+
+The [documentation evidence](docs/design/learning-dialog/DOCUMENTATION.md) separates source facts, synthetic captures, usability findings, and the visual review's scored-fix scope. The generated state study is illustrative, not an approved comp or a source of new global tokens.
 
 ## Do's and Don'ts
 

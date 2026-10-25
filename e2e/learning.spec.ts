@@ -101,7 +101,7 @@ test("assigns a named space, starts Learning, and reviews a proposal with eviden
   await page.getByRole("button", { name: "Learning", exact: true }).click();
   await page.getByLabel("Learning space", { exact: true }).selectOption("coding");
   await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText("Learning space saved");
+  await expect(page.getByText("Learning space saved.", { exact: true })).toBeVisible();
   await expect(
     page.getByText("Learning uses saved conversations across this shared space."),
   ).toBeVisible();
@@ -111,13 +111,15 @@ test("assigns a named space, starts Learning, and reviews a proposal with eviden
   await expect(page.getByText("Run the tests before editing.")).toBeVisible();
   await page.getByText("Supporting evidence", { exact: true }).click();
   await expect(page.getByText("Please run the tests first.")).toBeVisible();
-  await page.getByRole("button", { name: "Approve", exact: true }).click();
+  await page.getByRole("button", { name: "Approve skill", exact: true }).click();
   await expect(page.getByText("Approved. Published to Coding lessons.")).toBeVisible();
   await page.getByRole("button", { name: "Back to skills" }).click();
   await page.getByRole("button", { name: /Published skills/ }).click();
   await page.getByText("test-first", { exact: true }).click();
   await expect(page.getByText("Run the tests before editing.")).toBeVisible();
-  expect((await new AxeBuilder({ page }).include(".inspector").analyze()).violations).toEqual([]);
+  expect((await new AxeBuilder({ page }).include(".learning-dialog").analyze()).violations).toEqual(
+    [],
+  );
 });
 
 test("mobile assignment survives a failed save, cancellation, reload, and workspace switching", async ({
@@ -137,20 +139,23 @@ test("mobile assignment survives a failed save, cancellation, reload, and worksp
   await expect(page.getByLabel("Learning space", { exact: true })).toHaveValue("coding");
   await page.screenshot({ path: ".impeccable/review/learning-mobile-error.png", fullPage: true });
   await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText("Learning space saved");
+  await expect(page.getByText("Learning space saved.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Change space" }).click();
   await page.getByLabel("Learning space", { exact: true }).selectOption("writing");
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
-  await expect(page.getByLabel("Learning space", { exact: true })).toHaveValue("coding");
+  await expect(page.getByText("Coding lessons", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Close Learning" }).click();
   await page.getByLabel("Workspace", { exact: true }).selectOption("second");
+  await page.getByRole("button", { name: "Learning", exact: true }).click();
   await expect(page.getByLabel("Learning space", { exact: true })).toHaveValue("");
+  await page.getByRole("button", { name: "Close Learning" }).click();
   await page.getByLabel("Workspace", { exact: true }).selectOption("default");
-  await expect(page.getByLabel("Learning space", { exact: true })).toHaveValue("coding");
   await page.reload();
   await page
     .locator(".workspace-header")
     .getByRole("button", { name: "Learning", exact: true })
     .click();
-  await expect(page.getByLabel("Learning space", { exact: true })).toHaveValue("coding");
+  await expect(page.getByText("Coding lessons", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Learn", exact: true }).click();
   await expect(page.getByText("Learning queued")).toBeVisible();
   await expect(page.getByRole("button", { name: "Learn", exact: true })).toBeDisabled();
@@ -162,12 +167,12 @@ test("mobile assignment survives a failed save, cancellation, reload, and worksp
     page.getByText("Please run the tests first so we know which behavior is broken."),
   ).toBeVisible();
   await page.screenshot({ path: ".impeccable/review/learning-mobile-review.png", fullPage: true });
-  await page.getByRole("button", { name: "Reject", exact: true }).scrollIntoViewIfNeeded();
+  await page.getByRole("button", { name: "Reject skill", exact: true }).scrollIntoViewIfNeeded();
   await page.screenshot({
     path: ".impeccable/review/learning-mobile-decision.png",
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Reject", exact: true }).click();
+  await page.getByRole("button", { name: "Reject skill", exact: true }).click();
   await expect(page.getByText("Rejected. This proposal was not published.")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect((await new AxeBuilder({ page }).include(".workspace").analyze()).violations).toEqual([]);
@@ -189,20 +194,20 @@ test("a failed review preserves the proposal and recovers without publishing aut
   await expect(page.getByText("Learning finished")).toBeVisible();
   await page.screenshot({ path: ".impeccable/review/learning-desktop.png", fullPage: true });
   await page.getByRole("button", { name: "Test before editing" }).click();
-  await page.getByRole("button", { name: "Approve", exact: true }).click();
+  await page.getByRole("button", { name: "Approve skill", exact: true }).click();
   await expect(page.getByRole("alert")).toContainText("temporarily unavailable");
-  await expect(page.getByRole("button", { name: "Approve", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Approve skill", exact: true })).toBeEnabled();
   await page.getByText("Supporting evidence", { exact: true }).click();
   await expect(
     page.getByText("Please run the tests first so we know which behavior is broken."),
   ).toBeVisible();
   await page.screenshot({ path: ".impeccable/review/learning-desktop-review.png", fullPage: true });
-  await page.getByRole("button", { name: "Approve", exact: true }).scrollIntoViewIfNeeded();
+  await page.getByRole("button", { name: "Approve skill", exact: true }).scrollIntoViewIfNeeded();
   await page.screenshot({
     path: ".impeccable/review/learning-desktop-decision.png",
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Approve", exact: true }).click();
+  await page.getByRole("button", { name: "Approve skill", exact: true }).click();
   await expect(page.getByText("Approved. Published to Coding lessons.")).toBeVisible();
 });
 
@@ -219,10 +224,10 @@ test("an uncertain review cannot repeat until the proposal state refreshes", asy
   await page.getByRole("button", { name: "Learn", exact: true }).click();
   await expect(page.getByText("Learning finished")).toBeVisible();
   await page.getByRole("button", { name: "Test before editing" }).click();
-  await page.getByRole("button", { name: "Approve", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Approve", exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Approve skill", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Approve skill", exact: true })).toBeDisabled();
   await page.getByRole("button", { name: "Retry", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Approve", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Approve skill", exact: true })).toBeEnabled();
 });
 
 for (const theme of ["light", "dark"]) {
@@ -249,7 +254,7 @@ for (const theme of ["light", "dark"]) {
       await page.getByRole("button", { name: "Learn", exact: true }).click();
       await expect(page.getByRole("button", { name: "Test before editing" })).toBeVisible();
       await page.getByRole("button", { name: "Test before editing" }).click();
-      await page.getByRole("button", { name: "Approve", exact: true }).click();
+      await page.getByRole("button", { name: "Approve skill", exact: true }).click();
       await expect(page.getByText("Approved. Published to Coding lessons.")).toBeVisible();
       await page.getByRole("button", { name: "Back to skills" }).click();
       await page.getByRole("button", { name: "Published skills" }).click();
@@ -262,9 +267,9 @@ for (const theme of ["light", "dark"]) {
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
         true,
       );
-      expect((await new AxeBuilder({ page }).include(".inspector").analyze()).violations).toEqual(
-        [],
-      );
+      expect(
+        (await new AxeBuilder({ page }).include(".learning-dialog").analyze()).violations,
+      ).toEqual([]);
     });
   }
 }

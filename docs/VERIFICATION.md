@@ -579,31 +579,31 @@ Public preview inputs:
 The earlier `cdbc41f` candidate installed but failed container discovery because the route validated PostgreSQL Date values before serialization.
 A regression reproduced HTTP 500, then passed for container list and detail. Its artifact records remain in `docs/alpha-artifacts/workspace-learning-cdbc41f/`.
 
-| Validation | Result |
-| --- | --- |
-| `pnpm install --frozen-lockfile` | Passed in the worktree and isolated public starter clone with 16 verified public preview archives |
-| `pnpm check` | Passed lint, design checks, both TypeScript checks, 42 test files / 212 tests, and production builds; 47 optional live tests skipped |
-| `node --test example/greet.test.js` | 1 passed |
-| `FILE_VIEWER_APP_URL=http://127.0.0.1:4197 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4195 pnpm exec playwright test e2e/workspace.spec.ts --output=.data/workspace-learning/header-verified` | 6 passed: production navigation, mobile panels, both-theme axe, header label fit and click outcomes |
-| `pnpm exec playwright test e2e/learning.spec.ts` | 8 passed: fixture assignment, isolation, run completion, delayed proposals, evidence, review failure/recovery, keyboard, mobile, themes, reduced motion |
-| `pnpm exec playwright test e2e/file-viewer.spec.ts` | 10 passed; development-only file-entry test also passed |
-| `pnpm design:browser --output=.data/workspace-learning/header-design` | 1 passed across both themes and sizes; fixture logged non-failing ResizeObserver notifications |
-| `git diff --check` | Passed |
+| Validation                                                                                                                                                                                  | Result                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install --frozen-lockfile`                                                                                                                                                            | Passed in the worktree and isolated public starter clone with 16 verified public preview archives                                                       |
+| `pnpm check`                                                                                                                                                                                | Passed lint, design checks, both TypeScript checks, 42 test files / 212 tests, and production builds; 47 optional live tests skipped                    |
+| `node --test example/greet.test.js`                                                                                                                                                         | 1 passed                                                                                                                                                |
+| `FILE_VIEWER_APP_URL=http://127.0.0.1:4197 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4195 pnpm exec playwright test e2e/workspace.spec.ts --output=.data/workspace-learning/header-verified` | 6 passed: production navigation, mobile panels, both-theme axe, header label fit and click outcomes                                                     |
+| `pnpm exec playwright test e2e/learning.spec.ts`                                                                                                                                            | 8 passed: fixture assignment, isolation, run completion, delayed proposals, evidence, review failure/recovery, keyboard, mobile, themes, reduced motion |
+| `pnpm exec playwright test e2e/file-viewer.spec.ts`                                                                                                                                         | 10 passed; development-only file-entry test also passed                                                                                                 |
+| `pnpm design:browser --output=.data/workspace-learning/header-design`                                                                                                                       | 1 passed across both themes and sizes; fixture logged non-failing ResizeObserver notifications                                                          |
+| `git diff --check`                                                                                                                                                                          | Passed                                                                                                                                                  |
 
 Real installed proof used a fresh public starter clone with the reviewed source overlay, public SDK/CLI archives, and normal setup/connection/update commands.
 It used macOS ARM64, Node 22.22.0, pnpm 10.9.0, and real GPT-6 Luna coding and Learning models.
 No private SDK links, backend source build, or manual image patch supplied installed acceptance.
 
-| Installed check | Evidence |
-| --- | --- |
-| Setup and compatible update | Normal setup installed the prior candidate; `pnpm intelligence local update --json` completed on the corrected candidate and preserved all three containers |
-| Workspace choice and isolation | UI saved `workspace-learning-review`; a second workspace retained Off independently |
-| Coding and replay | Conversation `cebc2151-f65e-4fd0-bd30-5dbb3ba9191c`; one approved `npm test`, one passing test, no edits; browser reload preserved answers |
-| Learn and review | UI run `01a170ea-d0c8-7a11-8657-d8333e6cf9a8` succeeded; candidate `01a170eb-4054-713d-a4de-7b30c246ca99` cited three saved messages through Insight `01a170eb-4053-72a8-86f3-aa6b4c6625d5` |
-| Publication and immediate delivery | UI approval published `evidence-first-regression-testing`; the next turn called `load_skill` and received its instructions in the same app process, PID 20552 |
-| Conversation scope | Changing the workspace choice preserved the old conversation's membership and Skill access; new conversation `b3b6d777-c221-427b-9525-6c2401737eba` used `workspace-learning-other` |
-| App and stack restart | `local stop --json` and `local start --json` completed; app restart restored transcript and assignment; another turn loaded the Skill; 155 events decoded without truncation, with exactly one original shell call |
-| Learning service recycling | Deployment restart changed the Learning pod UID and reached readiness; UI run `01a170ef-8259-7cf2-9051-4f09cb7207d6` then succeeded with no new proposals |
+| Installed check                    | Evidence                                                                                                                                                                                                           |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Setup and compatible update        | Normal setup installed the prior candidate; `pnpm intelligence local update --json` completed on the corrected candidate and preserved all three containers                                                        |
+| Workspace choice and isolation     | UI saved `workspace-learning-review`; a second workspace retained Off independently                                                                                                                                |
+| Coding and replay                  | Conversation `cebc2151-f65e-4fd0-bd30-5dbb3ba9191c`; one approved `npm test`, one passing test, no edits; browser reload preserved answers                                                                         |
+| Learn and review                   | UI run `01a170ea-d0c8-7a11-8657-d8333e6cf9a8` succeeded; candidate `01a170eb-4054-713d-a4de-7b30c246ca99` cited three saved messages through Insight `01a170eb-4053-72a8-86f3-aa6b4c6625d5`                        |
+| Publication and immediate delivery | UI approval published `evidence-first-regression-testing`; the next turn called `load_skill` and received its instructions in the same app process, PID 20552                                                      |
+| Conversation scope                 | Changing the workspace choice preserved the old conversation's membership and Skill access; new conversation `b3b6d777-c221-427b-9525-6c2401737eba` used `workspace-learning-other`                                |
+| App and stack restart              | `local stop --json` and `local start --json` completed; app restart restored transcript and assignment; another turn loaded the Skill; 155 events decoded without truncation, with exactly one original shell call |
+| Learning service recycling         | Deployment restart changed the Learning pod UID and reached readiness; UI run `01a170ef-8259-7cf2-9051-4f09cb7207d6` then succeeded with no new proposals                                                          |
 
 Usability and visual reviews passed independently. A later full-app check found header label overlap missed by the panel-only visual review.
 A failing browser regression preceded its CSS correction. A fresh reviewer passed the actual header at 390px and 1440px in both themes.
@@ -626,3 +626,44 @@ Main's normal `pnpm intelligence local update --json` completed at `step=ready` 
 The production app on port 4173 runs from the main checkout, verified through its process working directory.
 The user's existing Chrome tab was refreshed after confirming its composer was empty. It retained the CPK Intelligence workspace and Repo Overview conversation.
 Its Learning panel showed Coding lessons, Learn, Review skills, and the existing published Skills without an error. No new model turn or Learning run was started against the user's main workspace during this final UI check.
+
+## Workspace Learning dialog — 2026-10-24
+
+Implemented in `feat/workspace-learning-dialog`, based on local main `6c73b79`.
+Learning opens beside the workspace name in a large native dialog.
+The file inspector no longer contains Learning. Long Markdown and published Skills use the wider reader.
+Mobile gives the document the full width. Decisions remain visible while the document scrolls.
+
+[Design study and captures](design/learning-dialog/STUDY.md), [usability](design/learning-dialog/USABILITY.md), and [visual review](design/learning-dialog/VISUAL-REVIEW.md) record separate verdicts.
+The fresh usability review passed after fixes for assignment-draft scope and initial focus.
+The visual verdict pass marked misleading empty guidance and moving pending controls resolved.
+The documenter updated the Learning-specific section of DESIGN.md without replacing global tokens.
+
+| Command                                                                                                                                                                                                                                                                           | Result                                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm install --frozen-lockfile`                                                                                                                                                                                                                                                  | Passed in the isolated worktree; package and lockfile pins unchanged                                                     |
+| `pnpm check`                                                                                                                                                                                                                                                                      | Passed lint, source design checks, both type checks, 42 test files / 212 tests, and production builds; 47 declared skips |
+| `node --test example/greet.test.js`                                                                                                                                                                                                                                               | One passed                                                                                                               |
+| `FILE_VIEWER_APP_URL=http://127.0.0.1:4197 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4196 pnpm exec playwright test e2e/learning-dialog.spec.ts e2e/learning.spec.ts e2e/workspace.spec.ts e2e/file-viewer.spec.ts e2e/file-entry.spec.ts --output=.data/learning-dialog-delivery` | All 48 passed                                                                                                            |
+| `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4196 pnpm design:browser --output=.data/learning-dialog-design`                                                                                                                                                                         | Passed the rendered tools and approvals matrix in both themes and widths                                                 |
+| `.agents/skills/impeccable/scripts/impeccable detect --json src/client/components/learning-panel.tsx src/client/components/learning-dialog.tsx src/client/components/inspector.tsx src/client/workspace.tsx src/client/styles.css`                                                | No blocking findings; local reader dimensions and pre-existing controls produced advisories                              |
+| `git diff --check`                                                                                                                                                                                                                                                                | Passed                                                                                                                   |
+
+The browser suite covers workspace entry, native dialog focus, Escape and Close restoration, legacy URL handling, and unsent composer preservation.
+It covers long Markdown, code, tables, metadata, evidence, publication, rejection, removal, assignment isolation, reload, and cancellation.
+State checks include loading, empty data, failed reads, failed saves, retries, pending writes, uncertain review results, failed runs, and unavailable evidence.
+Pending decision geometry stays fixed at 390px and 1440px. Both themes pass axe checks.
+Actual shell captures also use the user's 1512px desktop width.
+
+Four regressions failed before their fixes: missing modal, unsaved-space action scope, false empty-reader guidance, and moving pending decisions.
+An initial fixture ignored cancelled requests during StrictMode remounts and consumed injected failures too early.
+It now honors AbortSignal before returning simulated results. A status assertion now targets the specific saved message.
+The full-app preview initially proxied `api.ts` by mistake. Its ignored proxy now matches only `/api/` routes.
+The shell test dismisses SDK promotion overlays through their visible control and treats Files as an independent toggle.
+Generated file-viewer proof changes were restored after the checks.
+
+The fixture simulates Learning writes. The application preview uses the existing CLI-installed backend for real reads.
+No new model call, Learning run, or Skill approval was made against the user's main workspace for this redesign.
+No server, SDK, dependency preview, upstream PR, or shared deployment changed.
+The existing build chunk warning and pre-existing Impeccable sidecar drift remain.
+Merged-main and active-app verification follow after integration.

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { LearningDialog } from "../../src/client/components/learning-dialog";
 import { Inspector } from "../../src/client/components/inspector";
 import "../../src/client/styles.css";
 import "@fontsource-variable/manrope";
@@ -13,6 +14,17 @@ const spaces = [
   { id: "coding", name: "Coding lessons" },
   { id: "writing", name: "Writing lessons" },
 ];
+const instruction =
+  "# Test first\n\nRun the focused tests before editing. After the change, run them again and report the result.";
+const longInstruction =
+  "---\nname: test-first\ndescription: Verify behavior with focused tests\n---\n\n" +
+  instruction +
+  Array.from(
+    { length: 12 },
+    (_, index) =>
+      `\n\n## ${index + 1}. Verify the behavior\n\nReproduce the reported issue with a focused test. Record the result before changing the implementation. Keep unrelated work intact and check the final behavior against the original request.\n\n\`\`\`sh\npnpm test -- affected.test.ts\n\`\`\`\n\n| Check | Expected result |\n| --- | --- |\n| Regression | Fails before the fix |\n| Verification | Passes after the fix |`,
+  ).join("");
+const content = params.has("long") ? longInstruction : instruction;
 const originalFetch = window.fetch.bind(window);
 let fail = params.get("failure");
 const states = new Map<string, { started: number; reviewed?: "approved" | "rejected" }>();
@@ -21,7 +33,7 @@ const proposal = {
   title: "Test before editing",
   description: "Check behavior before changing code",
   reason: "Repeated corrections in saved conversations",
-  operation: "add",
+  operation: params.has("remove") ? "remove" : "add",
   status: "pending_review",
 };
 /** Isolated in-browser service: this fixture never calls Intelligence or a model. */
@@ -32,10 +44,16 @@ window.fetch = async (input, init) => {
   );
   if (!url.pathname.startsWith("/api/")) return originalFetch(input, init);
   init?.signal?.throwIfAborted();
+  await new Promise((resolve) =>
+    setTimeout(resolve, params.has("slow") ? 1200 : url.pathname.endsWith("/candidates") ? 40 : 20),
+  );
+  init?.signal?.throwIfAborted();
   const workspace = url.searchParams.get("workspace") ?? "default";
   const key = `learning-fixture-${workspace}`;
   const selected = localStorage.getItem(key);
-  const state = states.get(selected ?? "") ?? { started: 0 };
+  const state = states.get(selected ?? "") ?? {
+    started: params.has("ready") ? Date.now() - 10000 : 0,
+  };
   states.set(selected ?? "", state);
   const { started, reviewed } = state;
   const body = typeof init?.body === "string" ? JSON.parse(init.body) : undefined;
@@ -50,7 +68,17 @@ window.fetch = async (input, init) => {
           ? "save"
           : path === "/api/skills"
             ? "skills"
-            : undefined;
+            : path === "/api/learning"
+              ? "settings"
+              : path.endsWith("/runs")
+                ? "status"
+                : path.endsWith("/candidates")
+                  ? "candidates"
+                  : path.endsWith("/evidence")
+                    ? "evidence"
+                    : path.endsWith(`/candidates/${id}`)
+                      ? "candidate"
+                      : undefined;
   if (category === "review" && fail === "review-state") {
     fail = "candidate-state";
     return Response.json({ error: "Review result unavailable" }, { status: 503 });
@@ -75,13 +103,13 @@ window.fetch = async (input, init) => {
               {
                 name: "test-first",
                 description: proposal.description,
-                content:
-                  "# Test first\n\nRun the focused tests before editing. After the change, run them again and report the result.",
+                content,
               },
             ]
           : [],
     });
-  if (path.endsWith("/spaces")) return Response.json({ spaces, nextCursor: null });
+  if (path.endsWith("/spaces"))
+    return Response.json({ spaces: params.has("empty") ? [] : spaces, nextCursor: null });
   if (path === "/api/learning") {
     if (body) {
       if (body.containerId) localStorage.setItem(key, body.containerId);
@@ -98,7 +126,11 @@ window.fetch = async (input, init) => {
     if (body) state.started = Date.now();
     const run = {
       id,
-      status: Date.now() - state.started > 900 ? "succeeded" : "queued",
+      status: params.has("runfailed")
+        ? "failed"
+        : Date.now() - state.started > 900
+          ? "succeeded"
+          : "queued",
       candidateCount: 1,
       createdAt: new Date().toISOString(),
       failureCode: null,
@@ -120,18 +152,19 @@ window.fetch = async (input, init) => {
       files: [
         {
           path: "SKILL.md",
-          content:
-            "# Test first\n\nRun the focused tests before editing. After the change, run them again and report the result.",
+          content,
         },
       ],
-      supportingInsights: [
-        {
-          id,
-          alias: "test-first",
-          statement: "Run tests before editing code",
-          impact: "A failing test identifies the behavior to fix.",
-        },
-      ],
+      supportingInsights: params.has("noevidence")
+        ? []
+        : [
+            {
+              id,
+              alias: "test-first",
+              statement: "Run tests before editing code",
+              impact: "A failing test identifies the behavior to fix.",
+            },
+          ],
     });
   if (path.endsWith("/evidence"))
     return Response.json({
@@ -139,8 +172,8 @@ window.fetch = async (input, init) => {
         {
           id: "conversation",
           label: "Fix greeting tests",
-          available: true,
-          unavailable: null,
+          available: !params.has("unavailable"),
+          unavailable: params.has("unavailable") ? "Source removed" : null,
           items: [
             {
               label: "user",
@@ -160,40 +193,28 @@ const client = new QueryClient({ defaultOptions: { queries: { retry: false } } }
 function Fixture() {
   const [workspace, setWorkspace] = useState("default");
   const [open, setOpen] = useState(false);
-  const [panel, setPanel] = useState<"files" | "skills">("files");
+  const [learningOpen, setLearningOpen] = useState(false);
   const [file, setFile] = useState<string>();
   const name = workspace === "default" ? "Demo project" : "Second project";
   return (
     <QueryClientProvider client={client}>
       <div className={`workspace ${open ? "" : "hide-inspector"}`}>
         <header className="workspace-header">
-          <select
-            aria-label="Workspace"
-            value={workspace}
-            onChange={(event) => setWorkspace(event.target.value)}
-          >
-            <option value="default">Demo project</option>
-            <option value="second">Second project</option>
-          </select>
-          <div className="header-actions">
-            <button
-              aria-pressed={open && panel === "skills"}
-              onClick={() => {
-                setPanel("skills");
-                setOpen(!open || panel !== "skills");
-              }}
+          <div className="header-left">
+            <select
+              aria-label="Workspace"
+              value={workspace}
+              onChange={(event) => setWorkspace(event.target.value)}
             >
+              <option value="default">Demo project</option>
+              <option value="second">Second project</option>
+            </select>
+            <button className="workspace-learning-entry" onClick={() => setLearningOpen(true)}>
               Learning
             </button>
-            <button
-              aria-pressed={open && panel === "files"}
-              onClick={() => {
-                setPanel("files");
-                setOpen(!open || panel !== "files");
-              }}
-            >
-              Files
-            </button>
+          </div>
+          <div className="header-actions">
+            <button onClick={() => setOpen(!open)}>Files</button>
           </div>
         </header>
         <aside className="sessions" aria-label="Sessions" />
@@ -214,13 +235,32 @@ function Fixture() {
             defaultModel: "",
             containerId: null,
           }}
-          panel={panel}
           file={file}
-          onPanel={setPanel}
           onFile={setFile}
         />
+        {learningOpen && (
+          <LearningDialog
+            key={workspace}
+            config={{
+              token: "fixture",
+              workspaceId: workspace,
+              workspace: "/demo",
+              workspaceName: name,
+              runtimeUrl: "",
+              agentId: "coder",
+              models: [],
+              defaultModel: "",
+              containerId: null,
+            }}
+            onClose={() => setLearningOpen(false)}
+          />
+        )}
       </div>
     </QueryClientProvider>
   );
 }
-createRoot(document.getElementById("root")!).render(<Fixture />);
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <Fixture />
+  </StrictMode>,
+);

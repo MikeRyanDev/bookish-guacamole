@@ -2,27 +2,32 @@
 version: 1
 slug: "src-client-components-learning-panel-tsx"
 primary_target: "src/client/components/learning-panel.tsx"
-related_targets: ["src/client/components/inspector.tsx"]
+related_targets:
+  [
+    "src/client/components/learning-dialog.tsx",
+    "src/client/workspace.tsx",
+    "src/client/components/inspector.tsx",
+  ]
 ---
 
 # Workspace Learning
 
-Mode: Operate. Extend the existing workspace inspector using its established visual system.
+Mode: Operate. Replace the inspector Learning surface with a workspace modal using the established visual system.
 The developer assigns a named Learning space, starts Learning from saved conversations,
 and reviews proposed and published Skills. This is an authorized local extension,
 not a new visual identity or a whole-page concept round.
 
 ## Direction contract
 
-**THESIS:** Put assignment, Learning progress, and Skill review beside the current workspace, with visible task controls.
+**THESIS:** Put assignment, Learning progress, and Skill review in a workspace-level modal, with the document given protected reading space.
 
 **OWN-WORLD:** Inherit Manrope, compact flat rows, warm configurable accents, and deep neutral charcoal in dark mode. Use spacing and quiet surfaces without enclosing outlines.
 
 **STORY:** Choose a space, save the choice for new conversations, start Learning, inspect instructions and supporting evidence, then explicitly approve or reject.
 
-**FIRST VIEWPORT:** A visible Learning button beside Files opens the existing inspector. Assignment occupies its top, Learn and run status follow, then Review skills and Published skills. Selecting a Skill replaces the list with a reader and Back action. Mobile uses the same sequence at full panel width. Pending actions keep their label and announce progress; reduced motion preserves immediate state feedback.
+**FIRST VIEWPORT:** A visible Learning button beside the workspace name opens Learning · [workspace]. A compact assignment summary offers Change space with explicit Save and Cancel. The left rail holds Learn, status, Review skills and Published skills. Selecting a Skill keeps the desktop list beside a broad, independently scrolling reader. Instructions and Supporting evidence switch the reading content; Approve skill and Reject skill remain in the footer. Mobile gives the reader the full dialog and Back to skills restores the list and focus. Escape or Close Learning returns focus to the entry point.
 
-**FORM:** Local extension, code-led. No concept seed applies. The ImageGen component study is `docs/design/workspace-learning/states.png`, not a pixel contract. Preserve the incumbent controls, remove generated outlines, and omit invented counts and timestamps.
+**FORM:** User-specified local redesign, code-led. The component/state ImageGen study is `docs/design/learning-dialog/states.png`, not an approved pixel contract. Keep the broad reader and persistent decisions; remove generated outlines, decorative stripes and misleading sample selection/count. Motion is immediate native modal focus transfer and in-place state updates, with no fading text or animated document layout.
 
 **FINISH:** unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 
