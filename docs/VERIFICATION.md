@@ -559,3 +559,7 @@ transcript reload, and further model turns. It also exercised compaction and usa
 No SDK packages, backend releases, or shared deployments changed. No new Learning run was required.
 
 - `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4279 pnpm exec playwright test e2e/conversation-capabilities.spec.ts e2e/capabilities-design.spec.ts --output .data/history-fixtures`: seven passed, including both themes and 1440px, 390px, and 320px widths.
+
+- `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4279 pnpm design:browser --output .data/history-design`: passed rendered scans; existing ResizeObserver warnings appeared.
+- After merging `eb9ebaa` into local `main`, `pnpm check` passed again (205 passed, 47 declared skips); `node --test example/greet.test.js` and `git diff --check` passed.
+- Restarted the app on port 4173 and verified its process directory, browser composer, and served rejection handler match the main checkout. The unrelated checklist edit remains untouched.
