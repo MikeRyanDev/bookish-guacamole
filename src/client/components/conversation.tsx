@@ -229,6 +229,13 @@ function ActiveConversation({
               onRunErrorEvent: ({ event }) => {
                 failure = event.message;
               },
+              onCustomEvent: ({ event }) => {
+                if (
+                  event.name === "starter.history.rejected" &&
+                  typeof event.value?.message === "string"
+                )
+                  failure = event.value.message;
+              },
               onMessagesSnapshotEvent: () => {
                 applied = true;
               },

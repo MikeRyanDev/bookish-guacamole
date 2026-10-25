@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { randomUUID } from "node:crypto";
 import { expect, test } from "vitest";
+import { firstValueFrom, toArray } from "rxjs";
 import { createHarnessHost, defineHarness, definePlugin } from "@tanstack/ai-harness";
 import { workspaceTools, snapshots } from "@tanstack/ai-harness/plugins/coding";
 import { memoryPersistence } from "@tanstack/ai-persistence";
@@ -68,6 +69,27 @@ test("native undo and redo reject later edits and retain outer message identitie
       /changed/,
     );
     expect(await readFile(join(root, "file.txt"), "utf8")).toBe("human edit");
+    const agent = createHarnessAgent({ host, harness, history: undo });
+    const events = await firstValueFrom(
+      agent
+        .run({
+          threadId,
+          runId: randomUUID(),
+          messages: [user],
+          state: {},
+          tools: [],
+          context: [],
+          forwardedProps: { starterHistory: { action: "undo", revision: preview.undo.revision } },
+        })
+        .pipe(toArray()),
+    );
+    expect(events.map((event) => event.type)).toEqual(["RUN_STARTED", "CUSTOM", "RUN_FINISHED"]);
+    expect(events[1]).toMatchObject({
+      name: "starter.history.rejected",
+      value: { message: expect.stringContaining("Files changed after") },
+    });
+    expect(await readFile(join(root, "file.txt"), "utf8")).toBe("human edit");
+    expect(await session.transcript()).not.toEqual([]);
     await writeFile(join(root, "file.txt"), "after");
     const removed = await undo.execute(threadId, "undo", preview.undo.revision!, [user]);
     expect(removed).toEqual([]);
