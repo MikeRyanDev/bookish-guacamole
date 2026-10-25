@@ -39,3 +39,19 @@ Intelligence `libs/learning-agent/src/skill-candidate-draft.ts:112` prefixes tri
 ## Acceptance
 
 Inspect both themes at mobile, desktop, the user's width, and 200 percent browser zoom. Include long titles, documents, errors, focus, and pending states. Run a fresh task-first usability review before the separate visual review. Include the user's rejected screenshot in the visual review packet. Run required checks, merge into local main, and verify the active app. No fresh model or Learning run is needed for this UI change.
+
+## Completion evidence
+
+| Plan item | Evidence |
+| --- | --- |
+| Compact header | Reader captures show the two-row header. The desktop regression asserts that assignment guidance is absent until editing. |
+| Compact sidebar | The two-line preview regression and long-title matrix cover both themes and six widths. |
+| Learning controls | Run status sits beside Learn. The regression rejects the previous Refresh Learning and Refresh status controls. |
+| Reader alignment | Geometry assertions compare the title, description, and Markdown left edges. Pending-review tests preserve decision positions. |
+| Repeated text | The source trace identifies the upstream compiler. The pure presentation tests preserve ordinary text. Raw Markdown and frontmatter bypass normalization. |
+| Responsive navigation | Desktop tests require hidden Back. Mobile tests prove Back and focus restoration. A short-viewport regression covers zoom layout. |
+| Element states | The state table, existing error/review tests, retained-document refresh test, and stale-error recovery regression cover the specified states. |
+| Pre-build review | HTML previews and the generated study preceded application edits. Preview limitations are recorded above. |
+| Delivery proof | USABILITY.md and VISUAL-REVIEW.md separate reviewer verdicts. docs/VERIFICATION.md records commands, merge, and active-app proof. |
+
+The committed PNGs in this directory are synthetic browser captures with embedded provenance. The generated state study has its exact prompt embedded. Real workspace screenshots remain ignored local evidence.

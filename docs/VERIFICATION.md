@@ -722,3 +722,19 @@ SDK packages, server contracts, shared deployments, and upstream pull requests r
 The fresh full visual review matched all UI elements and required only documentation reconciliation.
 The documenter updated the Learning subsection; the reviewer scored that fix resolved with disposition ship.
 The final ship verdict covers the documentation fix. Merged-main verification follows after integration.
+
+### Merged main and active app
+
+Implementation commit `31c29ba` fast-forwarded into local main. The user's pre-existing Monday checklist patch remained byte-for-byte identical.
+On merged main, `pnpm check` passed with 43 test files, 214 tests, and 47 declared skips, including production builds.
+`node --test example/greet.test.js` passed one test.
+
+`CI=1 FILE_VIEWER_APP_URL=http://127.0.0.1:4173 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4198 pnpm exec playwright test e2e/learning-dialog.spec.ts e2e/learning.spec.ts e2e/learning-refinement.spec.ts e2e/workspace.spec.ts e2e/design.spec.ts --output=.data/learning-refinement-main-browser` passed all 56 tests.
+This includes the additional list/loading/empty capture test, the rendered design matrix, and the real application shell.
+
+The production app restarted on port 4173. Process 25846's working directory confirmed the main checkout.
+Before refreshing the user's Chrome tab, the composer was empty and no active generation control was present.
+The refreshed app retained CPK Intelligence and Repo Overview. Its Learning dialog opened the existing greet-blank-trim-validation Skill.
+The live view showed the compact assignment, two-line previews, unified refresh, corrected description, and aligned document.
+The final screenshot remains ignored at `.data/learning-refinement-main.jpg`. No new model or backend Learning mutation occurred.
+Temporary preview servers stopped. The production app remains running.
