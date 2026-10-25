@@ -47,3 +47,7 @@ Rendered examples: [success on desktop](success-desktop.png), [failure on mobile
 - `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4227 pnpm exec playwright test e2e/typescript-tool.spec.ts e2e/typescript-output.spec.ts e2e/tool-renderers.spec.ts e2e/tool-approvals.spec.ts e2e/tool-disclosure.spec.ts e2e/tool-polish.spec.ts e2e/tool-stack.spec.ts e2e/motion.spec.ts e2e/virtual-transcript.spec.ts e2e/design.spec.ts`: 34 behavior tests passed. The rendered design scan initially found an 11px fallback heading; that heading was corrected and the rendered scan rerun separately.
 - Formatting and `git diff --check`: passed.
 - `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4227 pnpm design:browser`: passed after the fallback heading correction, scanning rendered tools and approvals in both themes and sizes.
+
+## Merged verification
+
+Local main fast-forwarded to `9d878e2`. On that merged tree, `pnpm check` and `node --test example/greet.test.js` passed again. `CI=1 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4231 pnpm exec playwright test e2e/typescript-tool.spec.ts e2e/typescript-output.spec.ts e2e/design.spec.ts` passed all 12 tests. The main preview at port 4173 served the new TypeScript output component and padding rules. The unrelated Monday checklist retained its original checksum. No shared deployment or upstream PR changed.
