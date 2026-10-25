@@ -14,6 +14,12 @@ const entrySchema = z.object({
   createdAt: z.string(),
 });
 export type WorkspaceEntry = z.infer<typeof entrySchema>;
+const learningAssignmentSchema = z
+  .string()
+  .min(1)
+  .max(64)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  .nullable();
 const nameSchema = z.string().trim().min(1).max(80);
 export const createWorkspaceSchema = z
   .object({
@@ -41,6 +47,9 @@ export async function openWorkspaceRegistry(directory: string, defaultRoot: stri
   const database = new DatabaseSync(join(directory, "workspaces.sqlite"));
   database.exec(
     "PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS workspaces (id TEXT PRIMARY KEY, name TEXT NOT NULL, path TEXT NOT NULL UNIQUE, createdAt TEXT NOT NULL, archived INTEGER NOT NULL DEFAULT 0)",
+  );
+  database.exec(
+    "CREATE TABLE IF NOT EXISTS workspace_learning (workspaceId TEXT PRIMARY KEY REFERENCES workspaces(id), containerId TEXT)",
   );
   database
     .prepare("INSERT OR IGNORE INTO workspaces(id,name,path,createdAt) VALUES (?,?,?,?)")
@@ -125,5 +134,39 @@ export async function openWorkspaceRegistry(directory: string, defaultRoot: stri
     if (list().length < 2) throw new WorkspaceError("Keep at least one workspace open.");
     database.prepare("UPDATE workspaces SET archived=1 WHERE id=?").run(id);
   }
-  return { list, get, create, rename, remove, close: () => database.close() };
+  /**
+   * Reads the saved choice. Undefined inherits the application default; null
+   * explicitly disables assignment. This metadata never moves existing threads.
+   */
+  function getLearningAssignment(id: string): string | null | undefined {
+    get(id);
+    const row = database
+      .prepare("SELECT containerId FROM workspace_learning WHERE workspaceId=?")
+      .get(id);
+    return row ? learningAssignmentSchema.parse(row.containerId) : undefined;
+  }
+  /**
+   * Persists a workspace choice without changing its files or conversations.
+   * The caller must verify the selected container exists in Intelligence first.
+   */
+  function setLearningAssignment(id: string, containerId: unknown): void {
+    get(id);
+    const parsed = learningAssignmentSchema.safeParse(containerId);
+    if (!parsed.success) throw new WorkspaceError("Choose a valid Learning space.");
+    database
+      .prepare(
+        "INSERT INTO workspace_learning(workspaceId,containerId) VALUES (?,?) ON CONFLICT(workspaceId) DO UPDATE SET containerId=excluded.containerId",
+      )
+      .run(id, parsed.data);
+  }
+  return {
+    list,
+    get,
+    create,
+    rename,
+    remove,
+    getLearningAssignment,
+    setLearningAssignment,
+    close: () => database.close(),
+  };
 }
