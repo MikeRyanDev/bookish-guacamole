@@ -107,9 +107,13 @@ function Shell({ config }: { config: AppConfig }) {
   const { theme, accent, setTheme, setAccent, storageError, retryStorage } = useAppearance();
   const dialog = useRef<HTMLDialogElement>(null);
   const [modal, setModal] = useState<"commands" | "settings">("commands");
+  const [settingsCategory, setSettingsCategory] = useState<"appearance" | "execution">(
+    "appearance",
+  );
   const threads = useThreads({ agentId: config.agentId, limit: 30 });
   const current = threads.threads.find((thread) => thread.id === threadId);
   function showModal(kind: "commands" | "settings") {
+    setSettingsCategory("appearance");
     setModal(kind);
     dialog.current?.showModal();
   }
@@ -252,6 +256,11 @@ function Shell({ config }: { config: AppConfig }) {
               navigate({ search: (previous) => ({ ...previous, thread: threadId }), replace: true })
             }
             onBusyChange={onBusy}
+            onExecutionSettings={() => {
+              setSettingsCategory("execution");
+              setModal("settings");
+              dialog.current?.showModal();
+            }}
           />
         </CopilotChatConfigurationProvider>
       </main>
@@ -318,6 +327,7 @@ function Shell({ config }: { config: AppConfig }) {
           </div>
         ) : (
           <SettingsPanel
+            initialCategory={settingsCategory}
             config={config}
             theme={theme}
             accent={accent}

@@ -153,6 +153,10 @@ export function ToolCall({
   const { output, exitCode, failed, denied } = toolOutcome(result);
   const [open, setOpen] = useToolDisclosure(awaitingApproval || failed || running);
   const command = typeof parameters.command === "string" ? parameters.command : undefined;
+  const program =
+    name === "execute_typescript" && typeof parameters.typescriptCode === "string"
+      ? parameters.typescriptCode
+      : undefined;
   const path = typeof parameters.path === "string" ? parameters.path : undefined;
   const patch =
     typeof parameters.patch === "string"
@@ -181,7 +185,7 @@ export function ToolCall({
             ? "Running"
             : "No result";
   const Icon =
-    name === "read_file"
+    name === "read_file" || name === "execute_typescript"
       ? FileCode
       : patch || name === "write_file"
         ? FileDiff
@@ -197,16 +201,20 @@ export function ToolCall({
   const filePath =
     path ?? (patch ? /^\*\*\* (?:Update|Add|Delete) File: (.+)$/m.exec(patch)?.[1] : undefined);
   const title =
-    name === "bash"
-      ? "Run command"
-      : name === "read_file"
-        ? "Read file"
-        : patch
-          ? "Edit file"
-          : name === "write_file"
-            ? "Write file"
-            : name.replaceAll("_", " ");
-  const hasPreview = Boolean(command || patch || name === "read_file" || name === "write_file");
+    name === "execute_typescript"
+      ? "Run TypeScript"
+      : name === "bash"
+        ? "Run command"
+        : name === "read_file"
+          ? "Read file"
+          : patch
+            ? "Edit file"
+            : name === "write_file"
+              ? "Write file"
+              : name.replaceAll("_", " ");
+  const hasPreview = Boolean(
+    program || command || patch || name === "read_file" || name === "write_file",
+  );
   const additions =
     patch?.split("\n").filter((line) => line.startsWith("+") && !line.startsWith("+++")).length ??
     0;
@@ -276,6 +284,20 @@ export function ToolCall({
           </span>
         </summary>
         <div className="tool-body">
+          {program !== undefined && (
+            <div className="tool-surface">
+              <div className="tool-surface-heading">
+                <FileCode size={14} />
+                <code>TypeScript program</code>
+                <CopyToolText text={program} label="Copy program" />
+              </div>
+              <pre className="file-tool-preview" aria-label="TypeScript program">
+                <code>
+                  <SourceText text={program} />
+                </code>
+              </pre>
+            </div>
+          )}
           {command && (
             <div className="tool-surface">
               <div className="shell-command">

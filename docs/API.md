@@ -67,3 +67,33 @@ are serialized and merged. New conversation initialization copies the current de
 into native thread settings once; existing logs, planning state and pending approvals remain unchanged.
 If a saved default model is no longer configured, reads use the configured default.
 The initial values are the configured model and `acceptEdits`.
+
+## Execution, connections, and recovery
+
+All routes below require the local bearer token and accept the workspace selector.
+Thread routes also require a nonempty `thread`. Existing Host/Origin and 16 KiB JSON limits apply.
+
+| Method and path                        | Input                                           | Success                                                                          |
+| -------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
+| GET `/api/execution`                   | Workspace                                       | `{ revision, settings }`                                                         |
+| PUT `/api/execution`                   | `{ revision, settings }` from the read contract | Saved settings and new revision                                                  |
+| GET `/api/execution/status`            | Workspace and thread                            | `{ usage, context, recovery, status, pending }`                                  |
+| POST `/api/execution/compact`          | Workspace and thread; `{}`                      | Scheduled summary acknowledgement                                                |
+| GET `/api/connections`                 | Workspace                                       | `{ revision, connections }` without secret values                                |
+| PUT `/api/connections`                 | `{ revision, connections }`                     | Saved configuration; application status is separate                              |
+| GET `/api/connections/status`          | Workspace                                       | Connection states, tool counts, sign-in state, applying flag, sanitized error    |
+| POST `/api/connections/retry`          | `{}`                                            | `{ accepted: true }`                                                             |
+| POST `/api/connections/sign-in`        | `{ connectionId }`                              | `{ accepted: true }`; poll status for the sign-in URL                            |
+| POST `/api/connections/cancel-sign-in` | `{}`                                            | `{ cancelled: true }`                                                            |
+| POST `/api/connections/sign-out`       | `{ connectionId }`                              | `{ accepted: true }`; poll status for completion                                 |
+| GET `/api/history`                     | Workspace and thread                            | Undo and Redo previews with availability, revision, files, conflicts, and reason |
+
+Execution settings use the browser-safe contract in `src/shared/execution.ts` and the strict server schema in `execution-settings.ts`.
+Connection configuration uses `src/shared/connections.ts` and the strict schema in `connections.ts`.
+Revisions provide compare-and-set writes. Stale writes and conflicting operations return 409; invalid settings return 400.
+Execution and connection settings persist in workspace metadata. OAuth credentials do not persist across process restarts.
+
+Undo and Redo run through CopilotKit with `forwardedProps.starterHistory = { action, revision }`.
+The bridge checks the preview again and emits a deliberate outer `MESSAGES_SNAPSHOT` after native restoration.
+Normal harness snapshots remain private. The browser must not mutate its own message array to simulate recovery.
+See [execution behavior and limits](EXECUTION.md).

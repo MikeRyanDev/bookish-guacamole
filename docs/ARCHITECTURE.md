@@ -145,3 +145,21 @@ Permission initialization is the single entry point used by model reads, permiss
 It copies both defaults into an empty native log once, sharing concurrent initialization work.
 Existing logs keep their native settings. The Goal judge continues to follow the thread model.
 Appearance and custom swatches stay browser-local; System subscribes to operating-system theme changes.
+
+## Execution capabilities
+
+`execution-settings.ts` stores workspace policy with compare-and-set revisions. Native `usage()` remains mounted.
+`execution-usage.ts` maintains private aggregate accounting for admission checks, including summary and Goal judge calls.
+Compaction runs before main-call admission so a summary cannot consume the remaining budget unnoticed.
+`context-management.ts` uses durable `withCompaction`; `projectCompaction` folds the model view without deleting the product transcript.
+`recovery.ts` configures native bounded transient retries.
+
+Native `snapshots()` owns file trees and Undo/Redo transcript buffers. `undo.ts` stores only outer message-ID mappings and recovery boundaries.
+It checks native activity, matching turn ownership, preview revisions, and later file changes before restoration.
+Only explicit history commands emit outer message snapshots; normal pause/resume snapshots stay private.
+No second React transcript or product-message database is introduced.
+
+`connections.ts` provides a stable native MCP plugin across sessions. Management operations hold a private session that makes no model calls.
+Native reload waits for active work; the UI polls application status. OAuth uses a host-memory credential store.
+`code-mode.ts` gates native code mode per turn and restricts isolate bindings to inspection tools.
+See [Execution and connections](EXECUTION.md) for defaults, procedures, and recovery limits.

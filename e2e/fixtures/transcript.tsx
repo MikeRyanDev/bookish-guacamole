@@ -111,6 +111,15 @@ function Fixture() {
           result={"10\texport function greet(name) {\n11\t  return name.trim();"}
           running={false}
         />
+        <ToolCall
+          name="execute_typescript"
+          args={JSON.stringify({
+            typescriptCode:
+              'const notes = await external_read_file({ path: "notes.txt" });\nreturn notes;',
+          })}
+          result="Read-only result"
+          running={false}
+        />
       </main>
     );
   return (

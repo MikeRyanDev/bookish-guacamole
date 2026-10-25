@@ -209,3 +209,9 @@ Always Approve shows the exact scope before **Approve and Save** submits it. Sav
 
 **Settings → Permissions** lists saved rules with remove controls. Removal takes effect after active turns finish.
 YOLO does not change saved rules. [The design study](docs/design/permissions/STUDY.md) records the current controls and review evidence.
+
+### Execution controls and connections
+
+Use **Settings → Execution** for durable context summaries, conversation limits, retries, and opt-in code mode.
+Use **Connections** for MCP servers or the bundled read-only guide. **Usage** and **Undo last turn** stay beside the conversation.
+See [Execution and connections](docs/EXECUTION.md) for setup, defaults, and recovery boundaries.

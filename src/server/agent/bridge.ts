@@ -2,8 +2,34 @@ import { randomBytes } from "node:crypto";
 import { type BaseEvent, EventType, HttpAgent, type RunAgentInput } from "@ag-ui/client";
 import type { AnyHarness, HarnessHost } from "@tanstack/ai-harness";
 import { createHarnessHandler } from "@tanstack/ai-harness/server";
-import { Observable } from "rxjs";
+import { defer, Observable, switchMap } from "rxjs";
+import { z } from "zod";
 import { withGoalCommands } from "./goals.js";
+import type { createUndo } from "./undo.js";
+import { WorkspaceError } from "../workspaces/registry.js";
+
+const historyCommand = z
+  .object({ action: z.enum(["undo", "redo"]), revision: z.string().regex(/^[a-f0-9]{64}$/) })
+  .strict();
+
+/** Keep native recovery buffers private; clients get history previews through the settings API. */
+function publicPlugins(plugins: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.entries(plugins)
+      .filter(([name]) => name !== "tanstack/snapshots")
+      .map(([name, value]) => {
+        if (name !== "tanstack/mcp") return [name, value];
+        const parsed = z
+          .object({
+            servers: z.array(
+              z.object({ name: z.string(), status: z.string(), toolCount: z.number() }),
+            ),
+          })
+          .safeParse(value);
+        return [name, parsed.success ? parsed.data : { servers: [] }];
+      }),
+  );
+}
 
 type Handler = (request: Request) => Promise<Response>;
 
@@ -13,6 +39,7 @@ class HarnessAgent extends HttpAgent {
     private readonly handler: Handler,
     private readonly readPlugins: (threadId: string) => Promise<Record<string, unknown>>,
     agentId = "coder",
+    private readonly history?: ReturnType<typeof createUndo>,
   ) {
     super({
       agentId,
@@ -24,6 +51,57 @@ class HarnessAgent extends HttpAgent {
 
   /** Provider lifecycle IDs must never replace the Intelligence run identity. */
   override run(input: RunAgentInput): Observable<BaseEvent> {
+    if (!this.history) return this.stream(input);
+    const history = this.history;
+    return defer(() => history.rememberInput(input)).pipe(
+      switchMap(() => {
+        if (input.forwardedProps?.starterHistory === undefined) return this.stream(input);
+        return new Observable<BaseEvent>((subscriber) => {
+          subscriber.next({
+            type: EventType.RUN_STARTED,
+            threadId: input.threadId,
+            runId: input.runId,
+          });
+          const work = async () => {
+            const command = historyCommand.safeParse(input.forwardedProps.starterHistory);
+            if (!command.success)
+              throw new WorkspaceError("Review the affected files before changing history.");
+            const messages = await history.execute(
+              input.threadId,
+              command.data.action,
+              command.data.revision,
+              input.messages,
+            );
+            if (subscriber.closed) return;
+            subscriber.next({ type: EventType.MESSAGES_SNAPSHOT, messages });
+            subscriber.next({
+              type: EventType.STATE_SNAPSHOT,
+              snapshot: { ...input.state, plugins: await this.readPlugins(input.threadId) },
+            });
+            subscriber.next({
+              type: EventType.RUN_FINISHED,
+              threadId: input.threadId,
+              runId: input.runId,
+            });
+          };
+          work()
+            .catch((error: unknown) => {
+              if (!subscriber.closed)
+                subscriber.next({
+                  type: EventType.RUN_ERROR,
+                  message:
+                    error instanceof WorkspaceError
+                      ? error.message
+                      : "Could not change history. Reload the conversation and review its files before retrying.",
+                });
+            })
+            .finally(() => subscriber.complete());
+        });
+      }),
+    );
+  }
+
+  private stream(input: RunAgentInput): Observable<BaseEvent> {
     return new Observable((subscriber) => {
       let terminal = false;
       let finish: BaseEvent | undefined;
@@ -39,28 +117,32 @@ class HarnessAgent extends HttpAgent {
           // owns the outer transcript and already has every streamed message.
           // Merging these snapshots would duplicate tool rows on each resume.
           if (event.type === "MESSAGES_SNAPSHOT") return;
+          if (event.type === "STATE_SNAPSHOT") {
+            const parsed = z
+              .object({ plugins: z.record(z.string(), z.unknown()) })
+              .loose()
+              .safeParse(event.snapshot);
+            if (parsed.success) {
+              subscriber.next({
+                ...event,
+                snapshot: { ...parsed.data, plugins: publicPlugins(parsed.data.plugins) },
+              });
+              return;
+            }
+          }
           if (event.type === "RUN_FINISHED") {
             finish = { ...event, threadId: input.threadId, runId: input.runId };
             return;
           }
           if (event.type === "RUN_ERROR") {
             terminal = true;
-            finish = undefined;
+            finish = { ...event, threadId: input.threadId, runId: input.runId };
+            return;
           }
-          if (event.type === "RUN_ERROR") {
-            subscriber.next({
-              ...event,
-              threadId: input.threadId,
-              runId: input.runId,
-            });
-          } else subscriber.next(event);
+          subscriber.next(event);
         },
         error: (error) => subscriber.error(error),
         complete: () => {
-          if (terminal) {
-            subscriber.complete();
-            return;
-          }
           // The stock per-operation stream omits session plugin state. Publish
           // the authoritative state before the outer terminal, also on follow-ups.
           this.readPlugins(input.threadId)
@@ -106,7 +188,7 @@ class HarnessAgent extends HttpAgent {
 
   /** Runtime clones retain the bridge and share the harness host's sessions. */
   override clone(): HarnessAgent {
-    const clone = new HarnessAgent(this.handler, this.readPlugins, this.agentId);
+    const clone = new HarnessAgent(this.handler, this.readPlugins, this.agentId, this.history);
     clone.threadId = this.threadId;
     clone.messages = structuredClone(this.messages);
     clone.state = structuredClone(this.state);
@@ -123,6 +205,7 @@ export function createHarnessAgent(options: {
   harness: AnyHarness;
   agentId?: string;
   initialize?: (threadId: string) => Promise<void>;
+  history?: ReturnType<typeof createUndo>;
 }): HttpAgent {
   const handler = createHarnessHandler({
     ...options,
@@ -141,11 +224,12 @@ export function createHarnessAgent(options: {
     async (threadId) => {
       const session = await options.host.open(options.harness, { threadId });
       try {
-        return session.snapshot().plugins;
+        return publicPlugins(session.snapshot().plugins);
       } finally {
         await session.close();
       }
     },
     options.agentId,
+    options.history,
   );
 }

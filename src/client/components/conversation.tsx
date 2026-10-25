@@ -18,6 +18,7 @@ import { TranscriptMessages } from "./transcript-messages";
 import { goalFromState } from "./goal-status";
 
 import { ConversationComposer } from "./conversation-composer";
+import { ConversationCapabilities } from "./conversation-capabilities";
 
 type ConversationProps = {
   config: AppConfig;
@@ -26,6 +27,7 @@ type ConversationProps = {
   existing: boolean;
   onFirstSend: () => void;
   onBusyChange: (busy: boolean) => void;
+  onExecutionSettings?: () => void;
 };
 /** Registers the private agent before interrupt hooks try to resolve it. */
 export function Conversation(props: ConversationProps) {
@@ -44,6 +46,7 @@ function ActiveConversation({
   existing,
   onFirstSend,
   onBusyChange,
+  onExecutionSettings,
 }: ConversationProps) {
   const agentId = `${runtimeAgentId}-${threadId}`;
   const { agent, isReady } = useAgent({ agentId });
@@ -105,9 +108,13 @@ function ActiveConversation({
     if (wasRunning.current && !running) {
       queryClient.invalidateQueries({ queryKey: ["files"] });
       queryClient.invalidateQueries({ queryKey: ["skills"] });
+      queryClient.invalidateQueries({
+        queryKey: ["execution-status", config.workspaceId, threadId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["history", config.workspaceId, threadId] });
     }
     wasRunning.current = running;
-  }, [running, onBusyChange, queryClient]);
+  }, [running, onBusyChange, queryClient, config.workspaceId, threadId]);
   async function goalCommand(action: "resume" | "stop") {
     if (
       agent.isRunning ||
@@ -207,6 +214,41 @@ function ActiveConversation({
           </>
         }
       />
+      {(existing || agent.messages.length > 0) && (
+        <ConversationCapabilities
+          config={config}
+          threadId={threadId}
+          modelId={model.query.data?.modelId}
+          busy={running || connecting || agent.pendingInterrupts.length > 0}
+          onExecutionSettings={onExecutionSettings}
+          onHistory={async (action, revision) => {
+            setError("");
+            let failure: string | undefined;
+            let applied = false;
+            const subscription = agent.subscribe({
+              onRunErrorEvent: ({ event }) => {
+                failure = event.message;
+              },
+              onMessagesSnapshotEvent: () => {
+                applied = true;
+              },
+            });
+            try {
+              await copilotkit.runAgent({
+                agent,
+                forwardedProps: { starterHistory: { action, revision } },
+              });
+              if (failure) throw new Error(failure);
+              if (!applied)
+                throw new Error(
+                  "History restoration was not confirmed. Reload the conversation before trying again.",
+                );
+            } finally {
+              subscription.unsubscribe();
+            }
+          }}
+        />
+      )}
       <ConversationComposer
         approvals={
           <>

@@ -8,6 +8,8 @@ import { useAppearance } from "../../src/client/appearance";
 import "../../src/client/styles.css";
 import "@fontsource-variable/manrope";
 import "@fontsource/ibm-plex-mono/400.css";
+import { installCapabilitiesReview } from "./capabilities-review";
+installCapabilitiesReview();
 const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 function Fixture() {
   const appearance = useAppearance();

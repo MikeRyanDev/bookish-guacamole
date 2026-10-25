@@ -73,6 +73,10 @@ test("does not turn a model failure into a successful run", async () => {
   const events = await firstValueFrom(agent.run(input()).pipe(toArray()));
   expect(events.some((event) => event.type === "RUN_ERROR")).toBe(true);
   expect(events.some((event) => event.type === "RUN_FINISHED")).toBe(false);
+  expect(events.findIndex((event) => event.type === "STATE_SNAPSHOT")).toBeGreaterThan(-1);
+  expect(events.findIndex((event) => event.type === "STATE_SNAPSHOT")).toBeLessThan(
+    events.findIndex((event) => event.type === "RUN_ERROR"),
+  );
 });
 
 test("cloning keeps the private transport and isolated message state", async () => {

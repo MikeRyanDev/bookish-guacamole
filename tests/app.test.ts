@@ -46,6 +46,104 @@ test("local browser bootstrap refuses cross-origin access and protects workspace
       authorization: `Bearer ${app.token}`,
       "content-type": "application/json",
     };
+    for (const resource of [
+      "execution",
+      "execution/status",
+      "connections",
+      "connections/status",
+      "history",
+    ]) {
+      expect((await fetch(`${origin}/api/${resource}?thread=capability-test`)).status).toBe(401);
+      expect(
+        (
+          await fetch(`${origin}/api/${resource}?workspace=missing&thread=capability-test`, {
+            headers: newThreadHeaders,
+          })
+        ).status,
+      ).toBe(404);
+    }
+    const executionUrl = `${origin}/api/execution`;
+    const initialExecution = await (
+      await fetch(executionUrl, { headers: newThreadHeaders })
+    ).json();
+    expect(initialExecution.settings.codeMode).toBe(false);
+    expect(
+      (
+        await fetch(executionUrl, {
+          method: "PUT",
+          headers: newThreadHeaders,
+          body: JSON.stringify({
+            ...initialExecution,
+            settings: { ...initialExecution.settings, maxRetries: -1 },
+          }),
+        })
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await fetch(executionUrl, {
+          method: "PUT",
+          headers: newThreadHeaders,
+          body: JSON.stringify({
+            ...initialExecution,
+            settings: { ...initialExecution.settings, maxRetries: 2 },
+          }),
+        })
+      ).status,
+    ).toBe(200);
+    expect(
+      (
+        await fetch(executionUrl, {
+          method: "PUT",
+          headers: newThreadHeaders,
+          body: JSON.stringify(initialExecution),
+        })
+      ).status,
+    ).toBe(409);
+    const connectionsUrl = `${origin}/api/connections`;
+    expect(await (await fetch(connectionsUrl, { headers: newThreadHeaders })).json()).toEqual({
+      connections: [],
+      revision: null,
+    });
+    expect(
+      (
+        await fetch(connectionsUrl, {
+          method: "PUT",
+          headers: newThreadHeaders,
+          body: JSON.stringify({
+            revision: null,
+            connections: [
+              {
+                id: "docs",
+                enabled: false,
+                transport: {
+                  type: "http",
+                  url: "https://example.com/mcp",
+                  auth: "none",
+                  token: "must-not-be-stored",
+                },
+              },
+            ],
+          }),
+        })
+      ).status,
+    ).toBe(400);
+    expect(
+      await (
+        await fetch(`${origin}/api/execution/status?thread=capability-test`, {
+          headers: newThreadHeaders,
+        })
+      ).json(),
+    ).toMatchObject({ usage: { calls: 0, totalTokens: 0 }, pending: 0 });
+    expect(
+      (
+        await fetch(`${origin}/api/execution/compact?thread=capability-test`, {
+          method: "POST",
+          headers: newThreadHeaders,
+          body: "{}",
+        })
+      ).status,
+    ).toBe(200);
     await fetch(origin + "/api/model?thread=model-first", {
       method: "PUT",
       headers: newThreadHeaders,

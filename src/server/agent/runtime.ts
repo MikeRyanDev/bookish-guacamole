@@ -11,6 +11,17 @@ import { createModelSettings } from "./model-settings.js";
 import { createHarnessAgent } from "./bridge.js";
 import { createCodingHarness } from "./harness.js";
 import { openLogStore } from "../storage/log-store.js";
+import { createExecutionSettings } from "./execution-settings.js";
+import { createExecutionUsage } from "./execution-usage.js";
+import { createRecovery } from "./recovery.js";
+import { WorkspaceError } from "../workspaces/registry.js";
+import { memoryCredentialStore } from "@tanstack/ai/byok/server";
+import { createConnections } from "./connections.js";
+import { createConnectionManagement } from "./connection-management.js";
+import { snapshots } from "@tanstack/ai-harness/plugins/coding";
+import { createUndo } from "./undo.js";
+import { contextStateSchema } from "./context-management.js";
+import type { ConversationExecutionStatus } from "../../shared/execution.js";
 /** Keeps each workspace's agent identity, tools, and execution log separate. */
 export function createWorkspaceRuntime(
   workspace: WorkspaceEntry,
@@ -31,15 +42,40 @@ export function createWorkspaceRuntime(
       workspace.id === "default" ? "harness.sqlite" : `harness-${workspace.id}.sqlite`,
     ),
   );
+  const credentials = memoryCredentialStore();
   const host = createHarnessHost({
+    credentials,
     persistence: defineAIPersistence({ stores: { log: store.log, metadata: store.metadata } }),
+  });
+  const executionSettings = createExecutionSettings(store.metadata, Object.keys(models.adapters));
+  const executionUsage = createExecutionUsage({
+    metadata: store.metadata,
+    settings: executionSettings,
+    models: models.adapters,
+    defaultModel: models.defaultModel,
+  });
+  const recovery = createRecovery(executionSettings);
+  const connectionSettings = createConnections(store.metadata, { root: workspace.path });
+  const history = snapshots({
+    root: workspace.path,
+    dataDir: resolve(dataDirectory, "snapshots", workspace.id),
   });
   const harness = createCodingHarness({
     root: workspace.path,
     intelligence,
     containerId,
     models,
+    history,
+    execution: { settings: executionSettings, ledger: executionUsage, recovery },
+    connections: connectionSettings,
   });
+  const connections = createConnectionManagement({
+    host,
+    harness,
+    settings: connectionSettings,
+    credentials,
+  });
+  const undo = createUndo({ host, harness, history, metadata: store.metadata });
   const defaults = createConversationDefaults({
     metadata: store.metadata,
     models: models.adapters,
@@ -66,6 +102,7 @@ export function createWorkspaceRuntime(
         harness,
         agentId,
         initialize: approvalSettings.initialize,
+        history: undo,
       }),
     },
     intelligence,
@@ -77,10 +114,48 @@ export function createWorkspaceRuntime(
     defaults,
     approvalSettings,
     modelSettings,
+    executionSettings,
+    connections,
+    undo,
+    async executionStatus(threadId: string): Promise<ConversationExecutionStatus> {
+      if (!threadId || threadId.length > 200) throw new WorkspaceError("Invalid conversation.");
+      await approvalSettings.initialize(threadId);
+      const session = await host.open(harness, { threadId });
+      try {
+        const snapshot = session.snapshot();
+        const context = contextStateSchema.safeParse(snapshot.plugins["starter/context"]);
+        return {
+          usage: await executionUsage.read(threadId),
+          context: context.success ? context.data : null,
+          recovery: recovery.read(threadId),
+          status: snapshot.status,
+          pending: snapshot.pendingWaits.length,
+        };
+      } finally {
+        await session.close();
+      }
+    },
+    async scheduleCompaction(threadId: string) {
+      if (!threadId || threadId.length > 200) throw new WorkspaceError("Invalid conversation.");
+      const session = await host.open(harness, { threadId });
+      try {
+        if (session.snapshot().status === "running" || session.snapshot().pendingWaits.length)
+          throw new WorkspaceError("Finish or stop the current operation first.", 409);
+        await session.runCommand({ name: "compact-next" });
+        return { scheduled: true };
+      } finally {
+        await session.close();
+      }
+    },
     handler: createCopilotHonoHandler({ runtime, basePath }),
     close: async () => {
       try {
-        await host.close();
+        // Host shutdown cancels running turns before waiting for pending reloads.
+        try {
+          await host.close();
+        } finally {
+          await connections.close();
+        }
       } finally {
         store.close();
       }

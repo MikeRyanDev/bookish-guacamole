@@ -36,8 +36,12 @@
     "@hono/zod-validator": "0.9.1",
     "@tanstack/ai": "1.0.0",
     "@tanstack/ai-anthropic": "1.0.0",
+    "@tanstack/ai-code-mode": "1.0.0",
+    "@tanstack/ai-compaction": "1.0.0",
     "@tanstack/ai-gemini": "1.0.0",
     "@tanstack/ai-harness": "0.1.0",
+    "@tanstack/ai-isolate-quickjs": "1.0.0",
+    "@tanstack/ai-mcp": "1.0.0",
     "@tanstack/ai-ollama": "1.0.0",
     "@tanstack/ai-openai": "1.0.0",
     "@tanstack/ai-persistence": "1.0.0",
@@ -90,7 +94,9 @@
       "@tanstack/ai-skills",
       "@tanstack/ai-persistence",
       "@tanstack/react-router",
-      "@tanstack/router-core"
+      "@tanstack/router-core",
+      "@tanstack/ai-mcp",
+      "@tanstack/ai-code-mode"
     ]
   }
 }
