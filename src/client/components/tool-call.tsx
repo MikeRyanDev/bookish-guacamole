@@ -1,7 +1,7 @@
 import { toolOutcome } from "./tool-outcome";
 import { revealToolContent, useToolDisclosure } from "./tool-disclosure";
-import { useState } from "react";
-import { IconButton } from "./icon-button";
+import { CopyToolText } from "./tool-copy";
+import { TypeScriptOutput } from "./typescript-output";
 import {
   Terminal,
   Check,
@@ -10,39 +10,11 @@ import {
   FileDiff,
   CircleAlert,
   ShieldCheck,
-  Copy,
   Search,
   FolderSearch,
   BookOpen,
   Wrench,
 } from "lucide-react";
-
-function CopyToolText({ text, label }: { text: string; label: string }) {
-  const [feedback, setFeedback] = useState<{ text: string; status: "copied" | "error" }>();
-  const status = feedback?.text === text ? feedback.status : "idle";
-  return (
-    <>
-      <IconButton
-        label={status === "copied" ? "Copied" : label}
-        onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(text);
-            setFeedback({ text, status: "copied" });
-          } catch {
-            setFeedback({ text, status: "error" });
-          }
-        }}
-      >
-        {status === "copied" ? <Check size={14} /> : <Copy size={14} />}
-      </IconButton>
-      {status === "error" && (
-        <span className="tool-copy-error" role="status">
-          Copy failed. Select the text to copy it.
-        </span>
-      )}
-    </>
-  );
-}
 
 /** Reads complete tool arguments; partial streaming JSON stays available in the raw view. */
 function argumentsOf(value: string): Record<string, unknown> {
@@ -135,41 +107,6 @@ function FileContents({ content }: { content: string }) {
     </pre>
   );
 }
-/** Indents JSON evidence for reading; copy retains the original provider text. */
-function readableOutput(output: string): string {
-  try {
-    const parsed: unknown = JSON.parse(output);
-    if (parsed === null || typeof parsed !== "object") return output;
-    // Do not reserialize values: large numbers and escape sequences must remain exact.
-    const tokens = output.match(/"(?:[^"\\]|\\.)*"|[^\s"{}[\],:]+|[{}[\],:]/g);
-    if (!tokens) return output;
-    let depth = 0;
-    return tokens
-      .map((token, index) => {
-        const previous = tokens[index - 1];
-        if (token === "}" || token === "]") {
-          depth--;
-          return previous === "{" || previous === "[" ? token : `\n${"  ".repeat(depth)}${token}`;
-        }
-        if (token === "{" || token === "[") {
-          depth++;
-          return (
-            token +
-            (tokens[index + 1] === "}" || tokens[index + 1] === "]"
-              ? ""
-              : `\n${"  ".repeat(depth)}`)
-          );
-        }
-        if (token === ",") return `,\n${"  ".repeat(depth)}`;
-        if (token === ":") return ": ";
-        return token;
-      })
-      .join("");
-  } catch {
-    return output;
-  }
-}
-
 /** Presents coding tools with their exact command, proposed changes, and observed outcome. */
 export function ToolCall({
   name,
@@ -338,27 +275,13 @@ export function ToolCall({
                       : "TypeScript source unavailable. Inspect Raw details."}
                 </p>
               )}
-              <div className="typescript-output">
-                <div className="tool-surface-heading">
-                  <span>{failed ? "Error output" : "Output"}</span>
-                  {output !== undefined && <CopyToolText text={output} label="Copy output" />}
-                </div>
-                {output ? (
-                  <pre className="typescript-result" aria-label="Execution output" tabIndex={0}>
-                    {readableOutput(output)}
-                  </pre>
-                ) : (
-                  <p className="typescript-empty">
-                    {output === ""
-                      ? "No output"
-                      : awaitingApproval
-                        ? "Awaiting approval"
-                        : running
-                          ? "Waiting for output"
-                          : "No result received"}
-                  </p>
-                )}
-              </div>
+              <TypeScriptOutput
+                output={output}
+                running={running}
+                awaitingApproval={awaitingApproval}
+                failed={failed}
+                denied={denied}
+              />
             </div>
           )}
           {!isTypeScript && command && (

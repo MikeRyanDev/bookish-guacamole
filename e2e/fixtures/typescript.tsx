@@ -9,6 +9,61 @@ const output = JSON.stringify({
   logs: ["Hello, Ada"],
 });
 
+const nativeStates: Record<string, unknown> = {
+  "native-empty": { success: true },
+  false: { success: true, result: false },
+  zero: { success: true, result: 0 },
+  null: { success: true, result: null },
+  "empty-string": { success: true, result: "" },
+  "empty-array": { success: true, result: [] },
+  "empty-object": { success: true, result: {} },
+  "logs-only": { success: true, logs: ["Reading files", "WARN: skipped empty file", ""] },
+  stack: {
+    success: false,
+    result: { processed: 2 },
+    logs: ["Started", "ERROR: stopped"],
+    error: {
+      name: "TypeError",
+      message: "Cannot read properties of undefined",
+      line: 4,
+      stack: "TypeError: Cannot read properties of undefined\n    at inspect (program.ts:4:9)",
+    },
+  },
+  timeout: {
+    success: false,
+    logs: ["Started"],
+    error: { name: "TimeoutError", message: "Execution timed out" },
+  },
+  cancelled: { success: false, error: { name: "AbortError", message: "Execution was cancelled" } },
+  "no-error-details": { success: false },
+  "empty-error": { success: false, error: { message: "" } },
+  conflict: { success: true, error: { message: "Failure despite success flag" } },
+  "invalid-envelope": { success: true, logs: [42] },
+  "unknown-fields": { success: true, result: { found: true }, extra: "provider evidence" },
+  "long-error": {
+    success: false,
+    logs: ["Started"],
+    error: {
+      name: "RuntimeError",
+      message: "A very long error detail. ".repeat(200),
+      stack: "at inspect (program.ts:4:9)\n".repeat(100),
+    },
+  },
+  "long-native": {
+    success: true,
+    result: Array.from({ length: 100 }, (_, index) => ({
+      path: `src/long-folder-${index}/` + "long-file-name-".repeat(15),
+      changed: false,
+    })),
+    logs: Array.from({ length: 100 }, (_, index) => `Read file ${index}`),
+  },
+  untrusted: {
+    success: false,
+    error: { message: '<img src=x onerror="alert(1)">' },
+    logs: ["<script>alert(1)</script>"],
+  },
+};
+
 /** Isolated renderer states. These controls simulate transport; they execute no code. */
 export function TypeScriptFixture() {
   if (new URLSearchParams(location.search).has("lifecycle")) return <TypeScriptLifecycle />;
@@ -20,28 +75,35 @@ export function TypeScriptFixture() {
         ? '{"other":42}'
         : JSON.stringify({
             typescriptCode:
-              state === "empty-source" ? "" : state === "long" ? source.repeat(100) : source,
+              state === "empty-source"
+                ? ""
+                : ["long", "long-native"].includes(state)
+                  ? source.repeat(100)
+                  : source,
           });
-  const result =
-    state === "precision"
-      ? '{"success":true,"result":{"id":9007199254740993,"literal":"{ [ , : \\"quoted\\" ] }","empty":[],"nested":[{},[false,null,0]]},"logs":["line\\nnext"]}'
-      : ["running", "partial", "missing", "approval"].includes(state)
-        ? undefined
-        : state === "error"
-          ? JSON.stringify({
-              success: false,
-              logs: ["Started"],
-              error: { name: "TypeScriptError", message: "Unexpected token", line: 2 },
-            })
-          : state === "denied"
-            ? "The user denied this tool call"
-            : state === "empty"
-              ? ""
-              : state === "long"
-                ? "Long output line\n".repeat(300)
-                : state === "unsafe"
-                  ? '<script>alert("hello")</script>'
-                  : output;
+  const result = Object.hasOwn(nativeStates, state)
+    ? JSON.stringify(nativeStates[state])
+    : state === "invalid-json"
+      ? "{broken response"
+      : state === "precision"
+        ? '{"success":true,"result":{"id":9007199254740993,"literal":"{ [ , : \\"quoted\\" ] }","empty":[],"nested":[{},[false,null,0]]},"logs":["line\\nnext"]}'
+        : ["running", "partial", "missing", "approval"].includes(state)
+          ? undefined
+          : state === "error"
+            ? JSON.stringify({
+                success: false,
+                logs: ["Started"],
+                error: { name: "TypeScriptError", message: "Unexpected token", line: 2 },
+              })
+            : state === "denied"
+              ? "The user denied this tool call"
+              : state === "empty"
+                ? ""
+                : state === "long"
+                  ? "Long output line\n".repeat(300)
+                  : state === "unsafe"
+                    ? '<script>alert("hello")</script>'
+                    : output;
   return (
     <main style={{ maxWidth: 760, margin: "24px auto", padding: 20 }}>
       <label>
@@ -61,6 +123,8 @@ export function TypeScriptFixture() {
             "long",
             "unsafe",
             "precision",
+            "invalid-json",
+            ...Object.keys(nativeStates),
           ].map((value) => (
             <option key={value}>{value}</option>
           ))}

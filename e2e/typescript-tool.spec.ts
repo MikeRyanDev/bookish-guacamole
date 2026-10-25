@@ -17,12 +17,15 @@ test("one disclosure reveals exact TypeScript and output, with independent copy 
   await expect(page.getByLabel("Execution output", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Copy TypeScript", exact: true }).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(source);
-  const output = await page.getByLabel("Execution output", { exact: true }).textContent();
-  await page.getByRole("button", { name: "Copy output", exact: true }).click();
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    JSON.stringify(JSON.parse(output!)),
+  await expect(page.getByLabel("Return value", { exact: true })).toContainText(
+    '"greeting": "Hello, Ada"',
   );
-  expect(output).toContain('\n  "success": true');
+  await expect(page.getByLabel("Console output", { exact: true })).toHaveText("Hello, Ada");
+  await page.getByText("Raw response", { exact: true }).click();
+  await page.getByRole("button", { name: "Copy response JSON", exact: true }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    JSON.stringify({ success: true, result: { greeting: "Hello, Ada" }, logs: ["Hello, Ada"] }),
+  );
   await page.getByText("Raw details", { exact: true }).click();
   await expect(page.locator(".tool-arguments pre")).toHaveText(
     JSON.stringify({ typescriptCode: source }),
@@ -37,7 +40,7 @@ test("execution states distinguish pending, missing, empty, denied, and structur
     ["running", "Waiting for output"],
     ["partial", "Receiving TypeScript…"],
     ["approval", "Awaiting approval"],
-    ["error", "Error output"],
+    ["error", "Execution failed"],
     ["denied", "Denied"],
   ]) {
     await page.getByLabel("Fixture state").selectOption(state!);
@@ -55,7 +58,7 @@ test("execution states distinguish pending, missing, empty, denied, and structur
   }
   await page.getByLabel("Fixture state").selectOption("unsafe");
   await page.locator("summary.tool-header").click();
-  await expect(page.getByLabel("Execution output", { exact: true })).toHaveText(
+  await expect(page.getByLabel("Original output", { exact: true })).toHaveText(
     '<script>alert("hello")</script>',
   );
   await expect(page.locator(".typescript-surface script")).toHaveCount(0);
@@ -126,12 +129,13 @@ test("structured output keeps numeric literals and escaped text intact", async (
   await page.goto(`${fixtureUrl}/?typescript`);
   await page.getByLabel("Fixture state").selectOption("precision");
   await page.locator("summary.tool-header").click();
-  const output = await page.getByLabel("Execution output", { exact: true }).textContent();
+  const output = await page.getByLabel("Return value", { exact: true }).textContent();
   expect(output).toContain('"id": 9007199254740993');
   expect(output).toContain('"literal": "{ [ , : \\"quoted\\" ] }"');
   expect(output).toContain('"empty": []');
-  expect(output).toContain('"line\\nnext"');
-  await page.getByRole("button", { name: "Copy output", exact: true }).click();
+  await expect(page.getByLabel("Console output", { exact: true })).toHaveText("line\nnext");
+  await page.getByText("Raw response", { exact: true }).click();
+  await page.getByRole("button", { name: "Copy response JSON", exact: true }).click();
   const copied = await page.evaluate(() => navigator.clipboard.readText());
   expect(copied).toContain('"id":9007199254740993');
   expect(copied).not.toContain("\n");

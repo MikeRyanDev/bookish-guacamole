@@ -2964,9 +2964,8 @@ dialog[open] {
 .typescript-surface .tool-surface-heading {
   font-size: 11px;
 }
-.tool-call .typescript-source,
-.tool-call .typescript-result {
-  padding: 8px 14px 14px;
+.tool-call .typescript-source {
+  padding: 16px;
   max-height: 280px;
   overflow: auto;
   white-space: pre-wrap;
@@ -2990,4 +2989,104 @@ dialog[open] {
 }
 .typescript-surface .tool-copy-error {
   flex-basis: 100%;
+}
+
+/* Evidence is inset independently of generic file/patch previews. */
+.typescript-surface .tool-surface-heading {
+  padding: 8px 16px;
+}
+.typescript-output {
+  padding: 16px;
+}
+.typescript-outcome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.typescript-outcome strong {
+  font-weight: 600;
+}
+.typescript-error,
+.typescript-error-meta,
+.console-error {
+  color: var(--danger);
+}
+.typescript-error-detail {
+  margin-top: 12px;
+}
+.typescript-error-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.typescript-error-message {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 180px;
+  overflow: auto;
+}
+.typescript-section-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  min-height: 28px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.typescript-section-heading > strong {
+  font-size: 12px;
+  color: var(--text);
+}
+.typescript-section-heading .icon-control {
+  margin-left: auto;
+}
+.typescript-section-heading .icon-button {
+  width: 28px;
+  height: 28px;
+}
+.tool-call .typescript-output pre {
+  padding: 8px 0 0;
+  max-height: 280px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.typescript-note,
+.typescript-output > .typescript-empty {
+  padding: 0;
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.typescript-output > .typescript-empty {
+  margin: 0;
+}
+.typescript-output > .typescript-section-heading:first-child {
+  margin-top: 0;
+}
+.typescript-raw {
+  margin-top: 12px;
+}
+.tool-call .typescript-diagnostic > summary {
+  padding: 8px 0;
+}
+.json-key {
+  color: var(--muted);
+}
+.json-number {
+  color: var(--text);
+  font-weight: 500;
+}
+.console-empty {
+  color: var(--muted);
+  font-style: italic;
 }
