@@ -173,7 +173,7 @@ node --test example/greet.test.js
 pnpm test:e2e
 ```
 
-Start the app before browser tests. `pnpm check` runs lint, the design source check, both TypeScript checks, unit tests, and production builds. Live model tests are opt-in because they use your configured provider account; see [verification](docs/VERIFICATION.md) for their prerequisites and commands.
+Start the app before browser tests. `pnpm check` runs lint, the design source check, TypeScript, unit tests, and production builds. Live model tests are opt-in because they use your configured provider account; see [verification](docs/VERIFICATION.md) for their prerequisites and commands.
 
 ```sh
 pnpm build
@@ -181,6 +181,18 @@ pnpm start
 ```
 
 Stop the app with Ctrl-C. The backend remains available until you run `pnpm intelligence local stop`, which preserves its data. Keep `.data/` across restarts: it holds workspace identities and local execution logs. `CODING_WORKSPACE` selects the initial folder (default `workspace/`); `LEARNING_CONTAINER_ID` selects the Learning container (default `coding-lessons`).
+
+### TypeScript and VS Code
+
+The root `tsconfig.json` covers the browser, server, shared types, tests, fixtures, and build configuration files.
+`pnpm typecheck` checks this same project without emitting files. Vite and tsdown produce the build output.
+Bundler resolution supports the existing Vite, tsdown, Vitest, and tsx workflows.
+The explicit source paths keep generated output and private workspaces outside the project.
+
+After installing dependencies, open the repository folder in VS Code and accept the workspace TypeScript version prompt.
+You can also run **TypeScript: Select TypeScript Version → Use Workspace Version** from the command palette.
+This uses the pinned compiler that runs in `pnpm typecheck`.
+If an open editor retains old errors after a configuration change, run **TypeScript: Restart TS Server**.
 
 ## If something does not work
 

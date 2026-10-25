@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx --env-file=.env src/server/main.ts",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit && tsc -p tsconfig.client.json",
+    "typecheck": "tsc",
     "build": "vite build && tsdown",
     "intelligence": "copilotkit",
     "workspace:create": "node scripts/create-workspace.mjs",
