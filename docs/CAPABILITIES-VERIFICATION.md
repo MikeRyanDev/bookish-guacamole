@@ -77,5 +77,27 @@ Production builds retain the existing large-chunk advisory. Neither advisory is 
 
 Remote discovery found `origin/main` at `a2484923abef9c7f8e49d07d273a6f1bfd9cae4d` and no open starter PRs.
 The local parent includes unpublished settings and Hono work. The weekend runbook forbids pushing an unrelated parent branch.
-This delivery is being integrated into local main at the user’s request. It is not a published preview, native-stack registration, or clean-history release.
+Feature commit `82135f5` was merged into local `main` as `69c08b3` at the user’s request. It is not a published preview, native-stack registration, or clean-history release.
 No upstream PR was merged and no history was rewritten. Publication requires a reviewed matching parent and the weekend installed-acceptance gate.
+
+## Local main integration
+
+Merged `feat/agent-capabilities` with `git merge --no-ff feat/agent-capabilities`.
+The merged source tree matches the reviewed feature tree. The pre-existing changes to `MONDAY_CUTOVER_CHECKLIST.md` remain byte-for-byte unchanged and uncommitted.
+
+Fresh checks on merged `main`:
+
+- `pnpm install --frozen-lockfile`: passed.
+- `pnpm check`: passed lint, design checks, types, 200 tests, and production builds; 47 unsupported-store cases skipped.
+- `node --test example/greet.test.js`: one passed.
+- The following fresh browser run passed 43 tests, including the rendered design scan; two opt-in tests were skipped:
+
+```sh
+CI=1 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4264 pnpm test:e2e e2e/capabilities-settings.spec.ts e2e/conversation-capabilities.spec.ts e2e/settings.spec.ts e2e/settings-navigation.spec.ts e2e/composer-discovery.spec.ts e2e/composer.spec.ts e2e/tool-renderers.spec.ts e2e/permissions.spec.ts e2e/goals.spec.ts e2e/capabilities-design.spec.ts e2e/design.spec.ts
+```
+
+The browser server started from the merged main checkout on a separate port. Test-generated replacements of existing proof images were discarded.
+`git diff --check` passed. Development-server ResizeObserver and Lit warnings did not fail the browser checks.
+
+The prior live-model and restart evidence applies to the same source tree. Those model calls were not repeated for this merge-only operation.
+No remote branch was pushed and no shared deployment changed.
