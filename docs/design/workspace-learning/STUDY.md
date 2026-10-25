@@ -1,6 +1,6 @@
 # Workspace Learning delivery
 
-Status: implementation in progress. No UI, upstream preview, or installed acceptance is complete.
+Status: implementation in progress. No UI, upstream preview, or installed acceptance is complete. The API draft is open.
 
 ## Scope
 
@@ -90,3 +90,41 @@ No fixture or unit result proves real Learning. No source edit proves a publishe
 
 Browser tests did not run because this foundation changes no visible behavior.
 The skipped tests and these deterministic results do not establish live backend or model acceptance.
+
+## Intelligence API layer — 2026-10-24
+
+[Draft PR #2068](https://github.com/CopilotKit/Intelligence/pull/2068) is registered in native stack #2064 at position 3.
+The ordered stack is #2041, #2063, #2068. GitHub confirmed the new head as `985175b7747fc3c0fe61573b0e8a6b9102eb49c8`.
+The worktree is `../Intelligence-workspace-learning`, branch `feat/workspace-learning`.
+The parent remained `7cab78803075816a27f7ccaa8a753ce828b51628` when the PR was opened.
+
+The API adds project-key container discovery, container detail, run reads/start, candidate reads/review, and Insight evidence reads.
+It reuses the existing scoped stores, entitlement gates, manual run admission, queue recovery, and publication transactions.
+Scope comes only from the verified key. Reviews identify the calling key as `api-key:<id>`.
+Runtime keys now have documented Learning review authority. Application servers must authorize their own browser users.
+The browser must never receive that key.
+
+The API design and task review are in the upstream `docs/contracts/runtime-learning.md`.
+Container pages retain the existing 500-item cursor pagination. Candidate lists retain 500 entries; run lists retain 100.
+No new transcript ingress, Thread reassignment, or shared deployment change is included.
+
+Validation:
+
+- Focused Vitest suite: 94 passed across seven files, including existing candidate publication and run start behavior.
+- `NX_DAEMON=false pnpm nx run @cpki/app-api:typecheck`: passed.
+- `NX_DAEMON=false pnpm nx run @cpki/app-api:lint`: passed with existing project warnings; changed-file ESLint passed without warnings.
+- `NX_DAEMON=false pnpm nx build @cpki/app-api`: passed.
+- `pnpm docs:check` and `git diff --check`: passed.
+
+The full `tsc -p apps/app-api/tsconfig.spec.json --noEmit` command failed because its project references are incomplete.
+It also identified a fixture type mismatch, which was fixed.
+A temporary configuration based on `tsconfig.app.json` references then typechecked the new runtime Learning and authentication tests.
+The temporary configuration was removed from the worktree; its copy is `/tmp/workspace-learning-api-test-type-config.json`.
+Logs use `/tmp/workspace-learning-api-*` and are not release evidence artifacts.
+
+Regression stages observed missing-route 404s before discovery, reads, run start, and review implementation.
+A production pre-authentication test caught missing browser-credential refusal; the new routes now reject those credentials before session handling.
+The production route-registration test now verifies that the runtime API-key guard reaches this API alongside the existing product guard.
+
+Next: implement typed management methods in the CopilotKit runtime SDK above #7966, cross-link the companion PRs, then build the UI.
+The user has not answered the optional evidence-source question. Continue with saved conversations as the stated assumption.
