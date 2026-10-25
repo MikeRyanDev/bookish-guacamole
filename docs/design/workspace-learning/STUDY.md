@@ -190,4 +190,8 @@ Shared promotions, upstream merges, and stable package publication remain outsid
 Do not dispatch the matching CLI until the candidate chart and images pass verification.
 
 Main still has the user's unrelated Monday checklist edit. Preserve it and the newer merged work.
-The starter worktree remains based on `6f57039`; integrate current main before final delivery checks.
+The starter worktree now includes main `93467d9` through a clean merge. Its new execution-output UI and tests are preserved.
+The user's uncommitted main checklist edit remains untouched.
+
+Candidate workflow: https://github.com/CopilotKit/Intelligence/actions/runs/40148976596
+GitHub confirmed the exact head `985175b7747fc3c0fe61573b0e8a6b9102eb49c8`; publication is in progress.
