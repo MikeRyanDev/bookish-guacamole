@@ -613,3 +613,16 @@ Raw events, screenshots, private model configuration, and workspace edits remain
 This is local preview acceptance. Hosted deployments, Windows, Linux, AMD64 runtime installation, automatic scheduling, and multi-user concurrency were not tested.
 Upstream PRs remain open; no stable release or shared deployment changed.
 The final local-main merge and active-app verification are recorded below after completion.
+
+### Merged main and active app
+
+Implementation commit `5da6095` fast-forwarded into local `main`. Autostash restored the user's existing Monday checklist edit; its added/removed lines matched the saved pre-merge patch exactly.
+`pnpm install --frozen-lockfile`, `pnpm check` (212 passed, 47 optional skips), and `node --test example/greet.test.js` passed on the merged tree.
+`FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4198 pnpm exec playwright test e2e/learning.spec.ts e2e/file-viewer.spec.ts --output=.data/workspace-learning/main-browser-fixtures` passed 18 tests.
+`FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4198 pnpm exec playwright test e2e/workspace.spec.ts --output=.data/workspace-learning/main-workspace-browser` passed six tests against port 4173.
+The file-viewer suite's generated proof PNG changes were restored; unrelated screenshots were not delivered.
+
+Main's normal `pnpm intelligence local update --json` completed at `step=ready` on `0.15.2-validation.4a801b8a843b`, preserving its existing local stack.
+The production app on port 4173 runs from the main checkout, verified through its process working directory.
+The user's existing Chrome tab was refreshed after confirming its composer was empty. It retained the CPK Intelligence workspace and Repo Overview conversation.
+Its Learning panel showed Coding lessons, Learn, Review skills, and the existing published Skills without an error. No new model turn or Learning run was started against the user's main workspace during this final UI check.

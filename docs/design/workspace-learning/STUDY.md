@@ -1,6 +1,6 @@
 # Workspace Learning delivery
 
-Status: UI reviews, deterministic checks, corrected preview publication, and real installed Learning acceptance passed. Final local-main merge and active-app verification remain pending.
+Status: Complete. UI reviews, deterministic checks, corrected preview publication, real installed Learning acceptance, local-main merge, and active-app verification passed.
 
 ## Scope
 
@@ -371,3 +371,8 @@ App and stack restart recovery passed. A further turn loaded the published Skill
 Learning pod UID changed from `3e5809c0-a034-4169-9c6e-cd88e2a99600` to `fb6352ef-58d5-43f5-bd64-3d444fb9f29b` after deployment recycling.
 The subsequent UI Learning run `01a170ef-8259-7cf2-9051-4f09cb7207d6` succeeded with no new proposals.
 Installed acceptance is complete. See `docs/VERIFICATION.md` for exact artifacts, commands, proof, and untested platforms.
+
+Implementation commit `5da6095` merged into local main. The merged check passed 212 tests with 47 optional skips; 24 affected browser tests passed.
+Main's existing stack updated normally to the corrected candidate. The active port 4173 process points to the main checkout.
+The user's existing browser tab retained its workspace and conversation and displayed the Learning controls and published Skills without errors.
+The user's uncommitted Monday checklist additions were preserved exactly. Upstream PRs remain open; stable publication gates remain separate.
