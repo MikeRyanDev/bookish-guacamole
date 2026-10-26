@@ -1,0 +1,183 @@
+[
+  {
+    "name": "@copilotkit/core",
+    "version": "1.80.0",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "1b584be3623e09b17ca10fb9b3d7db3801b62df7ba534274b223369578f01c99",
+    "integrity": "sha512-dOKn7Pe2P+sasyFPhPnBvPcCAqeOmqHu+Kx9uZqSKBjtIcW+MOOff8gQlk7tIsDxWgoih3CFbjIcwS/12cjk/Q==",
+    "dependencies": {
+      "@copilotkit/learning": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@912ed69",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/react-core",
+    "version": "1.80.0",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/react-core@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "db69ec8dd4ec064adb476211a51e165b27f8b94dd9970fd60890f62d898969c7",
+    "integrity": "sha512-5liXKH1bLnVOSGmjZCFTpQEkx0kbdcIkbtS0IZGyM6I5oH6Wz/ooDGpoRpIK9rQXCtwDKgCJCMwCfx0k3oNoYA==",
+    "dependencies": {
+      "@copilotkit/a2ui-renderer": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@912ed69",
+      "@copilotkit/core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@912ed69",
+      "@copilotkit/mcp-apps-renderer": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@912ed69",
+      "@copilotkit/runtime-client-gql": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@912ed69",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69",
+      "@copilotkit/web-components": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@912ed69",
+      "@copilotkit/web-inspector": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/runtime",
+    "version": "1.80.0",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "6475a1e08a6b253df2976732cc85905d892f168f4bc4759e808dd8183936c949",
+    "integrity": "sha512-Bq+8hPZUAbu4HMfXG4wiCtGx/we1ogU4Ay9X1fMkpqjJkgat1GjgPw163KTo94pLvjj4ziarBSwWfXVJdGd8Eg==",
+    "dependencies": {
+      "@copilotkit/channels-core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@912ed69",
+      "@copilotkit/channels-intelligence": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@912ed69",
+      "@copilotkit/license-verifier": "~0.5.0",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/shared",
+    "version": "1.80.0",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "5a550ba1b34e299a8334a458785e7cc944286039266e61dfbbada09aeb5a4068",
+    "integrity": "sha512-KCisxpUCuszzhWS5dahdz42e9aY9ultkxS1BB49Y8odBVkcNbsp5AD3ftJFx/0awB3EnePXMPZvmQHz4smZbeg==",
+    "dependencies": {
+      "@copilotkit/license-verifier": "~0.5.0"
+    }
+  },
+  {
+    "name": "@copilotkit/web-inspector",
+    "version": "1.80.0",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-inspector@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "4e7fe1ac9269e57af2c2909b4eb5d71f8dcaf5dd038eb4ae0ef90ff1431a2159",
+    "integrity": "sha512-NrRruPN1sn62dtmejxIPqOsUJa2u2HZ4+AbBhzPATM5A8rGCCojOXMKWUMOedp7kWuEnsN3SXyAa/olBKquqBg==",
+    "dependencies": {
+      "@copilotkit/core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@912ed69",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/runtime-client-gql",
+    "version": "1.80.0",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/runtime-client-gql@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "62d936c708ac4cc2c12b7d11f054a8d20e5253bb011536e75e38bfeb55f8b60b",
+    "integrity": "sha512-Mi5BiVavz48toSRqE708sjzmcvyc5lu3Qslf73k3INDGQc2Mj7r7t78ipQosmaN783skEVKk2M0X8ZwNLifUTA==",
+    "dependencies": {
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/channels-intelligence",
+    "version": "0.11.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-intelligence@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "d58f0e5dabb05c8168b5fa3d3a11e4fc94f6201cd286774fd7d9fa3329041c2b",
+    "integrity": "sha512-nTYQ1IFRTlF61IHg+lJXA/AeUmhtlQm3kOjJsu3+egJFUdZcdcGbOzb1YJtouMylLQKBVsc8fARDMz8uTF8YoQ==",
+    "dependencies": {
+      "@copilotkit/channels-core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@912ed69",
+      "@copilotkit/channels-slack": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@912ed69",
+      "@copilotkit/channels-teams": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@912ed69",
+      "@copilotkit/channels-ui": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/channels-ui",
+    "version": "0.11.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "c47987174bae90f16c4001895b7a10562b23c3d0da1755891883bf3248e83d97",
+    "integrity": "sha512-IY8thicSCaNtiNMA2wfneMtKibJ6dgdJZFZMMiDF6YKAbjiJz3S1Nai2lG+u+6eo5rxD0TSnb/Z+VtjJJmAfWg==",
+    "dependencies": {
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/channels-teams",
+    "version": "0.11.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-teams@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "9ea5396f36626802b6ec9fce8d152b0ab1eebe27f6ff9f07510969b221b4369b",
+    "integrity": "sha512-gjQIxece/Cdh9kMsW/VYqjPHMiB/mErhnyh5TzTS86QVdHq7agPd+WTjGfQIE9bF+1eYZvg+5XWRTQ6vj0O0Xw==",
+    "dependencies": {
+      "@copilotkit/channels-core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@912ed69",
+      "@copilotkit/channels-ui": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@912ed69",
+      "@copilotkit/core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@912ed69",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/channels-core",
+    "version": "0.11.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "430315f45f52e2c35ed5852658d15b956984a281d0de63805c5c50f16360b806",
+    "integrity": "sha512-wYh5i6Ff2bx55d4PVP61+HdfbYtAnBeELxp58pYa4aaadLrcDfMuNQPekZbnizlkLOoPLQYSQuVMMraKS0DO9Q==",
+    "dependencies": {
+      "@copilotkit/channels-ui": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@912ed69",
+      "@copilotkit/core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@912ed69",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/channels-slack",
+    "version": "0.11.1",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-slack@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "7780659f46d5ac52eceffc9fd5aee5dfa71a95cd864de0e641e147ed8ae10a1f",
+    "integrity": "sha512-8NPdpU+KyKFjohDtXBvuHWJsKD8jcXoiTb/ibTX5jHaxwdOWK0MixdNlswCXsRpw7jpcBTEeS0h9EeOZYvBxeA==",
+    "dependencies": {
+      "@copilotkit/channels-core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-core@912ed69",
+      "@copilotkit/channels-ui": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/channels-ui@912ed69",
+      "@copilotkit/core": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/core@912ed69",
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/web-components",
+    "version": "1.80.0",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/web-components@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "e46b946af873b0ea537e450d0cfe1636b1c0b82fc02809ed5bc91943807abbd7",
+    "integrity": "sha512-PXnsj6xwCP156D6oOyXA+hSe5MnkAfHOiSUOdlGXNwJXQ9Yu22bzy5PTxNNbQpLzI5SmggC66aSLEKxxoY38PQ==",
+    "dependencies": {}
+  },
+  {
+    "name": "@copilotkit/mcp-apps-renderer",
+    "version": "1.80.0",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/mcp-apps-renderer@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "c7359e42c5794908abf5b18efb63c380db88b2d75493a105fad9c8603db94648",
+    "integrity": "sha512-TCixlJdTu0Illn/fJGK7jZS2arIlivxMWm5QnIKoR+kTgPrZp0/14GUSo1wSfCNFUnMjrjy9jsTk/MRdfef6IA==",
+    "dependencies": {
+      "@copilotkit/shared": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/shared@912ed69"
+    }
+  },
+  {
+    "name": "@copilotkit/a2ui-renderer",
+    "version": "1.80.0",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/a2ui-renderer@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "d42cf381ed0bb2e63d02d7b515a6ca77e7304c4a6071356193c2167143fa8355",
+    "integrity": "sha512-B7luPDGQzepau6prJDHySNnZP0vPk3SBQXJTpoVXswi1GXnQylT+zGJ6nCV3kQPHJnbOtTNHxNREZVvVzJIjRg==",
+    "dependencies": {}
+  },
+  {
+    "name": "@copilotkit/learning",
+    "version": "1.80.0",
+    "url": "https://pkg.pr.new/CopilotKit/CopilotKit/@copilotkit/learning@912ed69",
+    "sourceCommit": "912ed69d13cca0a0707e96ba9a8ac6364de913fc",
+    "sha256": "bef267b6d7b8443f832a3ef66e323822fc6a73ffc441d80903f030d5a0de529a",
+    "integrity": "sha512-7zr75gX/Q02xyPfM2O6WZICVkPJYgEP/j0q5QW6jjRGOGVzGg/j5kVhIkvqKwl8vW7jl4Xezai1dJ18q/MJ36A==",
+    "dependencies": {}
+  }
+]

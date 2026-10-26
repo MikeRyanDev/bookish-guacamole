@@ -3,8 +3,8 @@ import { readFile, writeFile } from "node:fs/promises";
 /** Generates preview lockfile integrities from the reviewed archive records. */
 const readJson = async (path) => JSON.parse(await readFile(path, "utf8"));
 const archives = [
-  await readJson("docs/alpha-artifacts/cli-archive.json"),
-  ...(await readJson("docs/alpha-artifacts/sdk-archives.json")),
+  await readJson("docs/alpha-artifacts/monday-11e65d6/cli-archive.json"),
+  ...(await readJson("docs/alpha-artifacts/sdk-archives-912ed69.json")),
 ];
 const canonical = (url) =>
   url.replace(

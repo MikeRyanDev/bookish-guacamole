@@ -792,3 +792,84 @@ Failed acceptance worktrees were recovered, archived, and removed individually.
 Existing user worktrees remained in place. Local main's unrelated Monday checklist
 patch remains excluded from all commits. Final integration uses `wt finish` and
 records its checked target commit in `starter-worktrunk/last-finish.json`.
+
+## Monday cutover preparation — 2026-10-26
+
+The five upstream PRs were rebased in native stack order and moved out of draft.
+The current Intelligence heads are #2041 `62d3c8ed1864754cfbf4b2199bacd97dd5ebda33`,
+#2063 `d05c1f0afe2ad7fce42190a8c436f7b970890203`, and
+#2068 `11e65d655cbd8a6b3dfcdee169e68e203af8143f`.
+The current CopilotKit heads are #7966 `4bf4447107c795c0624d4a6c0feb7a6189a22a23`
+and #7977 `912ed69d13cca0a0707e96ba9a8ac6364de913fc`.
+
+The starter now calls the SDK's `experimental.learning` management namespace.
+The first namespace preview compiled its methods as `any`; a strict starter
+typecheck caught that error. The corrected SDK preview passed runtime tests,
+build, typecheck, and declaration checks. All 15 public SDK archives at `912ed69`
+were downloaded and checksum-verified. `pnpm install --frozen-lockfile` passed
+with their lockfile integrities.
+
+| Command                                 | Result                                                                                                                                                                |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm test tests/learning-http.test.ts` | Passed the authenticated Learning route regression with the real namespace and mocked backend responses. The regression failed against the old SDK before the change. |
+| `pnpm typecheck`                        | Passed against the corrected public SDK preview.                                                                                                                      |
+| `pnpm check`                            | Passed lint, design source checks, types, tests, and builds.                                                                                                          |
+| `node --test example/greet.test.js`     | Passed.                                                                                                                                                               |
+| `pnpm format:check`                     | Passed after formatting.                                                                                                                                              |
+| `wt doctor`                             | Passed for the managed starter worktree.                                                                                                                              |
+| `wt check e2e/learning-dialog.spec.ts`  | Passed the full starter check, greeting test, and 18 affected browser tests on managed URLs.                                                                          |
+
+Intelligence's matching chart candidate `0.15.2-validation.11e65d655cbd`
+passed workflow `40378089911`. The CLI preview `4.31.0-pre.11e65d6`
+passed workflow `40379989285`. Its downloaded archive embedded the expected
+Intelligence and CopilotKit commits and chart pin. The candidate, artifact
+verification, and CLI SHA-256/SHA-512 record are in
+`docs/alpha-artifacts/monday-11e65d6/`. The candidate record reports
+`runtimeAcceptance: not_run`; artifact workflows do not prove an installed runtime.
+The final starter pin passed `pnpm check` again: 46 test files, 218 passing
+tests, 47 optional skips, and the production builds. `pnpm format:check`, the
+greeting test, `wt doctor`, and `wt check e2e/learning-dialog.spec.ts` passed;
+the latter ran all 18 affected browser tests. All five upstream PR heads had
+settled check rollups with no active or failed jobs. Intelligence #2041 and
+#2063, and CopilotKit #7966, needed same-head failed-job reruns for unrelated
+CI failures; each rerun passed. Review approvals and stable release gates remain open.
+
+### Installed candidate on macOS ARM64
+
+A fresh clone of public starter `38fb4d6a4678c80866619d04bd323490c3c3a41f`
+received the reviewed source overlay and public archive records. It used Node
+22.22.3 and pnpm 10.9.0. `pnpm install --frozen-lockfile` passed with all 16
+preview archive integrities. Private model and connection settings stayed in
+ignored files. The published CLI's normal `local setup --model-config
+.data/learning-model.json --candidate
+docs/alpha-artifacts/monday-11e65d6/candidate.json --json` created a separate
+stack `local-80d05b4092c7046109e3b02b` at the exact chart version and reached
+`ready`. The existing `local-15e8edc9f46af2905c518848` stack remained at its
+earlier candidate. The CLI connection preview named only this clone's local
+URLs, project key, Learning flag, and project file; `local connect
+--approve-connection --json` completed. `local status --json` returned `ready`.
+
+The fresh stack had no Learning spaces. The starter inherited its documented
+`coding-lessons` default and initially showed a 404 for the absent container.
+Creating `Coding lessons` with ID `coding-lessons` in the local Intelligence
+dashboard cleared the error. The starter then displayed that space and
+`Ready to learn`. The app ran at `http://127.0.0.1:4188` with a separate HMR
+port so the existing local app stayed untouched.
+
+| Installed check                    | Observed result                                                                                                                                                                                                                                                                                                                                                                         |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Coding and transcript reload       | GPT-6 Luna read two sample files, ran `node --test greet.test.js` after one-time approval, and suggested a regression-only test without editing files. Thread `0944158d-e7f4-4487-b816-8d939884f845` and its answer survived browser reload.                                                                                                                                            |
+| Real Learning and evidence         | UI run `01a17995-9111-79a3-b51c-62828329e1cf` succeeded with one candidate. The proposed `evidence-first-regression-tests` Skill cited the user request, the passing test output, and the agent answer. Its instructions were reviewed before approval.                                                                                                                                 |
+| Publication and immediate delivery | Approval published the Skill to `Coding lessons`; `/api/skills` reported registry revision 1. The next turn in the same app process called `load_skill`, received the reviewed instructions, ran the specified test with one-time approval, and answered without edits. The app process remained PID 19026 until later restart.                                                         |
+| Backend replay                     | The two-turn thread returned 118 events, zero decode-error rows, no truncation, and the `load_skill` call. Both responses and tool activity survived browser reload.                                                                                                                                                                                                                    |
+| Stack and app restart              | `local stop --json` and `local start --json` completed on the separate stack. Browser reload preserved the transcript, assignment, and published Skill. Restarting the clone's app on port 4188 changed its PID to 21068; the second thread, Learning state, and Skill remained visible.                                                                                                |
+| Learning agent recycling           | Restarting only the candidate stack's `cpki-learning-agent` deployment changed pod UID from `e70cdf55-35dc-4efd-9992-a84d1abae4c2` to `78753e17-1070-4e40-8420-e61b908bc2c4` and reached rollout readiness. A new saved thread `a9a4fe06-fa10-44c8-88ce-87417ca4f603` then fed UI run `01a17999-312c-766d-a901-5914ae4f2c23`, which succeeded with zero candidates and no failure code. |
+
+The generated Skill description repeats “When,” although its reviewed
+instructions and next-turn delivery worked. The second model answer incorrectly
+claimed two exclamation marks for `greet(' Ada ')`; direct execution returned
+`"Hello,  Ada !"`. This is an answer-quality failure, not evidence of a runtime
+failure. Candidate checks prove this macOS ARM64 local installation only.
+Windows, Linux, AMD64 installation, hosted deployment, automatic Learning
+scheduling, and concurrent users remain untested. Historical installed proof
+above belongs to older previews. No stable package or shared deployment changed.

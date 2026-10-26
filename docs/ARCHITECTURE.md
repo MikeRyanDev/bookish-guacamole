@@ -172,7 +172,7 @@ See [Execution and connections](EXECUTION.md) for defaults, procedures, and reco
 The workspace registry stores the default Learning space for new conversations.
 An absent row inherits the application default. Null explicitly disables Learning.
 The browser edits this choice through authenticated local routes and shows the confirmed server value.
-The Intelligence SDK validates runtime management responses and keeps project credentials on the server.
+The server calls the SDK's `CopilotKitIntelligence.experimental.learning` management namespace. The SDK validates responses and keeps project credentials on the server. The namespace and its types remain experimental until the cross-repository contract is approved for release.
 
 The assignment selector reads the existing conversation from Intelligence before each run.
 It verifies the workspace agent identity and preserves established memberships, including multiple spaces.

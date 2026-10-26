@@ -1,9 +1,6 @@
 import { Hono } from "hono";
 import { z } from "zod";
-import type {
-  LearningCandidate as SdkCandidate,
-  LearningRun as SdkRun,
-} from "@copilotkit/runtime/v2";
+import type { experimental } from "@copilotkit/runtime/v2";
 import type {
   LearningCandidate,
   LearningRun,
@@ -27,7 +24,13 @@ const runSummary = ({
   createdAt,
   candidateCount,
   failureCode,
-}: SdkRun): LearningRun => ({ id, status, createdAt, candidateCount, failureCode });
+}: experimental.LearningRun): LearningRun => ({
+  id,
+  status,
+  createdAt,
+  candidateCount,
+  failureCode,
+});
 const candidateSummary = ({
   id,
   title,
@@ -35,7 +38,14 @@ const candidateSummary = ({
   reason,
   operation,
   status,
-}: SdkCandidate): LearningCandidate => ({ id, title, description, reason, operation, status });
+}: experimental.LearningCandidate): LearningCandidate => ({
+  id,
+  title,
+  description,
+  reason,
+  operation,
+  status,
+});
 function objectId(value: string) {
   if (!z.uuid().safeParse(value).success) throw new WorkspaceError("Invalid Learning item.");
   return value;
@@ -64,7 +74,9 @@ export function learningRoutes({
   }
   async function settings(workspaceId: string, signal: AbortSignal): Promise<WorkspaceLearning> {
     const id = learning.assignment(workspaceId);
-    const space = id ? await intelligence.getLearningContainer({ containerId: id, signal }) : null;
+    const space = id
+      ? await intelligence.experimental.learning.getLearningContainer({ containerId: id, signal })
+      : null;
     return {
       containerId: id,
       inherited: workspaces.getLearningAssignment(workspaceId) === undefined,
@@ -75,7 +87,10 @@ export function learningRoutes({
     const cursor = c.req.query("cursor");
     if (cursor !== undefined && !z.string().min(1).max(128).safeParse(cursor).success)
       throw new WorkspaceError("Invalid space cursor.");
-    const page = await intelligence.listLearningContainers({ cursor, signal: c.req.raw.signal });
+    const page = await intelligence.experimental.learning.listLearningContainers({
+      cursor,
+      signal: c.req.raw.signal,
+    });
     return c.json({
       spaces: page.containers.map(({ id, name }) => ({ id, name })),
       nextCursor: page.nextCursor,
@@ -89,7 +104,10 @@ export function learningRoutes({
       const workspace = selected(c.req.url);
       const id = c.req.valid("json").containerId;
       const space = id
-        ? await intelligence.getLearningContainer({ containerId: id, signal: c.req.raw.signal })
+        ? await intelligence.experimental.learning.getLearningContainer({
+            containerId: id,
+            signal: c.req.raw.signal,
+          })
         : null;
       workspaces.setLearningAssignment(workspace.id, id);
       return c.json({
@@ -102,7 +120,7 @@ export function learningRoutes({
   app.get("/runs", async (c) =>
     c.json({
       runs: (
-        await intelligence.listLearningRuns({
+        await intelligence.experimental.learning.listLearningRuns({
           containerId: requireSpace(c.req.url),
           signal: c.req.raw.signal,
         })
@@ -113,7 +131,7 @@ export function learningRoutes({
     c.json(
       {
         run: runSummary(
-          await intelligence.startLearningRun({
+          await intelligence.experimental.learning.startLearningRun({
             containerId: requireSpace(c.req.url, c.req.valid("json").containerId),
             signal: c.req.raw.signal,
           }),
@@ -125,7 +143,7 @@ export function learningRoutes({
   app.get("/candidates", async (c) =>
     c.json({
       candidates: (
-        await intelligence.listLearningCandidates({
+        await intelligence.experimental.learning.listLearningCandidates({
           containerId: requireSpace(c.req.url),
           signal: c.req.raw.signal,
         })
@@ -133,7 +151,7 @@ export function learningRoutes({
     }),
   );
   app.get("/candidates/:id", async (c) => {
-    const candidate = await intelligence.getLearningCandidate({
+    const candidate = await intelligence.experimental.learning.getLearningCandidate({
       containerId: requireSpace(c.req.url),
       candidateId: objectId(c.req.param("id")),
       signal: c.req.raw.signal,
@@ -150,7 +168,7 @@ export function learningRoutes({
     async (c) => {
       const input = c.req.valid("json");
       return c.json(
-        await intelligence.reviewLearningCandidate({
+        await intelligence.experimental.learning.reviewLearningCandidate({
           containerId: requireSpace(c.req.url, input.containerId),
           candidateId: objectId(c.req.param("id")),
           action: input.action,
@@ -160,7 +178,7 @@ export function learningRoutes({
     },
   );
   app.get("/insights/:id/evidence", async (c) => {
-    const evidence = await intelligence.getLearningInsightEvidence({
+    const evidence = await intelligence.experimental.learning.getLearningInsightEvidence({
       containerId: requireSpace(c.req.url),
       insightId: objectId(c.req.param("id")),
       signal: c.req.raw.signal,

@@ -4,8 +4,8 @@ import { expect, test } from "vitest";
 test("every preview archive has a recorded integrity in the lockfile", () => {
   const lock = readFileSync("pnpm-lock.yaml", "utf8");
   const archives = [
-    JSON.parse(readFileSync("docs/alpha-artifacts/cli-archive.json", "utf8")),
-    ...JSON.parse(readFileSync("docs/alpha-artifacts/sdk-archives.json", "utf8")),
+    JSON.parse(readFileSync("docs/alpha-artifacts/monday-11e65d6/cli-archive.json", "utf8")),
+    ...JSON.parse(readFileSync("docs/alpha-artifacts/sdk-archives-912ed69.json", "utf8")),
   ];
   const resolutions = lock
     .split("\n")

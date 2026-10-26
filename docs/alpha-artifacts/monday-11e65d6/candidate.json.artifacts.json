@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "phase": "artifact-verification",
+  "candidateSha256": "38fb2a5da6dae111400a305eaf1df84d325b39e215b9da6a8d50556d1004294a",
+  "defaultEligible": false,
+  "runtimeAcceptance": "not_run"
+}
