@@ -2,14 +2,14 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { mkdir, mkdtemp, open, readFile, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, open, readFile, realpath, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { available, context, probe, readJson, sleep, writeJson } from "./core.mjs";
 import { environment } from "./lifecycle.mjs";
 
 const ctx = await context();
-const directory = await mkdtemp(join(tmpdir(), "starter-worktrunk-acceptance-"));
+const directory = await realpath(await mkdtemp(join(tmpdir(), "starter-worktrunk-acceptance-")));
 const id = Date.now().toString(36);
 const evidence = join(ctx.shared, "acceptance", id);
 await mkdir(evidence, { recursive: true });
@@ -65,7 +65,7 @@ async function waitReady(root) {
 }
 try {
   const started = Date.now();
-  await Promise.all(
+  const creations = await Promise.allSettled(
     ["a", "b", "c"].map(async (suffix) => {
       const branch = `verify/wt-${id}-${suffix}`;
       const root = join(directory, branch.replaceAll("/", "-"));
@@ -82,6 +82,8 @@ try {
       await waitReady(root);
     }),
   );
+  const failedCreation = creations.find((result) => result.status === "rejected");
+  if (failedCreation) throw failedCreation.reason;
   report.parallelSetupMs = Date.now() - started;
   const [a, b, c] = report.worktrees;
   const states = await Promise.all(

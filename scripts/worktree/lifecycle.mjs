@@ -18,19 +18,30 @@ import {
   writeJson,
 } from "./core.mjs";
 
-function vars(root, values) {
-  for (const [key, value] of Object.entries(values))
-    capture(
-      "wt",
-      [
-        "config",
-        "state",
-        "vars",
-        "set",
-        `${key}=${typeof value === "string" ? value : JSON.stringify(value)}`,
-      ],
-      root,
-    );
+async function vars(root, values) {
+  // Worktrunk stores branch variables in the shared Git config. Git's lock is fail-fast.
+  for (const [key, value] of Object.entries(values)) {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        capture(
+          "wt",
+          [
+            "config",
+            "state",
+            "vars",
+            "set",
+            `${key}=${typeof value === "string" ? value : JSON.stringify(value)}`,
+          ],
+          root,
+        );
+        break;
+      } catch (error) {
+        if (attempt >= 100 || !String(error.stderr).includes("could not lock config file"))
+          throw error;
+        await sleep(50);
+      }
+    }
+  }
 }
 export async function load(root) {
   const ctx = await context(root);
@@ -54,7 +65,7 @@ export async function setup(base = "main", mode = process.env.STARTER_WORKTREE_M
       await mkdir(join(ctx.root, ".data"), { recursive: true, mode: 0o700 });
       const previous = await readJson(ctx.statePath);
       if (previous?.process) throw Error("Stop the server with wt dev stop before setup.");
-      vars(ctx.root, { readiness: "preparing" });
+      await vars(ctx.root, { readiness: "preparing" });
       await run("wt", ["step", "copy-ignored", "--require-include"], ctx.root);
       await checkPrivatePaths(ctx.root);
       if (mode === "connected") {
@@ -117,7 +128,7 @@ export async function setup(base = "main", mode = process.env.STARTER_WORKTREE_M
         setupMs: Date.now() - started,
       };
       await writeJson(ctx.statePath, state);
-      vars(ctx.root, {
+      await vars(ctx.root, {
         owner: state.owner,
         purpose: state.purpose,
         "base-commit": state.baseCommit,
@@ -188,7 +199,7 @@ export async function stop(ctx, state) {
   delete state.process;
   delete state.instance;
   await writeJson(ctx.statePath, state);
-  vars(ctx.root, { readiness: "stopped" });
+  await vars(ctx.root, { readiness: "stopped" });
 }
 /** Starts tethered services and waits for their authenticated checkout identities. */
 export async function dev(action = "start") {
@@ -231,12 +242,12 @@ export async function dev(action = "start") {
       await writeJson(ctx.statePath, state);
       child.unref();
       await log.close();
-      vars(ctx.root, { readiness: "starting" });
+      await vars(ctx.root, { readiness: "starting" });
       let failure;
       for (let i = 0; i < 120; i++) {
         try {
           await ready(ctx, state);
-          vars(ctx.root, { readiness: "ready" });
+          await vars(ctx.root, { readiness: "ready" });
           console.log(
             JSON.stringify({
               root: ctx.root,
@@ -251,7 +262,7 @@ export async function dev(action = "start") {
           await sleep(250);
         }
       }
-      vars(ctx.root, { readiness: "failed" });
+      await vars(ctx.root, { readiness: "failed" });
       throw Error(
         `Server readiness failed: ${failure.message}. Inspect .data/worktrunk-server.log; run wt dev restart.`,
       );
@@ -326,7 +337,7 @@ export async function doctor() {
   const locks = (await readdir(ctx.shared)).filter((name) => name.endsWith(".lock"));
   try {
     await ready(ctx, state);
-    vars(ctx.root, { readiness: "ready" });
+    await vars(ctx.root, { readiness: "ready" });
     console.log(
       JSON.stringify({
         root: ctx.root,
@@ -341,7 +352,7 @@ export async function doctor() {
       }),
     );
   } catch (error) {
-    vars(ctx.root, { readiness: "not-ready" });
+    await vars(ctx.root, { readiness: "not-ready" });
     throw Error(
       `${error.message} Locks: ${locks.join(", ") || "none"}. Run wt dev restart; if setup is missing run wt setup.`,
     );
