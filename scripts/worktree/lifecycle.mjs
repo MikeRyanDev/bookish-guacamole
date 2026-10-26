@@ -18,7 +18,7 @@ import {
   writeJson,
 } from "./core.mjs";
 
-async function vars(root, values) {
+export async function setVariables(root, values) {
   // Worktrunk stores branch variables in the shared Git config. Git's lock is fail-fast.
   for (const [key, value] of Object.entries(values)) {
     for (let attempt = 0; ; attempt++) {
@@ -65,7 +65,7 @@ export async function setup(base = "main", mode = process.env.STARTER_WORKTREE_M
       await mkdir(join(ctx.root, ".data"), { recursive: true, mode: 0o700 });
       const previous = await readJson(ctx.statePath);
       if (previous?.process) throw Error("Stop the server with wt dev stop before setup.");
-      await vars(ctx.root, { readiness: "preparing" });
+      await setVariables(ctx.root, { readiness: "preparing" });
       await run("wt", ["step", "copy-ignored", "--require-include"], ctx.root);
       await checkPrivatePaths(ctx.root);
       if (mode === "connected") {
@@ -84,16 +84,14 @@ export async function setup(base = "main", mode = process.env.STARTER_WORKTREE_M
         ])
           if (!env[key])
             throw Error(`Connected mode needs ${key} in .env. Run wt setup after correcting it.`);
-        for (const name of ["CODING_MODELS_FILE", "LEARNING_MODELS_FILE"]) {
-          const path =
-            env[name] ?? (name === "CODING_MODELS_FILE" ? "models.json" : "learning.json");
-          try {
-            JSON.parse(await readFile(resolve(ctx.root, path), "utf8"));
-          } catch {
-            throw Error(
-              `Connected mode needs valid ${name}. Correct the private model file, then run wt setup.`,
-            );
-          }
+        try {
+          JSON.parse(
+            await readFile(resolve(ctx.root, env.CODING_MODELS_FILE ?? "models.json"), "utf8"),
+          );
+        } catch {
+          throw Error(
+            "Connected mode needs valid CODING_MODELS_FILE. Correct the private model file, then run wt setup.",
+          );
         }
       }
       await run("pnpm", ["install", "--frozen-lockfile"], ctx.root);
@@ -128,7 +126,7 @@ export async function setup(base = "main", mode = process.env.STARTER_WORKTREE_M
         setupMs: Date.now() - started,
       };
       await writeJson(ctx.statePath, state);
-      await vars(ctx.root, {
+      await setVariables(ctx.root, {
         owner: state.owner,
         purpose: state.purpose,
         "base-commit": state.baseCommit,
@@ -156,42 +154,64 @@ export async function ready(ctx, state) {
   if (state.mode === "connected")
     await probe(`http://127.0.0.1:${state.ports.app}`, state.token, expected(ctx, state, "app"));
 }
-function processStamp(pid) {
+function processInfo(pid) {
   try {
-    return capture("ps", ["-p", String(pid), "-o", "lstart="]);
+    const line = capture("ps", [
+      "-p",
+      String(pid),
+      "-o",
+      "lstart=",
+      "-o",
+      "pgid=",
+      "-o",
+      "command=",
+    ]);
+    const match = /^(\w{3}\s+\w{3}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}\s+\d{4})\s+(\d+)\s+(.+)$/.exec(
+      line,
+    );
+    return match ? { stamp: match[1], pgid: Number(match[2]), command: match[3] } : undefined;
   } catch {
-    return "";
+    return undefined;
   }
 }
-/** Stops only the recorded supervisor after checking its start time and executable arguments. */
+function processStamp(pid) {
+  return processInfo(pid)?.stamp ?? "";
+}
+function terminate(pid) {
+  try {
+    process.kill(pid, "SIGTERM");
+  } catch (error) {
+    if (error.code !== "ESRCH") throw error;
+  }
+}
+/** Stops recorded processes after one atomic process snapshot; an already-exited process is harmless. */
 export async function stop(ctx, state) {
   const groupFile = join(ctx.root, ".data/worktrunk-process.json");
   const group = await readJson(groupFile);
-  if (group && processStamp(group.pid)) {
-    const command = capture("ps", ["-p", String(group.pid), "-o", "command="]);
-    const pgid = Number(capture("ps", ["-p", String(group.pid), "-o", "pgid="]));
+  const groupInfo = group && processInfo(group.pid);
+  if (groupInfo) {
     if (
       group.instance !== state.instance ||
-      processStamp(group.pid) !== group.stamp ||
-      pgid !== group.pid ||
-      !command.includes(join(ctx.root, "scripts/worktree.mjs"))
+      groupInfo.stamp !== group.stamp ||
+      groupInfo.pgid !== group.pid ||
+      !groupInfo.command.includes(join(ctx.root, "scripts/worktree.mjs"))
     )
       throw Error("Recorded server group identity changed; refuse to signal it.");
-    process.kill(-group.pid, "SIGTERM");
+    terminate(-group.pid);
     for (let i = 0; i < 100 && processStamp(group.pid); i++) await sleep(100);
     if (processStamp(group.pid))
       throw Error("Server group did not stop; inspect it before retrying.");
   }
   await rm(groupFile, { force: true });
   const owned = state.process;
-  if (owned && processStamp(owned.pid)) {
-    const command = capture("ps", ["-p", String(owned.pid), "-o", "command="]);
+  const info = owned && processInfo(owned.pid);
+  if (info) {
     if (
-      processStamp(owned.pid) !== owned.stamp ||
-      !command.includes(join(ctx.root, "scripts/worktree.mjs"))
+      info.stamp !== owned.stamp ||
+      !info.command.includes(join(ctx.root, "scripts/worktree.mjs"))
     )
       throw Error("Recorded process identity changed; refuse to signal it.");
-    process.kill(owned.pid, "SIGTERM");
+    terminate(owned.pid);
     for (let i = 0; i < 100 && processStamp(owned.pid); i++) await sleep(100);
     if (processStamp(owned.pid))
       throw Error("Server did not stop. Inspect its process before retrying.");
@@ -199,7 +219,7 @@ export async function stop(ctx, state) {
   delete state.process;
   delete state.instance;
   await writeJson(ctx.statePath, state);
-  await vars(ctx.root, { readiness: "stopped" });
+  await setVariables(ctx.root, { readiness: "stopped" });
 }
 /** Starts tethered services and waits for their authenticated checkout identities. */
 export async function dev(action = "start") {
@@ -242,12 +262,12 @@ export async function dev(action = "start") {
       await writeJson(ctx.statePath, state);
       child.unref();
       await log.close();
-      await vars(ctx.root, { readiness: "starting" });
+      await setVariables(ctx.root, { readiness: "starting" });
       let failure;
       for (let i = 0; i < 120; i++) {
         try {
           await ready(ctx, state);
-          await vars(ctx.root, { readiness: "ready" });
+          await setVariables(ctx.root, { readiness: "ready" });
           console.log(
             JSON.stringify({
               root: ctx.root,
@@ -262,7 +282,7 @@ export async function dev(action = "start") {
           await sleep(250);
         }
       }
-      await vars(ctx.root, { readiness: "failed" });
+      await setVariables(ctx.root, { readiness: "failed" });
       throw Error(
         `Server readiness failed: ${failure.message}. Inspect .data/worktrunk-server.log; run wt dev restart.`,
       );
@@ -337,7 +357,7 @@ export async function doctor() {
   const locks = (await readdir(ctx.shared)).filter((name) => name.endsWith(".lock"));
   try {
     await ready(ctx, state);
-    await vars(ctx.root, { readiness: "ready" });
+    await setVariables(ctx.root, { readiness: "ready" });
     console.log(
       JSON.stringify({
         root: ctx.root,
@@ -352,7 +372,7 @@ export async function doctor() {
       }),
     );
   } catch (error) {
-    await vars(ctx.root, { readiness: "not-ready" });
+    await setVariables(ctx.root, { readiness: "not-ready" });
     throw Error(
       `${error.message} Locks: ${locks.join(", ") || "none"}. Run wt dev restart; if setup is missing run wt setup.`,
     );

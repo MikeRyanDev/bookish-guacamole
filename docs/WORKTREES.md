@@ -50,6 +50,8 @@ Place global flags before aliases: `wt --yes setup main fixture`.
 The Codex plugin supplies guidance and activity markers. It does not create isolated
 Codex worktrees automatically. Use `wt switch --create` before opening a desktop task
 in that directory. Existing Codex sessions can need a restart to load the plugin.
+Open `/hooks` in Codex and review the four Worktrunk marker commands before trusting them.
+Plugin installation alone does not activate untrusted hooks.
 Markers can remain after a process crash. They do not prove that a process is alive.
 The repository's existing Impeccable hooks remain separate.
 
@@ -105,7 +107,8 @@ wt doctor
 ```
 
 For creation directly in connected mode, set `STARTER_WORKTREE_MODE=connected` before
-`wt switch --create`. Prepare valid `.env`, `models.json`, and `learning.json` first.
+`wt switch --create`. Prepare valid `.env` and `models.json` first. `learning.json` is copied when present.
+The existing backend already owns its Learning model configuration.
 The script checks required connection fields without printing credentials. It does not
 install, upgrade, reset, or change the Intelligence backend.
 

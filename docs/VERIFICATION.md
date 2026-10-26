@@ -666,6 +666,7 @@ The fixture simulates Learning writes. The application preview uses the existing
 No new model call, Learning run, or Skill approval was made against the user's main workspace for this redesign.
 No server, SDK, dependency preview, upstream PR, or shared deployment changed.
 The existing build chunk warning and pre-existing Impeccable sidecar drift remain.
+
 ### Merged main and active app
 
 Implementation commit `9c71af9` fast-forwarded into local `main`.
@@ -694,15 +695,15 @@ The title, description, and Markdown share one left edge. Desktop removes Back t
 One library refresh replaces the header and run refresh controls. Failed refreshes retain readable content.
 The presentation helper removes only exact repeated generated prefixes. It preserves stored Skill source.
 
-| Command | Result |
-| --- | --- |
-| `pnpm install --frozen-lockfile` | Passed in the isolated worktree. Pins unchanged. |
-| `pnpm check` | Passed lint, source design checks, type checks, 43 test files, 214 tests, and production builds. 47 declared skips. |
-| `node --test example/greet.test.js` | One passed. |
-| `FILE_VIEWER_APP_URL=http://127.0.0.1:4197 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4196 pnpm exec playwright test e2e/learning-dialog.spec.ts e2e/learning.spec.ts e2e/learning-refinement.spec.ts e2e/workspace.spec.ts e2e/design.spec.ts --output=.data/learning-refinement/final` | 55 passed, including the rendered design matrix. |
-| `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4196 pnpm exec playwright test e2e/learning-refinement.spec.ts -g 'list, loading' --output=.data/learning-refinement/states` | One additional state test passed. |
-| `.agents/skills/impeccable/scripts/impeccable detect --json src/client/components/learning-panel.tsx src/client/components/learning-dialog.tsx src/client/styles.css` | No blocking findings. Advisories cover local reader sizes and pre-existing color/radius values. |
-| `git diff --check` | Passed. |
+| Command                                                                                                                                                                                                                                                                                | Result                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install --frozen-lockfile`                                                                                                                                                                                                                                                       | Passed in the isolated worktree. Pins unchanged.                                                                    |
+| `pnpm check`                                                                                                                                                                                                                                                                           | Passed lint, source design checks, type checks, 43 test files, 214 tests, and production builds. 47 declared skips. |
+| `node --test example/greet.test.js`                                                                                                                                                                                                                                                    | One passed.                                                                                                         |
+| `FILE_VIEWER_APP_URL=http://127.0.0.1:4197 FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4196 pnpm exec playwright test e2e/learning-dialog.spec.ts e2e/learning.spec.ts e2e/learning-refinement.spec.ts e2e/workspace.spec.ts e2e/design.spec.ts --output=.data/learning-refinement/final` | 55 passed, including the rendered design matrix.                                                                    |
+| `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:4196 pnpm exec playwright test e2e/learning-refinement.spec.ts -g 'list, loading' --output=.data/learning-refinement/states`                                                                                                                 | One additional state test passed.                                                                                   |
+| `.agents/skills/impeccable/scripts/impeccable detect --json src/client/components/learning-panel.tsx src/client/components/learning-dialog.tsx src/client/styles.css`                                                                                                                  | No blocking findings. Advisories cover local reader sizes and pre-existing color/radius values.                     |
+| `git diff --check`                                                                                                                                                                                                                                                                     | Passed.                                                                                                             |
 
 The browser matrix covers 320, 390, 768, 1440, 1512, and 2048px in both themes with long titles and documents.
 It covers alignment, preview length, focus, metadata, visible decisions, and axe accessibility checks.
@@ -738,3 +739,56 @@ The refreshed app retained CPK Intelligence and Repo Overview. Its Learning dial
 The live view showed the compact assignment, two-line previews, unified refresh, corrected description, and aligned document.
 The final screenshot remains ignored at `.data/learning-refinement-main.jpg`. No new model or backend Learning mutation occurred.
 Temporary preview servers stopped. The production app remains running.
+
+## Worktrunk contributor workflow — 2026-10-25
+
+Implemented in `feat/worktrunk-workflow` from local main `481dfc3`.
+Worktrunk 0.81.0 is installed and Homebrew-pinned. Zsh loads its wrapper.
+The Codex Worktrunk plugin is installed and enabled. Its four activity hooks were
+reviewed and trusted through `/hooks`. A real Codex CLI prompt showed the working
+marker, returned `OK`, and cleared the marker at session exit. The system CLI was
+broken before installation; npm package `@openai/codex@0.164.0` restored it. That
+package's executable reports `codex-cli 0.163.0`. The app-bundled older CLI could
+install plugins but could not run the configured GPT-6 Astra model.
+
+The workflow keeps fixture and connected modes explicit. Connected acceptance used
+existing local backend credentials, a fresh sample workspace, and no coding-model
+or Learning mutation. The plugin test was a separate minimal Codex model call.
+Learning configuration remains owned by the existing backend; a local `learning.json`
+is optional for application startup and is copied only when present.
+
+| Command or scenario                                            | Result                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `wt check e2e/worktree.spec.ts e2e/tool-renderers.spec.ts`     | Passed lint, source design checks, TypeScript, 45 Vitest files (217 passed, 47 declared skips), seven worktree regression tests, production builds, greeting test, and two browser tests at that revision.                                                                                                 |
+| `node scripts/worktree/acceptance.mjs`                         | Passed three simultaneous real worktrees, nine distinct ports, wrong-checkout rejection before browser tests, failed connected setup and retry, occupied-port refusal, stop/restart, killed server recovery, missing/stale archive refusal, foreground removal, and tether cleanup after external removal. |
+| Connected `e2e/worktree.spec.ts` with the launcher environment | Both tests passed: fixture access policy and the actual connected workspace shell. Global setup checked both server identities.                                                                                                                                                                            |
+| Three connected `wt dev stop` / `wt dev` cycles                | Every cycle released all three assigned ports and returned to authenticated readiness.                                                                                                                                                                                                                     |
+| Real Worktrunk merge regression tests                          | Conflict retained source and target state. Concurrent finish refused the second request. Failed final-target checks retained the merged source and did not record success.                                                                                                                                 |
+| Dirty-target regression                                        | Default refusal passed. An explicit unrelated tracked-file exception preserved the exact patch. Untracked files remained refused.                                                                                                                                                                          |
+| `git diff --check`                                             | Passed before integration.                                                                                                                                                                                                                                                                                 |
+
+The first parallel run exposed Git config lock contention in Worktrunk metadata
+writes. Bounded retries corrected it. An explicit stop test exposed an orphaned
+server group. Group identity tracking corrected it. Later stop testing exposed a
+process-exit race between separate `ps` calls. A single process snapshot and harmless
+handling of an already-exited process corrected it.
+
+One full check overlapped three dependency installations and timed out in the existing
+5-second Git discovery test. The same unmodified test passed in the subsequent full
+check without those installations. No timeout or assertion was relaxed.
+The tool-renderer suite wrote existing tracked screenshots; those generated changes
+were restored and are not part of this delivery.
+
+A manual single-checkout baseline reached fixture readiness in 8.476 seconds with
+a warm pnpm cache. It required four external creation/start commands plus private-file
+copying, port selection, and readiness inspection. The first successful three-way
+Worktrunk run took 47.185 seconds total; the expanded run took 51.888 seconds.
+Each automated task required creation and a readiness query. These concurrent runs
+measure coordination and reduced manual work, not a single-checkout speed improvement.
+
+Raw reports, logs, private archives, the inventory, and the baseline live under the
+Git common directory's `starter-worktrunk/` folder or ignored worktree `.data/`.
+Failed acceptance worktrees were recovered, archived, and removed individually.
+Existing user worktrees remained in place. Local main's unrelated Monday checklist
+patch remains excluded from all commits. Final integration uses `wt finish` and
+records its checked target commit in `starter-worktrunk/last-finish.json`.

@@ -19,3 +19,13 @@ test("managed fixture loads this checkout and refuses unauthenticated identity a
   await expect(page.locator("body")).not.toBeEmpty();
   expect((await page.request.get(`${fixture}/`)).status()).toBe(200);
 });
+
+test("managed connected app loads the isolated workspace", async ({ page }) => {
+  test.skip(
+    process.env.STARTER_WORKTREE_MODE !== "connected",
+    "Connected acceptance requires existing local backend configuration",
+  );
+  await page.goto(process.env.FILE_VIEWER_APP_URL!);
+  await expect(page.getByRole("textbox", { name: "Message your coding agent" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Settings", exact: true })).toBeVisible();
+});

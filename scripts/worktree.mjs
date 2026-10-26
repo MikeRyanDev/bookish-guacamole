@@ -2,6 +2,7 @@ import { readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { context, capture } from "./worktree/core.mjs";
 import {
+  setVariables,
   setup,
   dev,
   serve,
@@ -54,7 +55,7 @@ try {
       if (index < 1 || !["owner", "purpose", "target"].includes(key) || !value)
         throw Error("Use wt task owner=<name> purpose=<text> target=<branch>.");
       state[key] = value;
-      capture("wt", ["config", "state", "vars", "set", `${key}=${value}`], ctx.root);
+      await setVariables(ctx.root, { [key]: value });
     }
     const { writeJson } = await import("./worktree/core.mjs");
     await writeJson(ctx.statePath, state);

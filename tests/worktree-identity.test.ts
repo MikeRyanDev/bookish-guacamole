@@ -11,3 +11,18 @@ test("identity is absent unless enabled and exposes only startup identity", asyn
   expect(await response.json()).toEqual(identity);
   expect(response.headers.get("cache-control")).toBe("no-store");
 });
+
+test("production and unmanaged launches do not create an identity", async () => {
+  const { vi } = await import("vitest");
+  const { readWorktreeIdentity } = await import("../src/server/worktree-identity.js");
+  try {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("STARTER_WORKTREE_INSTANCE", "managed");
+    expect(readWorktreeIdentity("app")).toBeUndefined();
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("STARTER_WORKTREE_INSTANCE", "");
+    expect(readWorktreeIdentity("app")).toBeUndefined();
+  } finally {
+    vi.unstubAllEnvs();
+  }
+});
