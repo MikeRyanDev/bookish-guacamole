@@ -1,6 +1,7 @@
 // Opt-in lifecycle acceptance. Real Git worktrees, pnpm installs, Worktrunk hooks and TCP listeners.
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { createServer } from "node:net";
 import { randomUUID } from "node:crypto";
 import { mkdir, mkdtemp, open, readFile, realpath, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -126,6 +127,15 @@ try {
   record("failed setup leaves checkout and supports retry");
   await command(b.root, "wt", ["--yes", "dev", "stop"]);
   assert.equal(await available(stateB.ports.fixture), true);
+  const blocker = createServer();
+  await new Promise((resolve) => blocker.listen(stateB.ports.fixture, "127.0.0.1", resolve));
+  try {
+    const collision = await command(b.root, "wt", ["--yes", "dev"], 1);
+    assert.match(collision, /port is occupied/);
+  } finally {
+    await new Promise((resolve) => blocker.close(resolve));
+  }
+  record("occupied port fails before server startup");
   await command(b.root, "wt", ["--yes", "dev"]);
   record("stop releases the server port and restart succeeds");
   const group = await readJson(join(c.root, ".data/worktrunk-process.json"));
@@ -152,7 +162,29 @@ try {
   record("cleanup refuses missing and stale private archives");
   for (const { branch, root } of report.worktrees) {
     await command(root, "wt", ["--yes", "archive"]);
-    await command(ctx.root, "wt", ["--yes", "remove", branch, "--foreground"]);
+    if (branch === c.branch) {
+      await command(root, "wt", ["--yes", "dev"]);
+      // Adversarial acceptance: prove tether reacts even when another tool removes the checkout.
+      await command(ctx.root, "git", ["worktree", "remove", root]);
+      await command(ctx.root, "git", ["branch", "-d", branch]);
+      for (
+        let i = 0;
+        i < 100 &&
+        !(await available(
+          states[report.worktrees.findIndex((item) => item.root === c.root)].ports.fixture,
+        ));
+        i++
+      )
+        await sleep(100);
+      assert.equal(
+        await available(
+          states[report.worktrees.findIndex((item) => item.root === c.root)].ports.fixture,
+        ),
+        true,
+      );
+      await command(ctx.root, process.execPath, ["scripts/worktree.mjs", "release-ports", root]);
+      record("tether releases server after external worktree removal");
+    } else await command(ctx.root, "wt", ["--yes", "remove", branch, "--foreground"]);
   }
   for (const state of states) assert.equal(await available(state.ports.fixture), true);
   record("foreground removal preserves archives and releases ports");
