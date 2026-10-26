@@ -130,7 +130,9 @@ test("Markdown does not execute HTML or request external images", async ({ page 
 });
 
 for (const theme of ["light", "dark"]) {
-  test(`viewer is accessible and contained in ${theme} desktop and mobile`, async ({ page }) => {
+  test(`viewer is accessible and contained in ${theme} desktop and mobile`, async ({
+    page,
+  }, testInfo) => {
     await page.evaluate((theme) => (document.documentElement.dataset.theme = theme), theme);
     await page.getByRole("textbox", { name: "Search files" }).fill("greet");
     await page.getByRole("button", { name: "Open src/greet.ts", exact: true }).click();
@@ -143,7 +145,7 @@ for (const theme of ["light", "dark"]) {
     ).toEqual([]);
     await expect(page.locator(".starter-files-source-token").first()).toBeVisible();
     await page.mouse.move(0, 0);
-    await page.screenshot({ path: `docs/proof/file-viewer-${theme}.png` });
+    await page.screenshot({ path: testInfo.outputPath(`file-viewer-${theme}.png`) });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.getByRole("button", { name: "Wrap lines" }).click();
     await expect(page.getByRole("region", { name: "File contents" })).toBeVisible();
@@ -153,7 +155,7 @@ for (const theme of ["light", "dark"]) {
     expect(
       (await new AxeBuilder({ page }).include(".starter-files-inspector").analyze()).violations,
     ).toEqual([]);
-    await page.screenshot({ path: `docs/proof/file-viewer-mobile-${theme}.png` });
+    await page.screenshot({ path: testInfo.outputPath(`file-viewer-mobile-${theme}.png`) });
   });
 }
 

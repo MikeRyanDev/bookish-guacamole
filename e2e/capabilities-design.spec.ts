@@ -3,7 +3,9 @@ import AxeBuilder from "@axe-core/playwright";
 const fixture = process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174";
 for (const theme of ["light", "dark"])
   for (const width of [1440, 390, 320]) {
-    test(`capability surfaces remain accessible at ${width} in ${theme}`, async ({ page }) => {
+    test(`capability surfaces remain accessible at ${width} in ${theme}`, async ({
+      page,
+    }, testInfo) => {
       await page.setViewportSize({ width, height: width === 1440 ? 960 : 844 });
       await page.emulateMedia({ reducedMotion: "reduce" });
       const capture = async (name: string) => {
@@ -15,7 +17,7 @@ for (const theme of ["light", "dark"])
           true,
         );
         await page.screenshot({
-          path: `.impeccable/review/${name}-${theme}-${width}.png`,
+          path: testInfo.outputPath(`${name}-${theme}-${width}.png`),
           animations: "disabled",
           fullPage: true,
         });

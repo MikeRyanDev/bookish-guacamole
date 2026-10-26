@@ -4,7 +4,7 @@ import { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 
 test("a newly published Learning Skill reaches the next browser turn without restart", async ({
   page,
-}) => {
+}, testInfo) => {
   test.skip(
     process.env.LIVE_LEARNING !== "1",
     "Requires the installed Learning publication proof.",
@@ -66,7 +66,7 @@ test("a newly published Learning Skill reaches the next browser turn without res
     page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
   ).toHaveText(answer);
   await page.screenshot({
-    path: "docs/proof/learned-skill-refresh.png",
+    path: testInfo.outputPath("learned-skill-refresh.png"),
     fullPage: true,
     animations: "disabled",
   });

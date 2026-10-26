@@ -5,7 +5,7 @@ import { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 
 test("model patch approval previews the exact change, waits for consent, and persists after reload", async ({
   page,
-}) => {
+}, testInfo) => {
   test.skip(process.env.LIVE_MODEL !== "1", "Uses the configured provider account.");
   test.setTimeout(120_000);
   await mkdir(".data/patch-proof", { recursive: true });
@@ -36,7 +36,10 @@ test("model patch approval previews the exact change, waits for consent, and per
   await expect(page.getByRole("region", { name: "patch tool call", exact: true })).toHaveCount(1);
   await expect(permission.getByText("Approval required", { exact: true })).toBeVisible();
   expect(await readFile(filename, "utf8")).toBe("Hello before approval.\n");
-  await page.screenshot({ path: "docs/proof/live-patch-approval.png", animations: "disabled" });
+  await page.screenshot({
+    path: testInfo.outputPath("live-patch-approval.png"),
+    animations: "disabled",
+  });
   await permission.getByRole("button", { name: "Approve Once", exact: true }).click();
   await expect(permission).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Stop run" })).toHaveCount(0, { timeout: 45000 });

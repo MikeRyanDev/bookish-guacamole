@@ -111,7 +111,9 @@ test("Learning preserves the composer and restores legacy Skill links into the m
 
 for (const theme of ["light", "dark"]) {
   for (const width of [390, 1512]) {
-    test(`Learning entry and modal in the real shell: ${theme} ${width}`, async ({ page }) => {
+    test(`Learning entry and modal in the real shell: ${theme} ${width}`, async ({
+      page,
+    }, testInfo) => {
       await page.setViewportSize({ width, height: 900 });
       await page.addInitScript((value) => localStorage.setItem("starter-theme", value), theme);
       await page.goto("/");
@@ -119,13 +121,13 @@ for (const theme of ["light", "dark"]) {
       await page.evaluate(async () => {
         await document.fonts.ready;
       });
-      await page.screenshot({ path: `.impeccable/review/shell-${theme}-${width}.png` });
+      await page.screenshot({ path: testInfo.outputPath(`shell-${theme}-${width}.png`) });
       await page.getByRole("button", { name: "Learning", exact: true }).click();
       await expect(page.getByRole("heading", { name: /^Learning ·/ })).toBeFocused();
       await expect(page.getByText("Loading Learning…", { exact: true })).not.toBeVisible();
       await expect(page.getByText("Loading proposals…", { exact: true })).not.toBeVisible();
       await expect(page.getByRole("button", { name: "Refresh skills" })).toBeEnabled();
-      await page.screenshot({ path: `.impeccable/review/shell-dialog-${theme}-${width}.png` });
+      await page.screenshot({ path: testInfo.outputPath(`shell-dialog-${theme}-${width}.png`) });
       expect(
         (await new AxeBuilder({ page }).include(".starter-learning-learning-dialog").analyze())
           .violations,

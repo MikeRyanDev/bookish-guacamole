@@ -16,10 +16,11 @@ test("goal changes do not resize the output viewport", async ({ page }) => {
 });
 
 import AxeBuilder from "@axe-core/playwright";
-import { mkdir } from "node:fs/promises";
 for (const theme of ["light", "dark"]) {
   for (const width of [1440, 390]) {
-    test(`composer interaction and reading position ${theme} ${width}`, async ({ page }) => {
+    test(`composer interaction and reading position ${theme} ${width}`, async ({
+      page,
+    }, testInfo) => {
       await page.setViewportSize({ width, height: 844 });
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.goto(`${fixtureUrl}/composer.html?theme=${theme}`);
@@ -51,9 +52,8 @@ for (const theme of ["light", "dark"]) {
             .analyze()
         ).violations,
       ).toEqual([]);
-      await mkdir(".impeccable/review", { recursive: true });
       await page.screenshot({
-        path: `.impeccable/review/${theme}-${width}-goal.png`,
+        path: testInfo.outputPath(`${theme}-${width}-goal.png`),
         fullPage: true,
       });
       await page.keyboard.press("Escape");
@@ -73,7 +73,7 @@ for (const theme of ["light", "dark"]) {
       await page.getByLabel("Fixture state").selectOption("approval");
       await expect(page.getByRole("button", { name: "Approve Once" })).toBeInViewport();
       await page.screenshot({
-        path: `.impeccable/review/${theme}-${width}-approval.png`,
+        path: testInfo.outputPath(`${theme}-${width}-approval.png`),
         fullPage: true,
       });
       await page.getByRole("button", { name: /View goal.*Approval required/ }).click();
@@ -92,7 +92,7 @@ for (const theme of ["light", "dark"]) {
       await expect(page.getByText(/Continues automatically/)).toBeVisible();
       await expect(page.getByRole("button", { name: "Start goal", exact: true })).toBeDisabled();
       await page.screenshot({
-        path: `.impeccable/review/${theme}-${width}-new.png`,
+        path: testInfo.outputPath(`${theme}-${width}-new.png`),
         fullPage: true,
       });
       await page.getByRole("button", { name: "Cancel", exact: true }).click();
@@ -106,7 +106,7 @@ for (const theme of ["light", "dark"]) {
 
 test("long goal details stay within a short mobile viewport and dismiss outside", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.setViewportSize({ width: 390, height: 480 });
   await page.goto(`${fixtureUrl}/composer.html?long`);
   await page.getByLabel("Fixture state").selectOption("error");
@@ -118,7 +118,7 @@ test("long goal details stay within a short mobile viewport and dismiss outside"
   expect(rect!.x).toBeGreaterThanOrEqual(12);
   await page.getByRole("button", { name: "Resume goal" }).scrollIntoViewIfNeeded();
   await expect(page.getByRole("button", { name: "Resume goal" })).toBeInViewport();
-  await page.screenshot({ path: ".impeccable/review/short-long-goal.png", fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath("short-long-goal.png"), fullPage: true });
   // The control-anchored panel now overlaps the textarea; dismiss from the outer gutter.
   await page.mouse.click(2, 470);
   await expect(panel).toBeHidden();

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("CopilotKit Inspector opens, exposes agent events, and closes back to the starter", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Web Inspector", exact: true }).click();
   const inspector = page.locator("cpk-web-inspector");
@@ -10,7 +10,7 @@ test("CopilotKit Inspector opens, exposes agent events, and closes back to the s
   await inspector.getByRole("button", { name: "AG-UI Events", exact: true }).click();
   await expect(inspector.getByText("AG-UI Events", { exact: true }).first()).toBeVisible();
   await page.screenshot({
-    path: "docs/proof/copilotkit-inspector.png",
+    path: testInfo.outputPath("copilotkit-inspector.png"),
     fullPage: true,
     animations: "disabled",
   });

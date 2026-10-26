@@ -4,7 +4,7 @@ import { resolve, join } from "node:path";
 
 test("named workspaces isolate real files and conversations and retain identity after reopening", async ({
   page,
-}) => {
+}, testInfo) => {
   test.skip(process.env.LIVE_MODEL !== "1", "Uses the configured provider account.");
   test.setTimeout(180_000);
   await mkdir(".data/workspace-proof", { recursive: true });
@@ -96,7 +96,7 @@ test("named workspaces isolate real files and conversations and retain identity 
     page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
   ).toContainText("ALPHA_WORKSPACE_ONLY");
   await page.screenshot({
-    path: "docs/proof/workspace-isolation.png",
+    path: testInfo.outputPath("workspace-isolation.png"),
     fullPage: true,
     animations: "disabled",
   });

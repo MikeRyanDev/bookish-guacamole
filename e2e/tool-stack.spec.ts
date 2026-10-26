@@ -68,7 +68,9 @@ test("failures, denial and active calls remain visible outside completed groups"
   ).toHaveAttribute("title", "Result received");
 });
 
-test("grouped activity is accessible in both themes and at narrow widths", async ({ page }) => {
+test("grouped activity is accessible in both themes and at narrow widths", async ({
+  page,
+}, testInfo) => {
   await page.goto(`${fixtureUrl}/?activity`);
   await page.evaluate(() => document.fonts.ready);
   for (const theme of ["light", "dark"]) {
@@ -79,7 +81,7 @@ test("grouped activity is accessible in both themes and at narrow widths", async
       await group.focus();
       await page.screenshot({
         animations: "disabled",
-        path: `docs/design/tool-stack/after-${theme}-${width}-collapsed.png`,
+        path: testInfo.outputPath(`after-${theme}-${width}-collapsed.png`),
       });
       await group.press("Enter");
       await expect(page.locator(".starter-tools-tool-call")).toHaveCount(8);
@@ -95,7 +97,7 @@ test("grouped activity is accessible in both themes and at narrow widths", async
       );
       await page.screenshot({
         animations: "disabled",
-        path: `docs/design/tool-stack/after-${theme}-${width}-expanded.png`,
+        path: testInfo.outputPath(`after-${theme}-${width}-expanded.png`),
       });
       await page
         .getByRole("region", { name: "patch tool call" })
@@ -114,7 +116,7 @@ test("grouped activity is accessible in both themes and at narrow widths", async
           return narrative!.y - (activity!.y + activity!.height);
         })
         .toBeGreaterThanOrEqual(0);
-      await page.screenshot({ path: `docs/design/tool-stack/after-${theme}-${width}-detail.png` });
+      await page.screenshot({ path: testInfo.outputPath(`after-${theme}-${width}-detail.png`) });
       await page
         .getByRole("region", { name: "patch tool call" })
         .locator("summary.starter-tools-tool-header")

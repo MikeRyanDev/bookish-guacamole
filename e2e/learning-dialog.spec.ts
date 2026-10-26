@@ -31,7 +31,7 @@ for (const theme of ["light", "dark"]) {
   for (const width of [390, 1440]) {
     test(`long Markdown remains readable with persistent decisions: ${theme} ${width}`, async ({
       page,
-    }) => {
+    }, testInfo) => {
       await page.setViewportSize({ width, height: 900 });
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.goto(`${fixture}/learning.html?long=1&ready=1&theme=${theme}`);
@@ -51,7 +51,7 @@ for (const theme of ["light", "dark"]) {
         true,
       );
       await expect(page.getByRole("button", { name: "Approve skill" })).toBeInViewport();
-      await page.screenshot({ path: `.impeccable/review/dialog-${theme}-${width}.png` });
+      await page.screenshot({ path: testInfo.outputPath(`dialog-${theme}-${width}.png`) });
       await reader.focus();
       await page.keyboard.press("End");
       await expect(page.getByText("Skill metadata", { exact: true })).toBeInViewport();
@@ -60,7 +60,7 @@ for (const theme of ["light", "dark"]) {
       await expect(
         page.getByText("Please run the tests first so we know which behavior is broken."),
       ).toBeVisible();
-      await page.screenshot({ path: `.impeccable/review/dialog-evidence-${theme}-${width}.png` });
+      await page.screenshot({ path: testInfo.outputPath(`dialog-evidence-${theme}-${width}.png`) });
       if (width === 390) {
         await page.getByRole("button", { name: "Back to skills" }).click();
         await expect(page.getByRole("button", { name: "Test before editing" })).toBeFocused();
@@ -83,7 +83,7 @@ for (const failure of [
   "evidence",
   "skills",
 ]) {
-  test(`local ${failure} failure has an explicit retry`, async ({ page }) => {
+  test(`local ${failure} failure has an explicit retry`, async ({ page }, testInfo) => {
     await page.goto(`${fixture}/learning.html?ready=1&failure=${failure}`);
     if (failure !== "settings" && failure !== "spaces")
       await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
@@ -98,7 +98,7 @@ for (const failure of [
       await expect(page.getByLabel("Learning space", { exact: true })).toBeDisabled();
     if (failure === "status")
       await expect(page.getByRole("button", { name: "Learn", exact: true })).toBeDisabled();
-    await page.screenshot({ path: `.impeccable/review/dialog-error-${failure}.png` });
+    await page.screenshot({ path: testInfo.outputPath(`dialog-error-${failure}.png`) });
     await page.getByRole("button", { name: "Retry", exact: true }).click();
     await expect(page.getByRole("alert")).toHaveCount(0);
   });
@@ -106,12 +106,12 @@ for (const failure of [
 
 test("loading and pending saves prevent duplicate actions; close discards only unsaved drafts", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto(`${fixture}/learning.html?slow=1`);
   await page.getByRole("button", { name: "Learning", exact: true }).click();
   await expect(page.getByLabel("Learning space", { exact: true })).toBeDisabled();
   await expect(page.getByText("Loading spaces…")).toBeVisible();
-  await page.screenshot({ path: ".impeccable/review/dialog-loading.png" });
+  await page.screenshot({ path: testInfo.outputPath("dialog-loading.png") });
   await expect(page.getByLabel("Learning space", { exact: true })).toBeEnabled();
   await page.getByLabel("Learning space", { exact: true }).selectOption("coding");
   await page.getByRole("button", { name: "Save", exact: true }).click();
@@ -144,14 +144,14 @@ test("unsaved space changes cannot run Learning against a different saved space"
 
 test("empty spaces, failed runs, and empty published lists explain the next action", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto(`${fixture}/learning.html?empty=1`);
   await page.getByRole("button", { name: "Learning", exact: true }).click();
   await expect(
     page.getByText("No Learning spaces yet. Create one in Intelligence, then refresh the spaces."),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Refresh spaces" })).toBeEnabled();
-  await page.screenshot({ path: ".impeccable/review/dialog-empty.png" });
+  await page.screenshot({ path: testInfo.outputPath("dialog-empty.png") });
   await page.goto(`${fixture}/learning.html?ready=1&runfailed=1`);
   await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
   await page.getByRole("button", { name: "Learning", exact: true }).click();
@@ -185,7 +185,7 @@ test("removal proposals and unavailable evidence state their consequences", asyn
 for (const width of [390, 1440]) {
   test(`pending review retains stable controls at ${width}px and cannot be submitted twice`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(`${fixture}/learning.html?ready=1&slow=1&noevidence=1`);
     await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
@@ -202,7 +202,7 @@ for (const width of [390, 1440]) {
     expect(pending!.y).toBeCloseTo(before!.y, 0);
     await expect(page.getByRole("button", { name: "Approve skill" })).toBeDisabled();
     await expect(page.getByRole("button", { name: "Reject skill" })).toBeDisabled();
-    await page.screenshot({ path: `.impeccable/review/dialog-review-pending-${width}.png` });
+    await page.screenshot({ path: testInfo.outputPath(`dialog-review-pending-${width}.png`) });
     await expect(page.getByText("Rejected. This proposal was not published.")).toBeVisible();
   });
 }

@@ -1,10 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { mkdir, writeFile } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 
 test("the selected model loads a learned Skill, executes approved tests, and restores without duplicate tools", async ({
   page,
-}) => {
+}, testInfo) => {
   test.skip(process.env.LIVE_MODEL !== "1", "Opt in: this uses the configured provider account.");
   test.setTimeout(180_000);
   const modelConfig = await (await page.request.get("/api/config")).json();
@@ -26,7 +26,7 @@ test("the selected model loads a learned Skill, executes approved tests, and res
       await expect(permission.locator(".starter-tools-shell-command code")).toHaveText("npm test");
       if (approvals === 0)
         await page.screenshot({
-          path: "docs/proof/live-bash-approval.png",
+          path: testInfo.outputPath("live-bash-approval.png"),
           animations: "disabled",
         });
       await permission.getByRole("button", { name: "Approve Once" }).click();
@@ -78,15 +78,14 @@ test("the selected model loads a learned Skill, executes approved tests, and res
     toolCount,
   );
   await writeFile(".data/model-browser-events.json", JSON.stringify(saved));
-  await mkdir("docs/proof", { recursive: true });
   await page.screenshot({
-    path: "docs/proof/luna-light.png",
+    path: testInfo.outputPath("luna-light.png"),
     fullPage: true,
     animations: "disabled",
   });
   await page.getByRole("button", { name: "Use dark theme" }).click();
   await page.screenshot({
-    path: "docs/proof/luna-dark.png",
+    path: testInfo.outputPath("luna-dark.png"),
     fullPage: true,
     animations: "disabled",
   });

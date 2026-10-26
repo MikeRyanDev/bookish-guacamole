@@ -69,7 +69,7 @@ for (const theme of ["light", "dark"]) {
   for (const width of [320, 390, 768, 1440, 1512, 2048]) {
     test(`long titles and documents stay aligned and usable: ${theme} ${width}`, async ({
       page,
-    }) => {
+    }, testInfo) => {
       await page.setViewportSize({ width, height: 900 });
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.goto(
@@ -102,7 +102,7 @@ for (const theme of ["light", "dark"]) {
       if (width <= 700)
         await expect(page.getByRole("button", { name: "Back to skills" })).toBeVisible();
       else await expect(page.getByRole("button", { name: "Back to skills" })).not.toBeVisible();
-      await page.screenshot({ path: `.impeccable/refinement/reader-${theme}-${width}.png` });
+      await page.screenshot({ path: testInfo.outputPath(`reader-${theme}-${width}.png`) });
       const { default: AxeBuilder } = await import("@axe-core/playwright");
       expect(
         (await new AxeBuilder({ page }).include(".starter-learning-learning-dialog").analyze())
@@ -154,7 +154,9 @@ test("successful recovery clears an uncertain review error", async ({ page }) =>
   await expect(page.getByRole("alert")).toHaveCount(0);
 });
 
-test("short viewport equivalent to 200 percent zoom keeps decisions visible", async ({ page }) => {
+test("short viewport equivalent to 200 percent zoom keeps decisions visible", async ({
+  page,
+}, testInfo) => {
   await page.setViewportSize({ width: 756, height: 370 });
   await page.goto(`${fixture}/learning.html?ready=1&long=1&longtitle=1`);
   await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
@@ -170,28 +172,30 @@ test("short viewport equivalent to 200 percent zoom keeps decisions visible", as
   await expect(
     page.getByText("Please run the tests first so we know which behavior is broken."),
   ).toBeVisible();
-  await page.screenshot({ path: ".impeccable/refinement/short-viewport.png" });
+  await page.screenshot({ path: testInfo.outputPath("short-viewport.png") });
 });
 
-test("list, loading, and empty layouts expose accurate next actions", async ({ page }) => {
+test("list, loading, and empty layouts expose accurate next actions", async ({
+  page,
+}, testInfo) => {
   for (const theme of ["light", "dark"]) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${fixture}/learning.html?ready=1&duplicate=1&theme=${theme}`);
     await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
     await page.getByRole("button", { name: "Learning", exact: true }).click();
     await expect(page.locator(".starter-learning-learning-skill-row")).toBeVisible();
-    await page.screenshot({ path: `.impeccable/refinement/list-${theme}.png` });
+    await page.screenshot({ path: testInfo.outputPath(`list-${theme}.png`) });
     await page.getByRole("button", { name: "Published skills" }).click();
     await expect(page.getByText(/No published Skills yet/)).toBeVisible();
-    await page.screenshot({ path: `.impeccable/refinement/empty-${theme}.png` });
+    await page.screenshot({ path: testInfo.outputPath(`empty-${theme}.png`) });
   }
   await page.goto(`${fixture}/learning.html?slow=1&failure=candidate&ready=1`);
   await page.getByRole("button", { name: "Learning", exact: true }).click();
   await expect(page.getByText("Loading Learning…")).toBeVisible();
-  await page.screenshot({ path: ".impeccable/refinement/loading.png" });
+  await page.screenshot({ path: testInfo.outputPath("loading.png") });
   await page.getByRole("button", { name: "Test before editing" }).click();
   await expect(page.getByRole("alert")).toBeVisible();
-  await page.screenshot({ path: ".impeccable/refinement/error.png" });
+  await page.screenshot({ path: testInfo.outputPath("error.png") });
   await page.getByRole("button", { name: "Retry", exact: true }).click();
   await expect(page.getByText("Loading proposal…")).not.toBeVisible();
   await expect(page.getByRole("button", { name: "Approve skill" })).toBeEnabled();

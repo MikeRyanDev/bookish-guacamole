@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 
 test("coding tools show commands, honest exit status, readable diffs, and numbered file content", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto(`${fixtureUrl}/?tools`);
   await expect(page.locator(".starter-tools-shell-command code")).toBeVisible();
   await expect(page.getByText("Exit 1", { exact: true })).toBeVisible();
@@ -38,7 +38,7 @@ test("coding tools show commands, honest exit status, readable diffs, and number
       .analyze();
     expect(results.violations).toEqual([]);
     await page.screenshot({
-      path: `docs/proof/tool-cards-${theme}.png`,
+      path: testInfo.outputPath(`tool-cards-${theme}.png`),
       fullPage: true,
       animations: "disabled",
     });

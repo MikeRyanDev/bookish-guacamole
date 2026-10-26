@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 for (const theme of ["light", "dark"]) {
-  test(`${theme} workspace removes decorative framing and idle metadata`, async ({ page }) => {
+  test(`${theme} workspace removes decorative framing and idle metadata`, async ({
+    page,
+  }, testInfo) => {
     await page.addInitScript((value) => localStorage.setItem("starter-theme", value), theme);
     await page.goto("/");
     await expect(page.getByRole("textbox", { name: "Message your coding agent" })).toBeVisible();
@@ -45,7 +47,7 @@ for (const theme of ["light", "dark"]) {
       "none",
     );
     await page.screenshot({
-      path: `docs/proof/quiet-workspace-${theme}.png`,
+      path: testInfo.outputPath(`quiet-workspace-${theme}.png`),
       animations: "disabled",
     });
     await page.getByRole("button", { name: "Settings", exact: true }).click();

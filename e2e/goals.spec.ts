@@ -4,7 +4,9 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 
 for (const theme of ["light", "dark"] as const) {
-  test(`Goal composer preserves drafts and keyboard access in ${theme}`, async ({ page }) => {
+  test(`Goal composer preserves drafts and keyboard access in ${theme}`, async ({
+    page,
+  }, testInfo) => {
     await page.addInitScript((value) => localStorage.setItem("starter-theme", value), theme);
     await page.goto("/");
     const message = page.getByRole("textbox", { name: "Message your coding agent" });
@@ -33,13 +35,18 @@ for (const theme of ["light", "dark"] as const) {
     await expect(message).toBeFocused();
     await expect(message).toHaveValue("Inspect the project and verify its tests");
     await message.fill("");
-    await page.screenshot({ path: `.impeccable/review/app-${theme}-mobile.png`, fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath(`app-${theme}-mobile.png`), fullPage: true });
     await page.setViewportSize({ width: 1440, height: 960 });
-    await page.screenshot({ path: `.impeccable/review/app-${theme}-desktop.png`, fullPage: true });
+    await page.screenshot({
+      path: testInfo.outputPath(`app-${theme}-desktop.png`),
+      fullPage: true,
+    });
   });
 }
 
-test("live Goal runs with approval and persists its completion and evidence", async ({ page }) => {
+test("live Goal runs with approval and persists its completion and evidence", async ({
+  page,
+}, testInfo) => {
   test.skip(process.env.LIVE_MODEL !== "1", "Opt in to configured model use.");
   test.setTimeout(180_000);
   await page.goto("/");
@@ -105,9 +112,9 @@ test("live Goal runs with approval and persists its completion and evidence", as
       "background-color",
       theme === "light" ? "rgb(65, 100, 71)" : "rgb(172, 197, 156)",
     );
-    await page.screenshot({ path: `.data/goals/${theme}-desktop.png`, fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath(`${theme}-desktop.png`), fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.screenshot({ path: `.data/goals/${theme}-mobile.png`, fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath(`${theme}-mobile.png`), fullPage: true });
     await page.setViewportSize({ width: 1440, height: 960 });
   }
 });

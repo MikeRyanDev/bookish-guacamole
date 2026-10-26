@@ -7,7 +7,7 @@ import { officeFixture } from "../tests/fixtures/office";
 test("real workspace file reads preserve URL navigation, refresh, and asset isolation", async ({
   page,
   request,
-}) => {
+}, testInfo) => {
   const origin = process.env.FILE_VIEWER_APP_URL ?? "http://127.0.0.1:4173";
   const root = await mkdtemp(join(tmpdir(), "viewer-browser-"));
   const config = await (await request.get(`${origin}/api/config`)).json();
@@ -70,7 +70,10 @@ test("real workspace file reads preserve URL navigation, refresh, and asset isol
     expect(other.ok()).toBe(false);
     await page.mouse.move(0, 0);
     await expect(page.locator(".starter-files-inspector")).toHaveCSS("opacity", "1");
-    await page.screenshot({ path: "docs/proof/file-viewer-workspace.png", animations: "disabled" });
+    await page.screenshot({
+      path: testInfo.outputPath("file-viewer-workspace.png"),
+      animations: "disabled",
+    });
   } finally {
     if (id) await request.delete(`${origin}/api/workspaces/${id}`, { headers });
     await rm(root, { recursive: true, force: true });

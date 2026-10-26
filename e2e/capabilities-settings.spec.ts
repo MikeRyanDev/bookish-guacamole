@@ -123,7 +123,9 @@ test("price drafts survive toggles and saving retains keyboard focus", async ({ 
   await expect(page.getByRole("group", { name: "Execution settings", exact: true })).toBeFocused();
 });
 
-test("a stale connection draft has an explicit discard-and-reload recovery", async ({ page }) => {
+test("a stale connection draft has an explicit discard-and-reload recovery", async ({
+  page,
+}, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.route("**/api/connections?*", (route) =>
     route.request().method() === "PUT"
@@ -149,7 +151,7 @@ test("a stale connection draft has an explicit discard-and-reload recovery", asy
     .getByRole("button", { name: "Discard draft and reload", exact: true })
     .scrollIntoViewIfNeeded();
   await page.screenshot({
-    path: ".impeccable/review/stale-connection-dark-390.png",
+    path: testInfo.outputPath("stale-connection-dark-390.png"),
     animations: "disabled",
   });
   await page.getByRole("button", { name: "Discard draft and reload", exact: true }).click();

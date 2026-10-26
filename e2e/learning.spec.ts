@@ -123,7 +123,7 @@ test("assigns a named space, starts Learning, and reviews a proposal with eviden
 
 test("mobile assignment survives a failed save, cancellation, reload, and workspace switching", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(
     `${process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174"}/learning.html?theme=dark&failure=save`,
@@ -136,7 +136,7 @@ test("mobile assignment survives a failed save, cancellation, reload, and worksp
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("alert")).toContainText("temporarily unavailable");
   await expect(page.getByLabel("Learning space", { exact: true })).toHaveValue("coding");
-  await page.screenshot({ path: ".impeccable/review/learning-mobile-error.png", fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath("learning-mobile-error.png"), fullPage: true });
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByText("Learning space saved.", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Change space" }).click();
@@ -158,17 +158,23 @@ test("mobile assignment survives a failed save, cancellation, reload, and worksp
   await page.getByRole("button", { name: "Learn", exact: true }).click();
   await expect(page.getByText("Learning queued")).toBeVisible();
   await expect(page.getByRole("button", { name: "Learn", exact: true })).toBeDisabled();
-  await page.screenshot({ path: ".impeccable/review/learning-mobile-running.png", fullPage: true });
+  await page.screenshot({
+    path: testInfo.outputPath("learning-mobile-running.png"),
+    fullPage: true,
+  });
   await expect(page.getByText("Learning finished")).toBeVisible();
   await page.getByRole("button", { name: "Test before editing" }).click();
   await page.getByText("Supporting evidence", { exact: true }).click();
   await expect(
     page.getByText("Please run the tests first so we know which behavior is broken."),
   ).toBeVisible();
-  await page.screenshot({ path: ".impeccable/review/learning-mobile-review.png", fullPage: true });
+  await page.screenshot({
+    path: testInfo.outputPath("learning-mobile-review.png"),
+    fullPage: true,
+  });
   await page.getByRole("button", { name: "Reject skill", exact: true }).scrollIntoViewIfNeeded();
   await page.screenshot({
-    path: ".impeccable/review/learning-mobile-decision.png",
+    path: testInfo.outputPath("learning-mobile-decision.png"),
     fullPage: true,
   });
   await page.getByRole("button", { name: "Reject skill", exact: true }).click();
@@ -181,7 +187,7 @@ test("mobile assignment survives a failed save, cancellation, reload, and worksp
 
 test("a failed review preserves the proposal and recovers without publishing automatically", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto(
     `${process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174"}/learning.html?failure=review`,
   );
@@ -193,7 +199,7 @@ test("a failed review preserves the proposal and recovers without publishing aut
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await page.getByRole("button", { name: "Learn", exact: true }).click();
   await expect(page.getByText("Learning finished")).toBeVisible();
-  await page.screenshot({ path: ".impeccable/review/learning-desktop.png", fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath("learning-desktop.png"), fullPage: true });
   await page.getByRole("button", { name: "Test before editing" }).click();
   await page.getByRole("button", { name: "Approve skill", exact: true }).click();
   await expect(page.getByRole("alert")).toContainText("temporarily unavailable");
@@ -202,10 +208,13 @@ test("a failed review preserves the proposal and recovers without publishing aut
   await expect(
     page.getByText("Please run the tests first so we know which behavior is broken."),
   ).toBeVisible();
-  await page.screenshot({ path: ".impeccable/review/learning-desktop-review.png", fullPage: true });
+  await page.screenshot({
+    path: testInfo.outputPath("learning-desktop-review.png"),
+    fullPage: true,
+  });
   await page.getByRole("button", { name: "Approve skill", exact: true }).scrollIntoViewIfNeeded();
   await page.screenshot({
-    path: ".impeccable/review/learning-desktop-decision.png",
+    path: testInfo.outputPath("learning-desktop-decision.png"),
     fullPage: true,
   });
   await page.getByRole("button", { name: "Approve skill", exact: true }).click();

@@ -9,7 +9,7 @@ import AxeBuilder from "@axe-core/playwright";
 test("real Git changes refresh the tree while original HTML runs in the sandbox", async ({
   page,
   request,
-}) => {
+}, testInfo) => {
   const origin = process.env.FILE_VIEWER_APP_URL ?? "http://127.0.0.1:4173";
   const root = await mkdtemp(join(tmpdir(), "html-tree-browser-"));
   const git = (...args: string[]) =>
@@ -83,7 +83,7 @@ test("real Git changes refresh the tree while original HTML runs in the sandbox"
         ).violations,
       ).toEqual([]);
       await page.screenshot({
-        path: `docs/proof/html-tree-workspace-${theme}.png`,
+        path: testInfo.outputPath(`html-tree-workspace-${theme}.png`),
         animations: "disabled",
       });
       await page.setViewportSize({ width: 390, height: 844 });
@@ -96,7 +96,7 @@ test("real Git changes refresh the tree while original HTML runs in the sandbox"
       await page.keyboard.press("Enter");
       await expect(frame.getByRole("button", { name: "Count 1" })).toBeVisible();
       await page.screenshot({
-        path: `docs/proof/html-tree-workspace-mobile-${theme}.png`,
+        path: testInfo.outputPath(`html-tree-workspace-mobile-${theme}.png`),
         animations: "disabled",
       });
       await page.setViewportSize({ width: 1440, height: 960 });

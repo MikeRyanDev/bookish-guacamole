@@ -1,5 +1,5 @@
 import { mockFileDiscovery } from "./mock-file-discovery";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { officeFixture } from "../tests/fixtures/office";
 const origin = process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174";
@@ -12,7 +12,8 @@ const files = [
   "sample.pdf",
   "script.py",
 ];
-async function captureFormat(page: Page, name: string) {
+/** Check each file preview at desktop and mobile widths, saving captures to this test's output. */
+async function captureFormat(page: Page, testInfo: TestInfo, name: string) {
   await page.getByRole("button", { name: "Expand file viewer" }).click();
   for (const theme of ["light", "dark"]) {
     await page.evaluate((theme) => (document.documentElement.dataset.theme = theme), theme);
@@ -33,7 +34,7 @@ async function captureFormat(page: Page, name: string) {
     if (name === "pdf")
       await expect(page.getByText("Rendering page…", { exact: true })).toHaveCount(0);
     await page.screenshot({
-      path: `docs/proof/file-viewer-${name}-${theme}.png`,
+      path: testInfo.outputPath(`file-viewer-${name}-${theme}.png`),
       animations: "disabled",
     });
     await page.setViewportSize({ width: 390, height: 844 });
@@ -46,7 +47,7 @@ async function captureFormat(page: Page, name: string) {
     if (name === "pdf")
       await expect(page.getByText("Rendering page…", { exact: true })).toHaveCount(0);
     await page.screenshot({
-      path: `docs/proof/file-viewer-${name}-mobile-${theme}.png`,
+      path: testInfo.outputPath(`file-viewer-${name}-mobile-${theme}.png`),
       animations: "disabled",
     });
   }
@@ -111,7 +112,7 @@ test("lazy syntax worker highlights Python without changing its source", async (
     "def greet(name):",
   );
 });
-test("images support zoom, rotation and download", async ({ page }) => {
+test("images support zoom, rotation and download", async ({ page }, testInfo) => {
   await page.getByRole("button", { name: "Open image.svg", exact: true }).click();
   await expect(page.getByRole("img", { name: "image.svg" })).toBeVisible();
   await expect(page.getByText("400 × 240")).toBeVisible();
@@ -123,31 +124,31 @@ test("images support zoom, rotation and download", async ({ page }) => {
   await page.getByRole("button", { name: "Rotate image" }).click();
   await page.getByRole("button", { name: "Fit image" }).click();
   await expect(page.getByRole("link", { name: "Download", exact: true })).toBeVisible();
-  await captureFormat(page, "image");
+  await captureFormat(page, testInfo, "image");
 });
-test("Word, Excel and PowerPoint content is rendered locally", async ({ page }) => {
+test("Word, Excel and PowerPoint content is rendered locally", async ({ page }, testInfo) => {
   await page.getByRole("button", { name: "Open document.docx", exact: true }).click();
   await expect(page.getByText("Quarterly report & review", { exact: true })).toBeVisible();
-  await captureFormat(page, "word");
+  await captureFormat(page, testInfo, "word");
   await page.getByRole("button", { name: "Back to files" }).click();
   await page.getByRole("button", { name: "Open workbook.xlsx", exact: true }).click();
   await expect(page.getByRole("cell", { name: "120", exact: true })).toBeVisible();
-  await captureFormat(page, "sheet");
+  await captureFormat(page, testInfo, "sheet");
   await page.getByRole("combobox", { name: "Sheet" }).selectOption("1");
   await expect(page.getByRole("cell", { name: "42", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Back to files" }).click();
   await page.getByRole("button", { name: "Open slides.pptx", exact: true }).click();
   await expect(page.getByText("Project overview", { exact: true }).first()).toBeVisible();
-  await captureFormat(page, "slides");
+  await captureFormat(page, testInfo, "slides");
   await page.getByRole("combobox", { name: "Slide" }).selectOption("1");
   await expect(page.getByText("Next steps", { exact: true })).toBeVisible();
 });
-test("PDF renders a page and exposes its text", async ({ page }) => {
+test("PDF renders a page and exposes its text", async ({ page }, testInfo) => {
   await page.getByRole("button", { name: "Open sample.pdf", exact: true }).click();
   await page.getByText("Page text", { exact: true }).click();
   await expect(page.getByText("PDF preview works", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Next page" })).toBeDisabled();
-  await captureFormat(page, "pdf");
+  await captureFormat(page, testInfo, "pdf");
   await expect(
     page.getByRole("region", { name: "PDF page", exact: true }).locator("canvas"),
   ).toBeVisible();
@@ -163,7 +164,7 @@ test("unsupported and corrupt formats keep an honest download path", async ({ pa
 });
 
 for (const kind of ["image", "pdf"]) {
-  test(`zoom out shrinks a large fitted ${kind} on mobile`, async ({ page }) => {
+  test(`zoom out shrinks a large fitted ${kind} on mobile`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.route("**/api/workspace/asset?*", (route) =>
       route.fulfill({
@@ -188,13 +189,13 @@ for (const kind of ["image", "pdf"]) {
     else await expect(page.getByText("Page text", { exact: true })).toBeVisible();
     const before = (await visual.boundingBox())!.width;
     await page.screenshot({
-      path: `docs/proof/file-viewer-${kind}-fit-before.png`,
+      path: testInfo.outputPath(`file-viewer-${kind}-fit-before.png`),
       animations: "disabled",
     });
     await page.getByRole("button", { name: "Zoom out", exact: true }).click();
     await expect.poll(async () => (await visual.boundingBox())!.width).toBeLessThan(before);
     await page.screenshot({
-      path: `docs/proof/file-viewer-${kind}-zoom-after.png`,
+      path: testInfo.outputPath(`file-viewer-${kind}-zoom-after.png`),
       animations: "disabled",
     });
   });

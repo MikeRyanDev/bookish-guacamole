@@ -8,7 +8,7 @@ const origin = process.env.FILE_VIEWER_APP_URL ?? "http://127.0.0.1:4173";
 test("real directory pages and workspace search reach files beyond 1,000 without eager tree loading", async ({
   page,
   request,
-}) => {
+}, testInfo) => {
   test.setTimeout(90_000);
   await page.emulateMedia({ reducedMotion: "reduce" });
   const root = await mkdtemp(join(tmpdir(), "lazy-files-browser-"));
@@ -131,7 +131,7 @@ test("real directory pages and workspace search reach files beyond 1,000 without
           true,
         );
         await page.screenshot({
-          path: `docs/proof/lazy-files-${theme}-${width}.png`,
+          path: testInfo.outputPath(`lazy-files-${theme}-${width}.png`),
           animations: "disabled",
         });
       }

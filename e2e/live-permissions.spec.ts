@@ -4,7 +4,7 @@ import { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 
 test("native approvals, remembered scope, reload, and YOLO cross the real Intelligence bridge", async ({
   page,
-}) => {
+}, testInfo) => {
   test.skip(process.env.LIVE_MODEL !== "1", "Opt in to the configured local model account.");
   test.setTimeout(180000);
   const modelConfig = await (await page.request.get("/api/config")).json();
@@ -102,5 +102,5 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
       model: configuredModel,
     }),
   );
-  await page.screenshot({ path: ".data/live-permissions.png", fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath("live-permissions.png"), fullPage: true });
 });

@@ -18,6 +18,15 @@ Use [the weekend delivery workflow](docs/WEEKEND-DELIVERY.md) and the acceptance
 
 ## Review and merge readiness
 
+Live inventory on 2026-10-26, before a scope freeze. GitHub reports MikeRyanDev as the author of each upstream PR. The starter has no open PR; its public `main` is `38fb4d6a4678c80866619d04bd323490c3c3a41f`. These are observed heads, not release approvals.
+
+| Repository / native stack | Ordered PRs and exact heads                                                                                                                            | Current gate                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| Intelligence #2064        | #2041 `3dad371e80dc17f3e184a46a582073c3e433b6b0` → #2063 `7cab78803075816a27f7ccaa8a753ce828b51628` → #2068 `4a801b8a843b5fcb6e171b99a1d3269774ad0580` | #2041 open; #2063 and #2068 draft. GitHub reports #2063 conflicting. |
+| CopilotKit #7978          | #7966 `ba7b11d624915d75df8bf377f10be6f9bfeac84a` → #7977 `31af02d9455bd0bd78f4da40a68661bfa9fceb63`                                                    | Both draft; review required.                                         |
+
+The current PR check rollups contain successes and skips, with no reported failures. Review requirements, branch protections, skipped-job applicability, and cross-repository contract approval still need separate verification.
+
 - [ ] Freeze the intended cutover scope and record each repository's native stack ID, ordered PRs, owners, and exact heads.
 - [ ] Resolve review threads and obtain required approvals for every included layer. Confirm trunk protections and required CI pass at the current heads.
 - [ ] Review the complete result across Intelligence, CopilotKit, and the starter. Check API compatibility, dependency/license changes, migrations, and absence of secrets.
@@ -39,7 +48,7 @@ Source review on 2026-10-23 identified these concrete gaps. Close them before va
 
 - [x] Align Node support with all installed dependencies. `package.json` and `README.md` now require `^22.22.2 || ^24.15.0 || >=26.0.0`, including the stricter jsdom requirement. Frozen installation, starter checks, and production startup passed on Node 22.22.2. The workspace copy helper also handles that Node version without replacing existing edits.
 - [ ] Require a successful CI run from the final release commit. The checked-in workflow now runs frozen installation, starter checks, formatting, the greeting test, and deterministic browser fixtures on pull requests. Its Node matrix covers 22.22.2, 24.15.0, and 26.x. Backend and model acceptance remain separate. Local execution does not close the final hosted CI gate.
-- [ ] Move generated browser screenshots to ignored test output before removing development evidence. Tests including `e2e/live-model.spec.ts`, `e2e/file-viewer-integration.spec.ts`, and `e2e/tool-stack.spec.ts` write directly into `docs/proof/` or `docs/design/`. These paths bypass Playwright's configured `outputDir` and can capture local workspace content. Use `testInfo.outputPath()` or an equivalent ignored destination. Preserve the regression assertions. Verify browser runs leave tracked documentation unchanged and do not recreate removed evidence directories. Publish curated documentation images through an explicit review step.
+- [x] Move generated browser screenshots to ignored test output before removing development evidence. All direct browser screenshot paths now use `testInfo.outputPath()`, including the live model, file viewer, and tool stack suites. A regression test guards the output path. `wt check e2e/tool-stack.spec.ts e2e/file-formats.spec.ts e2e/learning-dialog.spec.ts e2e/composer.spec.ts e2e/html-tree.spec.ts` passed 42 browser tests and `FILE_VIEWER_FIXTURE_URL=http://127.0.0.1:14363 pnpm test:fixtures` passed 153 on 2026-10-26; tracked documentation was unchanged. Publish curated documentation images through an explicit review step.
 - [x] Record the owner's MIT license decision in the root `LICENSE` and package metadata. The vendored Impeccable license and notices remain intact. Review license completeness again in the final sanitized release tree.
 
 ## End-to-end acceptance with production artifacts

@@ -12,7 +12,7 @@ test.beforeEach(async ({ page }) => {
 });
 test("nested tree sorts folders first, starts collapsed, and supports keyboard and search", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto(`${origin}/inspector.html`);
   const tree = page.getByRole("tree", { name: "Workspace files" });
   await expect(tree.getByRole("treeitem")).toHaveCount(5);
@@ -41,7 +41,10 @@ test("nested tree sorts folders first, starts collapsed, and supports keyboard a
       (await new AxeBuilder({ page }).include(".starter-files-inspector").analyze()).violations,
     ).toEqual([]);
     await page.getByRole("tree").focus();
-    await page.screenshot({ path: `docs/proof/html-tree-${theme}.png`, animations: "disabled" });
+    await page.screenshot({
+      path: testInfo.outputPath(`html-tree-${theme}.png`),
+      animations: "disabled",
+    });
     await page.setViewportSize({ width: 390, height: 844 });
     expect(
       (await new AxeBuilder({ page }).include(".starter-files-inspector").analyze()).violations,
@@ -50,7 +53,7 @@ test("nested tree sorts folders first, starts collapsed, and supports keyboard a
       true,
     );
     await page.screenshot({
-      path: `docs/proof/html-tree-mobile-${theme}.png`,
+      path: testInfo.outputPath(`html-tree-mobile-${theme}.png`),
       animations: "disabled",
     });
     await page.setViewportSize({ width: 1440, height: 960 });
@@ -58,7 +61,7 @@ test("nested tree sorts folders first, starts collapsed, and supports keyboard a
 });
 test("HTML runs unchanged inside a sandbox without parent access or navigation privileges", async ({
   page,
-}) => {
+}, testInfo) => {
   const html = `<!doctype html><html><head><style>h1 { color: rgb(120, 30, 50) }</style></head><body>
   <h1>Interactive document</h1><button id="counter">Count 0</button><output id="isolation"></output>
   <button id="escape">Try popup and form</button><output id="popup"></output>
@@ -105,11 +108,14 @@ test("HTML runs unchanged inside a sandbox without parent access or navigation p
   await expect(page).toHaveURL(`${origin}/inspector.html`);
   for (const theme of ["light", "dark"]) {
     await page.evaluate((theme) => (document.documentElement.dataset.theme = theme), theme);
-    await page.screenshot({ path: `docs/proof/html-preview-${theme}.png`, animations: "disabled" });
+    await page.screenshot({
+      path: testInfo.outputPath(`html-preview-${theme}.png`),
+      animations: "disabled",
+    });
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(frame.getByRole("button", { name: "Count 1" })).toBeVisible();
     await page.screenshot({
-      path: `docs/proof/html-preview-mobile-${theme}.png`,
+      path: testInfo.outputPath(`html-preview-mobile-${theme}.png`),
       animations: "disabled",
     });
     await page.setViewportSize({ width: 1440, height: 960 });
