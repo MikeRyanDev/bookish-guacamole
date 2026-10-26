@@ -1,3 +1,4 @@
+import filesStyles from "../styles/files.module.css";
 import { useEffect, useRef, useState } from "react";
 import { Minus, Plus, RotateCw, Scan } from "lucide-react";
 import { IconButton } from "../components/icon-button";
@@ -27,7 +28,7 @@ export default function ImageViewer({ blob, path }: { blob: Blob; path: string }
   const [error, setError] = useState(false);
   return (
     <>
-      <div className="reader-toolbar">
+      <div className={filesStyles.readerToolbar}>
         <IconButton
           label="Zoom out"
           disabled={!size.width || scale <= 0.05}
@@ -58,7 +59,7 @@ export default function ImageViewer({ blob, path }: { blob: Blob; path: string }
       </div>
       <div
         ref={area}
-        className="image-canvas"
+        className={filesStyles.imageCanvas}
         role="region"
         aria-label="Image preview"
         tabIndex={0}
@@ -68,7 +69,7 @@ export default function ImageViewer({ blob, path }: { blob: Blob; path: string }
         ) : (
           url && (
             <div
-              className="image-stage"
+              className={filesStyles.imageStage}
               style={{ width: width * scale || undefined, height: height * scale || undefined }}
             >
               <img
@@ -91,7 +92,9 @@ export default function ImageViewer({ blob, path }: { blob: Blob; path: string }
           )
         )}
       </div>
-      <div className="reader-footer">{size.width ? `${size.width} × ${size.height}` : ""}</div>
+      <div className={filesStyles.readerFooter}>
+        {size.width ? `${size.width} × ${size.height}` : ""}
+      </div>
     </>
   );
 }

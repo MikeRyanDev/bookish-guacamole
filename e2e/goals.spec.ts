@@ -50,17 +50,17 @@ test("live Goal runs with approval and persists its completion and evidence", as
       "Read greet.js and its tests. Run npm test once and explain the actual result. Do not edit any files. When you have reported the passing test result, this goal is complete.",
     );
   await page.getByRole("button", { name: "Start goal", exact: true }).click();
-  await expect(page.locator(".composer-control").first()).toBeVisible();
+  await expect(page.locator(".starter-shared-composer-control").first()).toBeVisible();
   const permission = page.getByRole("region", { name: "Permission request" });
   await expect(permission).toBeVisible({ timeout: 60_000 });
-  await expect(permission.locator(".shell-command code")).toHaveText("npm test");
+  await expect(permission.locator(".starter-tools-shell-command code")).toHaveText("npm test");
   await permission.getByRole("button", { name: "Approve Once" }).click();
   await expect(page.getByRole("button", { name: "Stop run", exact: true })).toBeHidden({
     timeout: 60_000,
   });
   await page.getByRole("button", { name: /View goal/ }).click();
   await page.getByRole("button", { name: "Resume goal", exact: true }).click();
-  await expect(page.locator(".composer-control").first()).toContainText(
+  await expect(page.locator(".starter-shared-composer-control").first()).toContainText(
     "Complete · agent assessed",
     {
       timeout: 60_000,
@@ -69,13 +69,15 @@ test("live Goal runs with approval and persists its completion and evidence", as
   const url = page.url();
   const threadId = new URL(url).searchParams.get("thread")!;
   await page.reload();
-  await expect(page.locator(".composer-control").first()).toContainText(
+  await expect(page.locator(".starter-shared-composer-control").first()).toContainText(
     "Complete · agent assessed",
     {
       timeout: 30_000,
     },
   );
-  await expect(page.locator(".message.assistant .markdown").last()).toContainText(/pass/i);
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).toContainText(/pass/i);
   process.loadEnvFile(".env");
   const intelligence = new CopilotKitIntelligence({
     apiKey: process.env.CPK_INTELLIGENCE_API_KEY!,
@@ -99,7 +101,7 @@ test("live Goal runs with approval and persists its completion and evidence", as
   for (const theme of ["light", "dark"]) {
     if ((await page.locator("html").getAttribute("data-theme")) !== theme)
       await page.getByRole("button", { name: `Use ${theme} theme` }).click();
-    await expect(page.locator(".composer .primary")).toHaveCSS(
+    await expect(page.locator(".starter-composer-composer .starter-shared-primary")).toHaveCSS(
       "background-color",
       theme === "light" ? "rgb(65, 100, 71)" : "rgb(172, 197, 156)",
     );

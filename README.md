@@ -29,7 +29,7 @@ This is a starter for one trusted local developer. Provider keys stay on the ser
 
 ## Get running
 
-You need Node.js **22.13+**, pnpm **10.9**, Git, Docker, and access to your chosen model provider or local model server. Start Docker before setting up Intelligence.
+You need Node.js **22.22.2+ (22.x), 24.15.0+ (24.x), or 26+**, pnpm **10.9**, Git, Docker, and access to your chosen model provider or local model server. Start Docker before setting up Intelligence.
 
 ### 1. Prepare the starter
 
@@ -114,7 +114,7 @@ The workspace picker opens existing folders or creates named workspaces. Switch,
 The right panel previews files. **Learning** beside the workspace name opens workspace Learning and published Skills. Folders start collapsed and load on expansion. Directory pages contain up to 100 entries, with a control to load more. Search runs across workspace file paths, including unopened folders. Search results also load in pages; neither browsing nor search stops at 1,000 files. Folders sort before files. Git colors and status badges show file changes and aggregate folder changes. Search file paths, open a file, and expand the viewer for more reading space. Code supports syntax highlighting, find, line navigation, wrap, copy, and download. Markdown and HTML have Source and Preview modes. HTML runs unchanged in an isolated iframe; scripts work, while parent access, popups, forms, and top navigation stay blocked. Network requests remain possible. Images support fit, zoom, and rotation; PDFs support page navigation and extracted page text. DOCX, XLSX, and PPTX have local reading previews with an original-file download. Legacy Office formats download without a preview. Office layout and advanced formatting can differ; workbook formulas show saved values.
 
 Text previews are limited to 256 KiB; assets and downloads to 20 MiB. Use the header controls for panels and settings.
-Settings uses a left-side menu for **Appearance**, **Models**, and **Permissions**.
+Settings uses a left-side menu for **Appearance**, **Models**, **Permissions**, **Execution**, and **Connections**.
 In **Settings → Appearance**, choose **Light**, **Dark**, or **System**. System follows your operating-system appearance. Keep one of eight warm accents, or choose **Add color** to enter HEX, RGBA, HSV, or CMYK values. Custom swatches and appearance persist in this browser. CMYK is an approximate screen conversion. Interface shades adapt for readable contrast. Press **⌘K** or **Ctrl+K** for the command menu. CopilotKit's Inspector is enabled in local development. Motion respects your system's reduced-motion setting.
 
 ## Teach it a reusable lesson
@@ -164,16 +164,20 @@ Ask your coding assistant to use `$impeccable audit` or `$impeccable polish` on 
 Run `pnpm design:check` for source checks and `pnpm design:browser` for rendered tool and approval checks.
 The source check also runs inside `pnpm check`. [Impeccable setup and investigation](docs/IMPECCABLE.md) covers hooks, live mode, and upgrades.
 
+See [frontend maintenance](docs/FRONTEND-MAINTENANCE.md) for CSS Modules, component ownership, bundle analysis, and CI.
+
 ## Check and build
 
 ```sh
 pnpm check
 pnpm format:check
 node --test example/greet.test.js
+pnpm test:fixtures
 pnpm test:e2e
 ```
 
-Start the app before browser tests. `pnpm check` runs lint, the design source check, TypeScript, unit tests, and production builds. Live model tests are opt-in because they use your configured provider account; see [verification](docs/VERIFICATION.md) for their prerequisites and commands.
+`pnpm test:fixtures` starts its own deterministic fixture server and needs no backend or model keys.
+Start the app before connected browser tests. `pnpm check` runs lint, design and CSS declaration checks, TypeScript, unit and worktree tests, and production builds. Live model tests are opt-in because they use your configured provider account; see [verification](docs/VERIFICATION.md) for their prerequisites and commands.
 
 ```sh
 pnpm build
@@ -253,3 +257,7 @@ Use [Worktrunk](docs/WORKTREES.md) for isolated contributor tasks. Creation prep
 private configuration, ports, and a fixture server. `wt doctor` checks the actual checkout.
 `wt check` tests that checkout, and `wt finish` integrates reviewed commits with final-target checks.
 This contributor workflow is separate from workspaces inside the browser application.
+
+## License
+
+This starter uses the [MIT license](LICENSE). Bundled third-party code retains its own license and notices.

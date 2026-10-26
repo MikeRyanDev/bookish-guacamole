@@ -1,4 +1,3 @@
-import type { WorkspaceGitStatus } from "../shared/workspace";
 import { queryOptions } from "@tanstack/react-query";
 import type { AppConfig, Skill, WorkspaceEntry } from "../shared/api.js";
 export type { AppConfig, Skill, WorkspaceEntry } from "../shared/api.js";
@@ -23,17 +22,6 @@ export const configQuery = (workspace?: string) =>
       ),
     staleTime: Infinity,
     retry: 1,
-  });
-export const filesQuery = (token: string, workspace: string) =>
-  queryOptions({
-    queryKey: ["files", workspace],
-    queryFn: ({ signal }) =>
-      request<{ files: string[]; truncated: boolean; git?: WorkspaceGitStatus }>(
-        `/api/workspace/files?workspace=${encodeURIComponent(workspace)}`,
-        token,
-        signal,
-      ),
-    staleTime: 2000,
   });
 export const skillsQuery = (token: string, workspace = "default") =>
   queryOptions({

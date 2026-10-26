@@ -1,3 +1,5 @@
+import capabilitiesStyles from "../styles/capabilities.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useId, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { changeWorkspace, request, type AppConfig } from "../api";
@@ -94,7 +96,7 @@ export function ConversationCapabilities({
     dialog.current?.showModal();
   }
   return (
-    <div className="conversation-capabilities">
+    <div className={capabilitiesStyles.conversationCapabilities}>
       <ComposerPopover label="Usage" title="Conversation usage">
         {status.isPending ? (
           <PendingStatus>Loading usage…</PendingStatus>
@@ -112,7 +114,7 @@ export function ConversationCapabilities({
         ) : (
           usage && (
             <>
-              <dl className="usage-values">
+              <dl className={capabilitiesStyles.usageValues}>
                 <div>
                   <dt>Reported tokens</dt>
                   <dd>
@@ -137,15 +139,17 @@ export function ConversationCapabilities({
                 </div>
               </dl>
               {!costKnown && (
-                <p className="muted">
+                <p className={sharedStyles.muted}>
                   Cost is unknown when any call lacks a price or usage report.
                 </p>
               )}
               {usage.reportedCalls < usage.calls && (
-                <p className="muted">Usage has not arrived for every model call.</p>
+                <p className={sharedStyles.muted}>Usage has not arrived for every model call.</p>
               )}
               {costKnown && usage.calls > 0 && (
-                <p className="muted">Uses provider cost or the prices in Execution settings.</p>
+                <p className={sharedStyles.muted}>
+                  Uses provider cost or the prices in Execution settings.
+                </p>
               )}
             </>
           )
@@ -163,7 +167,7 @@ export function ConversationCapabilities({
           <p role="status">Context will be summarized with your next message.</p>
         )}
         {context?.status === "failed" && <p role="alert">{context.error}</p>}
-        <div className="usage-actions">
+        <div className={capabilitiesStyles.usageActions}>
           <button
             type="button"
             disabled={
@@ -188,7 +192,7 @@ export function ConversationCapabilities({
             </button>
           )}
           {usage?.historyIncomplete && (
-            <p className="muted">
+            <p className={sharedStyles.muted}>
               Earlier calls lack complete accounting. Start a new conversation to enforce limits.
             </p>
           )}
@@ -197,7 +201,7 @@ export function ConversationCapabilities({
       </ComposerPopover>
       <button
         ref={undoButton}
-        className="composer-control"
+        className={sharedStyles.composerControl}
         type="button"
         disabled={blocked || restore.isPending}
         onClick={(event) => review("undo", event.currentTarget)}
@@ -206,7 +210,7 @@ export function ConversationCapabilities({
       </button>
       {history.data?.redo.revision && (
         <button
-          className="composer-control"
+          className={sharedStyles.composerControl}
           type="button"
           disabled={blocked || restore.isPending}
           onClick={(event) => review("redo", event.currentTarget)}
@@ -215,14 +219,14 @@ export function ConversationCapabilities({
         </button>
       )}
       {status.data?.recovery && (
-        <span className="muted" role="status">
+        <span className={sharedStyles.muted} role="status">
           Retrying temporary failure · {status.data.recovery.attempt}/
           {status.data.recovery.maxRetries}
         </span>
       )}
       <dialog
         ref={dialog}
-        className="history-dialog"
+        className={capabilitiesStyles.historyDialog}
         aria-labelledby={`${id}-heading`}
         onCancel={(event) => {
           if (restore.isPending) event.preventDefault();
@@ -259,7 +263,7 @@ export function ConversationCapabilities({
                   ))}
                 </ul>
               ) : preview.available ? (
-                <p className="muted">No file changes in this turn.</p>
+                <p className={sharedStyles.muted}>No file changes in this turn.</p>
               ) : null}
               {!preview.available && <p role="alert">{preview.reason}</p>}
               {preview.conflicts.length > 0 && <p>Later edits: {preview.conflicts.join(", ")}</p>}
@@ -281,7 +285,7 @@ export function ConversationCapabilities({
             </button>
           </div>
         )}
-        <div className="capability-actions">
+        <div className={capabilitiesStyles.capabilityActions}>
           <button
             type="button"
             disabled={restore.isPending}

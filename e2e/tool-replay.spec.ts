@@ -16,7 +16,7 @@ test("existing backend transcript restores as grouped activity", async ({ page }
   const group = page.getByRole("button", { name: /6 tool calls/ });
   const origin = await group.boundingBox();
   await group.click();
-  await expect(page.locator(".tool-call")).toHaveCount(6);
+  await expect(page.locator(".starter-tools-tool-call")).toHaveCount(6);
   await page.waitForTimeout(250);
   expect(Math.abs((await group.boundingBox())!.y - origin!.y)).toBeLessThan(3);
   await page.screenshot({ path: ".data/tool-stack-replay-expanded.png" });

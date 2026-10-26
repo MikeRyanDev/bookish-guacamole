@@ -50,9 +50,9 @@ Manrope uses its variable weight range. Plex Mono loads 400 and 500 weights.
 
 The built-in imagegen tool produced three studies before implementation:
 
-- [Workspace composition](design/redesign/workspace.png)
-- [Tool components and states](design/redesign/tools.png)
-- [Appearance controls](design/redesign/appearance.png)
+- [Workspace composition](../../docs/design/redesign/workspace.png)
+- [Tool components and states](../../docs/design/redesign/tools.png)
+- [Appearance controls](../../docs/design/redesign/appearance.png)
 
 Each image has an adjacent `.png.json` file with the exact prompt and generation tool.
 The prompts are also embedded in the PNG metadata.

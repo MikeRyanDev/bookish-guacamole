@@ -41,7 +41,10 @@ test("model patch approval previews the exact change, waits for consent, and per
   await expect(permission).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Stop run" })).toHaveCount(0, { timeout: 45000 });
   expect(await readFile(filename, "utf8")).toBe("Hello after approval.\n");
-  const finalText = await page.locator(".message.assistant .markdown").last().innerText();
+  const finalText = await page
+    .locator(".starter-transcript-message.assistant .starter-shared-markdown")
+    .last()
+    .innerText();
   expect(finalText).toContain("Patch complete");
   const threadId = new URL(page.url()).searchParams.get("thread")!;
   process.loadEnvFile(".env");
@@ -59,7 +62,9 @@ test("model patch approval previews the exact change, waits for consent, and per
     ),
   ).toHaveLength(1);
   await page.reload();
-  await expect(page.locator(".message.assistant .markdown").last()).toHaveText(finalText);
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).toHaveText(finalText);
   await expect(page.getByRole("region", { name: "patch tool call", exact: true })).toHaveCount(1);
   expect(await readFile(filename, "utf8")).toBe("Hello after approval.\n");
   const replay = await backend.getThreadEvents({ threadId });

@@ -115,18 +115,18 @@ test("real directory pages and workspace search reach files beyond 1,000 without
               requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
             ),
         );
-        if (!(await page.locator(".inspector").isVisible()))
+        if (!(await page.locator(".starter-files-inspector").isVisible()))
           await page.getByRole("button", { name: "Toggle files", exact: true }).click();
-        await expect(page.locator(".inspector")).toBeVisible();
-        await expect(page.locator(".inspector")).toHaveCSS("opacity", "1");
+        await expect(page.locator(".starter-files-inspector")).toBeVisible();
+        await expect(page.locator(".starter-files-inspector")).toHaveCSS("opacity", "1");
         await tree.focus();
         await page.keyboard.press("End");
         await expect(
           page.getByRole("button", { name: "Open many/file-1104.ts", exact: true }),
         ).toBeVisible();
-        expect((await new AxeBuilder({ page }).include(".inspector").analyze()).violations).toEqual(
-          [],
-        );
+        expect(
+          (await new AxeBuilder({ page }).include(".starter-files-inspector").analyze()).violations,
+        ).toEqual([]);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
           true,
         );

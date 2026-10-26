@@ -9,18 +9,20 @@ for (const reducedMotion of ["no-preference", "reduce"] as const) {
     await page.goto(`${fixtureUrl}/?activity`);
     const group = page.getByRole("button", { name: /8 tool calls/ });
     await group.click();
-    const body = page.locator(".activity-calls");
+    const body = page.locator(".starter-transcript-activity-calls");
     const animations = await body.evaluate((el) => el.getAnimations().length);
     expect(animations).toBe(reducedMotion === "reduce" ? 0 : 1);
     await page.waitForTimeout(250);
     const command = page.getByRole("region", { name: "bash tool call" });
-    await command.locator(".tool-header").click();
-    await expect(command.locator(".shell-command")).toBeVisible();
+    await command.locator(".starter-tools-tool-header").click();
+    await expect(command.locator(".starter-tools-shell-command")).toBeVisible();
     await page.waitForTimeout(250);
     await group.click();
     await group.click();
     // Restored nested disclosures must not replay their own entrance.
-    expect(await command.locator(".tool-body").evaluate((el) => el.getAnimations().length)).toBe(0);
+    expect(
+      await command.locator(".starter-tools-tool-body").evaluate((el) => el.getAnimations().length),
+    ).toBe(0);
   });
 }
 

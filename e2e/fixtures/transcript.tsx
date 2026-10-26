@@ -1,3 +1,4 @@
+import transcriptStyles from "../../src/client/styles/transcript.module.css";
 import { TypeScriptFixture } from "./typescript";
 import { ToolActivityFixture } from "./tool-activity";
 import { useState } from "react";
@@ -163,7 +164,7 @@ function Fixture() {
         <VirtualTranscript
           items={items}
           renderItem={(item) => (
-            <article aria-label={item.text} className="message">
+            <article aria-label={item.text} className={transcriptStyles.message}>
               <strong>{item.text}</strong>
               {Array.from({ length: item.lines }, (_, i) => (
                 <p key={i}>

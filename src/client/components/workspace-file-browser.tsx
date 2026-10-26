@@ -1,3 +1,4 @@
+import sharedStyles from "../styles/shared.module.css";
 import { useEffect, useState } from "react";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { type AppConfig, directoryQuery, searchFilesQuery } from "../api";
@@ -148,7 +149,7 @@ export function WorkspaceFileBrowser({
   return (
     <>
       {filter !== search && (
-        <p role="status" className="muted">
+        <p role="status" className={sharedStyles.muted}>
           Searching…
         </p>
       )}
@@ -172,12 +173,12 @@ export function WorkspaceFileBrowser({
             onFile={onFile}
           />
           {results.some((result) => result.isError) && (
-            <p role="alert" className="muted">
+            <p role="alert" className={sharedStyles.muted}>
               Could not load files. Retry the affected folder.
             </p>
           )}
           {unavailable && (
-            <p role="status" className="muted">
+            <p role="status" className={sharedStyles.muted}>
               Git status unavailable. Refresh to retry.
             </p>
           )}
@@ -202,7 +203,7 @@ function FileSearch({
   const queryClient = useQueryClient();
   const [cursors, setCursors] = useState<(string | undefined)[]>([undefined]);
   const validCursors = cursors.filter(
-    (cursor, index) =>
+    (_, index) =>
       index === 0 ||
       cursors
         .slice(1, index + 1)
@@ -228,7 +229,7 @@ function FileSearch({
         <FileTree nodes={roots} filter={query} selected={selected} onFile={onFile} />
       )}
       {last.isPending && (
-        <p role="status" className="muted">
+        <p role="status" className={sharedStyles.muted}>
           Searching…
         </p>
       )}
@@ -239,7 +240,7 @@ function FileSearch({
         </div>
       )}
       {!last.isPending && !last.isError && files.length === 0 && (
-        <p className="muted">No files match “{query}”.</p>
+        <p className={sharedStyles.muted}>No files match “{query}”.</p>
       )}
       {last.data?.nextCursor && (
         <button
@@ -255,7 +256,7 @@ function FileSearch({
         </button>
       )}
       {results.some((result) => result.data?.git?.available === false) && (
-        <p role="status" className="muted">
+        <p role="status" className={sharedStyles.muted}>
           Git status unavailable. Refresh to retry.
         </p>
       )}

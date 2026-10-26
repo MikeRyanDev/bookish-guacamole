@@ -75,7 +75,7 @@ for (const scenario of ["command", "patch"]) {
           requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
         ),
     );
-    const transcript = page.locator(".transcript");
+    const transcript = page.locator(".starter-transcript-transcript");
     const before = await transcript.evaluate((element) => ({
       top: element.scrollTop,
       height: element.clientHeight,
@@ -98,7 +98,9 @@ test("planning stays separate from permission policy and saved rules live in Set
   page,
 }) => {
   await page.goto(`${fixtureUrl}/permissions.html`);
-  await expect(page.locator(".composer").getByText("Workspace permissions")).toHaveCount(0);
+  await expect(
+    page.locator(".starter-composer-composer").getByText("Workspace permissions"),
+  ).toHaveCount(0);
   await page.getByRole("button", { name: "Require permissions", exact: true }).click();
   await expect(page.getByRole("radio")).toHaveCount(2);
   await expect(page.getByRole("radio", { name: /Plan only|Review changes/ })).toHaveCount(0);
@@ -111,14 +113,17 @@ test("planning stays separate from permission policy and saved rules live in Set
   await plan.click();
   await expect(plan).toHaveAttribute("aria-pressed", "false");
   await expect(page.getByRole("button", { name: "YOLO", exact: true })).toBeVisible();
-  const footer = page.locator(".permission footer");
+  const footer = page.locator(".starter-tools-permission footer");
   await expect(footer.getByRole("button")).toHaveText(["Reject", "Approve Once", "Always Approve"]);
-  await expect(footer.locator("button.primary")).toHaveText(["Approve Once", "Always Approve"]);
+  await expect(footer.locator("button.starter-shared-primary")).toHaveText([
+    "Approve Once",
+    "Always Approve",
+  ]);
 });
 
 test("plan toggle keeps toolbar labels and geometry stable during save", async ({ page }) => {
   await page.goto(`${fixtureUrl}/permissions.html?slow`);
-  const toolbar = page.locator(".composer-tools");
+  const toolbar = page.locator(".starter-composer-composer-tools");
   await expect(toolbar.getByRole("button")).toHaveText([
     "Create goal",
     "Plan",

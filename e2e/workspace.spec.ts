@@ -18,8 +18,11 @@ test("real workspace supports files, skills, themes, commands, and new sessions"
   await page.goto("/");
   await expect(page.getByRole("button", { name: "Open greet.js", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Open greet.js", exact: true }).click();
-  await expect(page.locator(".file-preview")).toContainText("function greet");
-  await page.locator(".header-left").getByRole("button", { name: "Learning", exact: true }).click();
+  await expect(page.locator(".starter-files-file-preview")).toContainText("function greet");
+  await page
+    .locator(".starter-workspace-header-left")
+    .getByRole("button", { name: "Learning", exact: true })
+    .click();
   await expect(page.getByRole("dialog", { name: /^Learning ·/ })).toBeVisible();
   await page.getByRole("button", { name: "Close Learning" }).click();
   await page.getByRole("button", { name: "Use dark theme" }).click();
@@ -52,7 +55,7 @@ for (const theme of ["light", "dark"] as const) {
     await page.addInitScript((value) => localStorage.setItem("starter-theme", value), theme);
     await page.goto("/");
     await expect(page.getByRole("textbox", { name: "Message your coding agent" })).toBeVisible();
-    await page.locator(".inspector").evaluate(async (element) => {
+    await page.locator(".starter-files-inspector").evaluate(async (element) => {
       await Promise.all(element.getAnimations().map((animation) => animation.finished));
     });
     const results = await new AxeBuilder({ page })
@@ -66,7 +69,7 @@ for (const width of [390, 1440]) {
   test(`header Learning and Files labels fit their controls at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 960 });
     await page.goto("/");
-    const header = page.locator(".workspace-header");
+    const header = page.locator(".starter-workspace-workspace-header");
     for (const name of ["Learning", "Toggle files"]) {
       const button = header.getByRole("button", { name, exact: true });
       await expect(button).toBeVisible();
@@ -95,7 +98,7 @@ test("Learning preserves the composer and restores legacy Skill links into the m
   await expect(dialog).toBeVisible();
   await expect(page).toHaveURL(/panel=files/);
   await page.keyboard.press("Escape");
-  await expect(page.locator(".file-preview")).toContainText("function greet");
+  await expect(page.locator(".starter-files-file-preview")).toContainText("function greet");
   const draft = page.getByRole("textbox", { name: "Message your coding agent" });
   await draft.fill("Keep this unsent draft while I review Learning.");
   const before = page.url();
@@ -124,7 +127,8 @@ for (const theme of ["light", "dark"]) {
       await expect(page.getByRole("button", { name: "Refresh skills" })).toBeEnabled();
       await page.screenshot({ path: `.impeccable/review/shell-dialog-${theme}-${width}.png` });
       expect(
-        (await new AxeBuilder({ page }).include(".learning-dialog").analyze()).violations,
+        (await new AxeBuilder({ page }).include(".starter-learning-learning-dialog").analyze())
+          .violations,
       ).toEqual([]);
     });
   }

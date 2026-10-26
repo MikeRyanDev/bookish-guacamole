@@ -115,9 +115,10 @@ test("assigns a named space, starts Learning, and reviews a proposal with eviden
   await page.getByRole("button", { name: /Published skills/ }).click();
   await page.getByText("test-first", { exact: true }).click();
   await expect(page.getByText("Run the tests before editing.")).toBeVisible();
-  expect((await new AxeBuilder({ page }).include(".learning-dialog").analyze()).violations).toEqual(
-    [],
-  );
+  expect(
+    (await new AxeBuilder({ page }).include(".starter-learning-learning-dialog").analyze())
+      .violations,
+  ).toEqual([]);
 });
 
 test("mobile assignment survives a failed save, cancellation, reload, and workspace switching", async ({
@@ -128,7 +129,7 @@ test("mobile assignment survives a failed save, cancellation, reload, and worksp
     `${process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174"}/learning.html?theme=dark&failure=save`,
   );
   await page
-    .locator(".workspace-header")
+    .locator(".starter-workspace-workspace-header")
     .getByRole("button", { name: "Learning", exact: true })
     .click();
   await page.getByLabel("Learning space", { exact: true }).selectOption("coding");
@@ -150,7 +151,7 @@ test("mobile assignment survives a failed save, cancellation, reload, and worksp
   await page.getByLabel("Workspace", { exact: true }).selectOption("default");
   await page.reload();
   await page
-    .locator(".workspace-header")
+    .locator(".starter-workspace-workspace-header")
     .getByRole("button", { name: "Learning", exact: true })
     .click();
   await expect(page.getByText("Coding lessons", { exact: true })).toBeVisible();
@@ -173,7 +174,9 @@ test("mobile assignment survives a failed save, cancellation, reload, and worksp
   await page.getByRole("button", { name: "Reject skill", exact: true }).click();
   await expect(page.getByText("Rejected. This proposal was not published.")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  expect((await new AxeBuilder({ page }).include(".workspace").analyze()).violations).toEqual([]);
+  expect(
+    (await new AxeBuilder({ page }).include(".starter-workspace-workspace").analyze()).violations,
+  ).toEqual([]);
 });
 
 test("a failed review preserves the proposal and recovers without publishing automatically", async ({
@@ -183,7 +186,7 @@ test("a failed review preserves the proposal and recovers without publishing aut
     `${process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174"}/learning.html?failure=review`,
   );
   await page
-    .locator(".workspace-header")
+    .locator(".starter-workspace-workspace-header")
     .getByRole("button", { name: "Learning", exact: true })
     .click();
   await page.getByLabel("Learning space", { exact: true }).selectOption("coding");
@@ -214,7 +217,7 @@ test("an uncertain review cannot repeat until the proposal state refreshes", asy
     `${process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174"}/learning.html?failure=review-state`,
   );
   await page
-    .locator(".workspace-header")
+    .locator(".starter-workspace-workspace-header")
     .getByRole("button", { name: "Learning", exact: true })
     .click();
   await page.getByLabel("Learning space", { exact: true }).selectOption("coding");
@@ -239,7 +242,7 @@ for (const theme of ["light", "dark"]) {
         `${process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174"}/learning.html?theme=${theme}`,
       );
       await page
-        .locator(".workspace-header")
+        .locator(".starter-workspace-workspace-header")
         .getByRole("button", { name: "Learning", exact: true })
         .click();
       const choice = page.getByLabel("Learning space", { exact: true });
@@ -266,7 +269,8 @@ for (const theme of ["light", "dark"]) {
         true,
       );
       expect(
-        (await new AxeBuilder({ page }).include(".learning-dialog").analyze()).violations,
+        (await new AxeBuilder({ page }).include(".starter-learning-learning-dialog").analyze())
+          .violations,
       ).toEqual([]);
     });
   }

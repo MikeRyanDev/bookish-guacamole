@@ -1,3 +1,5 @@
+import composerStyles from "../styles/composer.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useCallback, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronUp, X } from "lucide-react";
 import { IconButton } from "./icon-button";
@@ -52,7 +54,7 @@ export function ComposerPopover({
         ref={trigger}
         type="button"
         disabled={disabled}
-        className="composer-control"
+        className={sharedStyles.composerControl}
         popoverTarget={id}
         aria-expanded={open}
         aria-haspopup="dialog"
@@ -66,13 +68,13 @@ export function ComposerPopover({
         popover="auto"
         role="dialog"
         aria-labelledby={`${id}-title`}
-        className="composer-popover"
+        className={composerStyles.composerPopover}
         onBeforeToggle={(event) => {
           if (event.newState === "open") position();
         }}
         onToggle={(event) => setOpen(event.newState === "open")}
       >
-        <div className="composer-popover-heading">
+        <div className={composerStyles.composerPopoverHeading}>
           <h2 id={`${id}-title`}>{title}</h2>
           <IconButton
             label={`Close ${title.toLowerCase()}`}

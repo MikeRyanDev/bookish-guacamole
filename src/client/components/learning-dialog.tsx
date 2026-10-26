@@ -1,8 +1,13 @@
-import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
+import { lazy, useEffect, useRef } from "react";
 import type { AppConfig } from "../api";
+import learningStyles from "../styles/learning.module.css";
 import { IconButton } from "./icon-button";
-import { LearningPanel } from "./learning-panel";
+import { DeferredPanel } from "./deferred-panel";
+
+const LearningPanel = lazy(() =>
+  import("./learning-panel").then(({ LearningPanel }) => ({ default: LearningPanel })),
+);
 
 /** A workspace-scoped, native modal. Mount to open; closing discards unsaved UI drafts. */
 export function LearningDialog({ config, onClose }: { config: AppConfig; onClose: () => void }) {
@@ -17,17 +22,17 @@ export function LearningDialog({ config, onClose }: { config: AppConfig; onClose
   return (
     <dialog
       ref={dialog}
-      className="learning-dialog"
+      className={learningStyles.learningDialog}
       aria-labelledby="learning-title"
       onClose={(event) => {
         if (!event.currentTarget.open) onClose();
       }}
     >
-      <header className="learning-dialog-heading">
+      <header className={learningStyles.learningDialogHeading}>
         <h1 ref={heading} tabIndex={-1} id="learning-title">
           Learning · {config.workspaceName}
         </h1>
-        <div className="learning-dialog-actions">
+        <div className={learningStyles.learningDialogActions}>
           <IconButton
             label="Close Learning"
             onClick={() => {
@@ -39,7 +44,9 @@ export function LearningDialog({ config, onClose }: { config: AppConfig; onClose
           </IconButton>
         </div>
       </header>
-      <LearningPanel config={config} />
+      <DeferredPanel label="Learning">
+        <LearningPanel config={config} />
+      </DeferredPanel>
     </dialog>
   );
 }

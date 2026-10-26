@@ -1,14 +1,19 @@
 import { execFile } from "node:child_process";
-import { cp, mkdir } from "node:fs/promises";
+import { cp, mkdir, readdir } from "node:fs/promises";
+import { join } from "node:path";
 import { promisify } from "node:util";
 
 // Refuse to replace an existing workspace or its edits.
 await mkdir("workspace");
-await cp("example", "workspace", {
-  recursive: true,
-  errorOnExist: true,
-  force: false,
-});
+// Copy children into the directory we just reserved. Current Node versions
+// reject cp(sourceDirectory, existingDirectory) with errorOnExist, even if empty.
+for (const entry of await readdir("example")) {
+  await cp(join("example", entry), join("workspace", entry), {
+    recursive: true,
+    errorOnExist: true,
+    force: false,
+  });
+}
 // Give official file tools a Git boundary outside the parent's ignore rules.
 await promisify(execFile)("git", ["init", "--quiet", "workspace"]);
 console.log(

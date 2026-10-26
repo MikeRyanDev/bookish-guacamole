@@ -1,3 +1,5 @@
+import filesStyles from "../styles/files.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useEffect, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import type { OfficeDocument, OfficeSection, OfficeImage, DocumentBlock } from "./office-parser";
@@ -15,7 +17,7 @@ function Block({ block }: { block: DocumentBlock }) {
   if (block.kind === "image") return <EmbeddedImage image={block.image} />;
   if (block.kind === "table")
     return (
-      <div className="office-table-scroll">
+      <div className={filesStyles.officeTableScroll}>
         <table>
           <tbody>
             {block.rows.map((row, index) => (
@@ -31,7 +33,7 @@ function Block({ block }: { block: DocumentBlock }) {
     );
   if (block.heading)
     return (
-      <div role="heading" aria-level={block.heading} className="office-heading">
+      <div role="heading" aria-level={block.heading} className={filesStyles.officeHeading}>
         {block.text}
       </div>
     );
@@ -40,12 +42,15 @@ function Block({ block }: { block: DocumentBlock }) {
 function Slide({ section }: { section: OfficeSection }) {
   const slide = section.slide!;
   return (
-    <div className="slide-scroll" role="region" aria-label={section.name} tabIndex={0}>
-      <div className="slide-frame" style={{ aspectRatio: `${slide.width} / ${slide.height}` }}>
+    <div className={filesStyles.slideScroll} role="region" aria-label={section.name} tabIndex={0}>
+      <div
+        className={filesStyles.slideFrame}
+        style={{ aspectRatio: `${slide.width} / ${slide.height}` }}
+      >
         {slide.elements.map((element, index) => (
           <div
             key={index}
-            className="slide-element"
+            className={filesStyles.slideElement}
             style={{
               left: `${(element.x / slide.width) * 100}%`,
               top: `${(element.y / slide.height) * 100}%`,
@@ -62,7 +67,7 @@ function Slide({ section }: { section: OfficeSection }) {
           </div>
         ))}
       </div>
-      <details className="pdf-text">
+      <details className={filesStyles.pdfText}>
         <summary>Slide text</summary>
         {section.paragraphs.map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
@@ -88,8 +93,14 @@ function Sheet({ section }: { section: OfficeSection }) {
     overscan: 8,
   });
   return (
-    <div ref={scroll} className="sheet-scroll" role="region" aria-label={section.name} tabIndex={0}>
-      <table className="sheet-table" aria-rowcount={rows.length + 1}>
+    <div
+      ref={scroll}
+      className={filesStyles.sheetScroll}
+      role="region"
+      aria-label={section.name}
+      tabIndex={0}
+    >
+      <table className={filesStyles.sheetTable} aria-rowcount={rows.length + 1}>
         <thead>
           <tr>
             <th scope="col">Row</th>
@@ -128,7 +139,7 @@ function Sheet({ section }: { section: OfficeSection }) {
           </tr>
         </tbody>
       </table>
-      {!rows.length && <p className="reader-empty">This worksheet is empty.</p>}
+      {!rows.length && <p className={filesStyles.readerEmpty}>This worksheet is empty.</p>}
     </div>
   );
 }
@@ -177,23 +188,24 @@ export default function OfficeViewer({
   }, [blob, kind]);
   if (result?.blob !== blob)
     return (
-      <p role="status" className="reader-feedback">
+      <p role="status" className={filesStyles.readerFeedback}>
         Reading document…
       </p>
     );
   if (result.error)
     return (
-      <p role="alert" className="reader-error">
+      <p role="alert" className={filesStyles.readerError}>
         {result.error}
       </p>
     );
   const document = result.document;
   const section = document?.sections[selected] ?? document?.sections[0];
-  if (!document || !section) return <p className="reader-empty">This document is empty.</p>;
+  if (!document || !section)
+    return <p className={filesStyles.readerEmpty}>This document is empty.</p>;
   return (
     <>
       {document.sections.length > 1 && (
-        <label className="office-section-picker">
+        <label className={filesStyles.officeSectionPicker}>
           {kind === "spreadsheet" ? "Sheet" : "Slide"}
           <select
             aria-label={kind === "spreadsheet" ? "Sheet" : "Slide"}
@@ -208,9 +220,9 @@ export default function OfficeViewer({
           </select>
         </label>
       )}
-      <p className="office-note muted">{document.note}</p>
+      <p className={[filesStyles.officeNote, sharedStyles.muted].join(" ")}>{document.note}</p>
       {section.truncated && (
-        <p role="status" className="reader-feedback">
+        <p role="status" className={filesStyles.readerFeedback}>
           Preview limited to 5,000 rows or paragraphs and 100 columns. Download for all content.
         </p>
       )}
@@ -219,7 +231,7 @@ export default function OfficeViewer({
       ) : section.rows ? (
         <Sheet key={selected} section={section} />
       ) : (
-        <article className="office-document" aria-label={section.name} tabIndex={0}>
+        <article className={filesStyles.officeDocument} aria-label={section.name} tabIndex={0}>
           {section.blocks?.length ? (
             section.blocks.map((block, index) => <Block key={index} block={block} />)
           ) : section.paragraphs.length ? (

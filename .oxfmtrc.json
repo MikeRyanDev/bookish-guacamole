@@ -11,6 +11,7 @@
     "dist/**",
     "test-results/**",
     "playwright-report/**",
-    ".agents/skills/impeccable/**"
+    ".agents/skills/impeccable/**",
+    "src/client/styles/*.module.css.d.ts"
   ]
 }

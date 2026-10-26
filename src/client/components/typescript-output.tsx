@@ -1,3 +1,4 @@
+import toolsStyles from "../styles/tools.module.css";
 import { Check, ChevronRight, CircleAlert } from "lucide-react";
 import { CopyToolText } from "./tool-copy";
 import { formatJsonEvidence, parseTypeScriptResponse } from "./typescript-response";
@@ -16,13 +17,13 @@ function JsonEvidence({ json }: { json: string }) {
             key={index}
             className={
               token.endsWith(":")
-                ? "json-key"
+                ? toolsStyles.jsonKey
                 : token.startsWith('"')
-                  ? "syntax-string"
+                  ? toolsStyles.syntaxString
                   : /^(true|false|null)$/.test(token)
-                    ? "syntax-keyword"
+                    ? toolsStyles.syntaxKeyword
                     : /^-?\d/.test(token)
-                      ? "json-number"
+                      ? toolsStyles.jsonNumber
                       : undefined
             }
           >
@@ -49,8 +50,8 @@ export function TypeScriptOutput({
 }) {
   if (output === undefined || output === "")
     return (
-      <section className="typescript-output" aria-label="Execution output">
-        <p className="typescript-empty">
+      <section className={toolsStyles.typescriptOutput} aria-label="Execution output">
+        <p className={toolsStyles.typescriptEmpty}>
           {output === ""
             ? "No output"
             : awaitingApproval
@@ -64,15 +65,15 @@ export function TypeScriptOutput({
   const response = parseTypeScriptResponse(output);
   if (!response)
     return (
-      <section className="typescript-output" aria-label="Execution output">
-        <div className="typescript-section-heading">
+      <section className={toolsStyles.typescriptOutput} aria-label="Execution output">
+        <div className={toolsStyles.typescriptSectionHeading}>
           <strong>
             {denied ? "Execution denied" : failed ? "Error output" : "Unrecognized response"}
           </strong>
           <CopyToolText text={output} label="Copy output" />
         </div>
         {!failed && (
-          <p className="typescript-note">
+          <p className={toolsStyles.typescriptNote}>
             The response does not match the execution format. Original output is shown below.
           </p>
         )}
@@ -84,9 +85,9 @@ export function TypeScriptOutput({
   const conflict = response.success && response.error !== undefined;
   const OutcomeIcon = response.success && !conflict ? Check : CircleAlert;
   return (
-    <section className="typescript-output" aria-label="Execution output">
+    <section className={toolsStyles.typescriptOutput} aria-label="Execution output">
       <div
-        className={`typescript-outcome ${!response.success || conflict ? "typescript-error" : ""}`}
+        className={`${toolsStyles.typescriptOutcome} ${!response.success || conflict ? toolsStyles.typescriptError : ""}`}
       >
         <OutcomeIcon size={15} aria-hidden="true" />
         <strong>
@@ -94,19 +95,21 @@ export function TypeScriptOutput({
         </strong>
       </div>
       {conflict && (
-        <p className="typescript-note">The response reports success but also includes an error.</p>
+        <p className={toolsStyles.typescriptNote}>
+          The response reports success but also includes an error.
+        </p>
       )}
       {response.error ? (
-        <div className="typescript-error-detail">
-          <div className="typescript-error-meta">
+        <div className={toolsStyles.typescriptErrorDetail}>
+          <div className={toolsStyles.typescriptErrorMeta}>
             {response.error.name && <span>{response.error.name}</span>}
             {response.error.line !== undefined && <span>Line {response.error.line}</span>}
           </div>
-          <p className="typescript-error-message" tabIndex={0} aria-label="Error message">
+          <p className={toolsStyles.typescriptErrorMessage} tabIndex={0} aria-label="Error message">
             {response.error.message || "No error message returned."}
           </p>
           {response.error.stack && (
-            <details className="typescript-diagnostic">
+            <details className={toolsStyles.typescriptDiagnostic}>
               <summary>
                 <ChevronRight size={12} />
                 Stack trace
@@ -118,11 +121,13 @@ export function TypeScriptOutput({
           )}
         </div>
       ) : (
-        !response.success && <p className="typescript-note">No error details returned.</p>
+        !response.success && (
+          <p className={toolsStyles.typescriptNote}>No error details returned.</p>
+        )
       )}
       {response.resultJson !== undefined ? (
         <>
-          <div className="typescript-section-heading">
+          <div className={toolsStyles.typescriptSectionHeading}>
             <span>{response.success ? "Return value" : "Partial return value"}</span>
             <CopyToolText text={response.resultJson} label="Copy return value JSON" />
           </div>
@@ -131,11 +136,11 @@ export function TypeScriptOutput({
           </pre>
         </>
       ) : (
-        response.success && <p className="typescript-note">No value returned.</p>
+        response.success && <p className={toolsStyles.typescriptNote}>No value returned.</p>
       )}
       {response.logs.length ? (
         <>
-          <div className="typescript-section-heading">
+          <div className={toolsStyles.typescriptSectionHeading}>
             <span>Console output</span>
             <CopyToolText text={response.logs.join("\n")} label="Copy console output" />
           </div>
@@ -145,22 +150,25 @@ export function TypeScriptOutput({
             aria-label="Console output"
           >
             {response.logs.map((log, index) => (
-              <span key={index} className={log.startsWith("ERROR:") ? "console-error" : undefined}>
-                {log || <span className="console-empty">Empty line</span>}
+              <span
+                key={index}
+                className={log.startsWith("ERROR:") ? toolsStyles.consoleError : undefined}
+              >
+                {log || <span className={toolsStyles.consoleEmpty}>Empty line</span>}
                 {index < response.logs.length - 1 ? "\n" : ""}
               </span>
             ))}
           </pre>
         </>
       ) : (
-        <p className="typescript-note">No console output.</p>
+        <p className={toolsStyles.typescriptNote}>No console output.</p>
       )}
-      <details className="typescript-diagnostic typescript-raw">
+      <details className={[toolsStyles.typescriptDiagnostic, toolsStyles.typescriptRaw].join(" ")}>
         <summary>
           <ChevronRight size={12} />
           Raw response
         </summary>
-        <div className="typescript-section-heading">
+        <div className={toolsStyles.typescriptSectionHeading}>
           <span>Response JSON</span>
           <CopyToolText text={output} label="Copy response JSON" />
         </div>

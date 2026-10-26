@@ -1,3 +1,4 @@
+import workspaceStyles from "../../src/client/styles/workspace.module.css";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -13,11 +14,11 @@ function Fixture() {
   const [file, setFile] = useState<string>();
   return (
     <QueryClientProvider client={client}>
-      <div className="workspace hide-sidebar">
-        <header className="workspace-header">
+      <div className={[workspaceStyles.workspace, workspaceStyles.hideSidebar].join(" ")}>
+        <header className={workspaceStyles.workspaceHeader}>
           File viewer fixture<button onClick={() => setLearningOpen(true)}>Learning</button>
         </header>
-        <main className="main-pane">
+        <main className={workspaceStyles.mainPane}>
           <h1>Conversation stays here</h1>
         </main>
         <Inspector

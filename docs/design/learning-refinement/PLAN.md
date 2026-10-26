@@ -18,19 +18,19 @@ Instructions and Supporting evidence switch proposal content. Approve skill and 
 
 ## States
 
-| Element | States and behavior |
-| --- | --- |
-| Close and Back | Neutral default, hover surface, visible keyboard focus, press feedback. Close remains available during reads. Back appears only in the mobile reader. |
-| Change space | Compact text action. Editor replaces the summary. Long space names wrap. |
-| Assignment | Initial loading and read errors disable selection. Save stays disabled until a different choice exists. Pending save disables edits and Cancel. Failed save keeps the draft. Save/Cancel restore focus to Change space. |
-| Learn | Neutral action beside status. Loading, active run, pending start, and unknown run state disable starts with an adjacent explanation. Failure permits explicit state refresh before a retry. |
-| Refresh skills | One named icon action, disabled during refresh with adjacent status. It refreshes list, selected document, evidence, and run status. Local Retry remains beside each failed read. |
-| List navigation | Neutral default, soft selected fill, hover, pressed and visible focus. Counts come from confirmed data. |
-| Skill row | Full wrapping title, two-line preview, muted description, soft selection. Hover retains selection clarity. Keyboard activation opens the same reader. |
-| Reader | Stable title and content switches. Initial loading has a local status. Failed refresh retains the document with an error and Retry. Wide code and tables scroll within the document. |
-| Decisions | Explicit destination text. Pending writes keep action geometry stable and disable duplicates. Unknown result disables decisions until a successful state read. Confirmed outcomes replace actions. |
-| Metadata | One native disclosure per Markdown file with frontmatter. Original source remains intact. |
-| Empty and missing data | Explain no spaces, no proposals, no published Skills, missing files, missing evidence, and unavailable sources locally. |
+| Element                | States and behavior                                                                                                                                                                                                     |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Close and Back         | Neutral default, hover surface, visible keyboard focus, press feedback. Close remains available during reads. Back appears only in the mobile reader.                                                                   |
+| Change space           | Compact text action. Editor replaces the summary. Long space names wrap.                                                                                                                                                |
+| Assignment             | Initial loading and read errors disable selection. Save stays disabled until a different choice exists. Pending save disables edits and Cancel. Failed save keeps the draft. Save/Cancel restore focus to Change space. |
+| Learn                  | Neutral action beside status. Loading, active run, pending start, and unknown run state disable starts with an adjacent explanation. Failure permits explicit state refresh before a retry.                             |
+| Refresh skills         | One named icon action, disabled during refresh with adjacent status. It refreshes list, selected document, evidence, and run status. Local Retry remains beside each failed read.                                       |
+| List navigation        | Neutral default, soft selected fill, hover, pressed and visible focus. Counts come from confirmed data.                                                                                                                 |
+| Skill row              | Full wrapping title, two-line preview, muted description, soft selection. Hover retains selection clarity. Keyboard activation opens the same reader.                                                                   |
+| Reader                 | Stable title and content switches. Initial loading has a local status. Failed refresh retains the document with an error and Retry. Wide code and tables scroll within the document.                                    |
+| Decisions              | Explicit destination text. Pending writes keep action geometry stable and disable duplicates. Unknown result disables decisions until a successful state read. Confirmed outcomes replace actions.                      |
+| Metadata               | One native disclosure per Markdown file with frontmatter. Original source remains intact.                                                                                                                               |
+| Empty and missing data | Explain no spaces, no proposals, no published Skills, missing files, missing evidence, and unavailable sources locally.                                                                                                 |
 
 ## Text source
 
@@ -42,16 +42,16 @@ Inspect both themes at mobile, desktop, the user's width, and 200 percent browse
 
 ## Completion evidence
 
-| Plan item | Evidence |
-| --- | --- |
-| Compact header | Reader captures show the two-row header. The desktop regression asserts that assignment guidance is absent until editing. |
-| Compact sidebar | The two-line preview regression and long-title matrix cover both themes and six widths. |
-| Learning controls | Run status sits beside Learn. The regression rejects the previous Refresh Learning and Refresh status controls. |
-| Reader alignment | Geometry assertions compare the title, description, and Markdown left edges. Pending-review tests preserve decision positions. |
-| Repeated text | The source trace identifies the upstream compiler. The pure presentation tests preserve ordinary text. Raw Markdown and frontmatter bypass normalization. |
-| Responsive navigation | Desktop tests require hidden Back. Mobile tests prove Back and focus restoration. A short-viewport regression covers zoom layout. |
-| Element states | The state table, existing error/review tests, retained-document refresh test, and stale-error recovery regression cover the specified states. |
-| Pre-build review | HTML previews and the generated study preceded application edits. Preview limitations are recorded above. |
-| Delivery proof | USABILITY.md and VISUAL-REVIEW.md separate reviewer verdicts. docs/VERIFICATION.md records commands, merge, and active-app proof. |
+| Plan item             | Evidence                                                                                                                                                  |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Compact header        | Reader captures show the two-row header. The desktop regression asserts that assignment guidance is absent until editing.                                 |
+| Compact sidebar       | The two-line preview regression and long-title matrix cover both themes and six widths.                                                                   |
+| Learning controls     | Run status sits beside Learn. The regression rejects the previous Refresh Learning and Refresh status controls.                                           |
+| Reader alignment      | Geometry assertions compare the title, description, and Markdown left edges. Pending-review tests preserve decision positions.                            |
+| Repeated text         | The source trace identifies the upstream compiler. The pure presentation tests preserve ordinary text. Raw Markdown and frontmatter bypass normalization. |
+| Responsive navigation | Desktop tests require hidden Back. Mobile tests prove Back and focus restoration. A short-viewport regression covers zoom layout.                         |
+| Element states        | The state table, existing error/review tests, retained-document refresh test, and stale-error recovery regression cover the specified states.             |
+| Pre-build review      | HTML previews and the generated study preceded application edits. Preview limitations are recorded above.                                                 |
+| Delivery proof        | USABILITY.md and VISUAL-REVIEW.md separate reviewer verdicts. docs/VERIFICATION.md records commands, merge, and active-app proof.                         |
 
 The committed PNGs in this directory are synthetic browser captures with embedded provenance. The generated state study has its exact prompt embedded. Real workspace screenshots remain ignored local evidence.

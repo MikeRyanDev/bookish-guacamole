@@ -99,10 +99,10 @@ test("bounds a large file DOM and navigates to an offscreen line", async ({ page
   await page.getByRole("spinbutton", { name: "Line number" }).fill("9000");
   await page.getByRole("button", { name: "Go", exact: true }).click();
   await expect(page.getByRole("region", { name: "File contents" })).toContainText("line 9000");
-  expect(await page.locator(".source-line").count()).toBeLessThan(100);
+  expect(await page.locator(".starter-files-source-line").count()).toBeLessThan(100);
   await page.getByRole("button", { name: "Find in file", exact: true }).click();
   await page.getByRole("textbox", { name: "Find in file", exact: true }).fill("line 1234");
-  await expect(page.locator("mark.current-match")).toHaveText("line 1234");
+  await expect(page.locator("mark.starter-files-current-match")).toHaveText("line 1234");
 });
 
 test("Markdown does not execute HTML or request external images", async ({ page }) => {
@@ -138,8 +138,10 @@ for (const theme of ["light", "dark"]) {
     await expect(page.getByRole("region", { name: "File contents" })).toContainText(
       "export function",
     );
-    expect((await new AxeBuilder({ page }).include(".inspector").analyze()).violations).toEqual([]);
-    await expect(page.locator(".source-token").first()).toBeVisible();
+    expect(
+      (await new AxeBuilder({ page }).include(".starter-files-inspector").analyze()).violations,
+    ).toEqual([]);
+    await expect(page.locator(".starter-files-source-token").first()).toBeVisible();
     await page.mouse.move(0, 0);
     await page.screenshot({ path: `docs/proof/file-viewer-${theme}.png` });
     await page.setViewportSize({ width: 390, height: 844 });
@@ -148,7 +150,9 @@ for (const theme of ["light", "dark"]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
-    expect((await new AxeBuilder({ page }).include(".inspector").analyze()).violations).toEqual([]);
+    expect(
+      (await new AxeBuilder({ page }).include(".starter-files-inspector").analyze()).violations,
+    ).toEqual([]);
     await page.screenshot({ path: `docs/proof/file-viewer-mobile-${theme}.png` });
   });
 }

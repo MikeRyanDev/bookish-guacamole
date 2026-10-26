@@ -1,3 +1,4 @@
+import workspaceStyles from "../../src/client/styles/workspace.module.css";
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -202,9 +203,9 @@ function Fixture() {
   const name = workspace === "default" ? "Demo project" : "Second project";
   return (
     <QueryClientProvider client={client}>
-      <div className={`workspace ${open ? "" : "hide-inspector"}`}>
-        <header className="workspace-header">
-          <div className="header-left">
+      <div className={`${workspaceStyles.workspace} ${open ? "" : workspaceStyles.hideInspector}`}>
+        <header className={workspaceStyles.workspaceHeader}>
+          <div className={workspaceStyles.headerLeft}>
             <select
               aria-label="Workspace"
               value={workspace}
@@ -213,16 +214,19 @@ function Fixture() {
               <option value="default">Demo project</option>
               <option value="second">Second project</option>
             </select>
-            <button className="workspace-learning-entry" onClick={() => setLearningOpen(true)}>
+            <button
+              className={workspaceStyles.workspaceLearningEntry}
+              onClick={() => setLearningOpen(true)}
+            >
               Learning
             </button>
           </div>
-          <div className="header-actions">
+          <div className={workspaceStyles.headerActions}>
             <button onClick={() => setOpen(!open)}>Files</button>
           </div>
         </header>
-        <aside className="sessions" aria-label="Sessions" />
-        <main className="main-pane">
+        <aside className={workspaceStyles.sessions} aria-label="Sessions" />
+        <main className={workspaceStyles.mainPane}>
           <div className="empty-state">
             <h1>What are we building?</h1>
           </div>

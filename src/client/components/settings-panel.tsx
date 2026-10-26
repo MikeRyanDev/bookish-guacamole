@@ -1,3 +1,5 @@
+import settingsStyles from "../styles/settings.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useId, useRef, useState } from "react";
 import { Palette, SlidersHorizontal, ShieldCheck, Workflow, Plug } from "lucide-react";
 import type { AppConfig } from "../api";
@@ -36,9 +38,9 @@ export function SettingsPanel({
   const [active, setActive] = useState<Category>(initialCategory);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   return (
-    <div className="settings-layout">
+    <div className={settingsStyles.settingsLayout}>
       <div
-        className="settings-tabs"
+        className={settingsStyles.settingsTabs}
         role="tablist"
         aria-label="Settings categories"
         aria-orientation="vertical"
@@ -81,7 +83,7 @@ export function SettingsPanel({
       {categories.map(({ id: category }) => (
         <div
           key={category}
-          className="settings-tab-panel"
+          className={settingsStyles.settingsTabPanel}
           role="tabpanel"
           id={`${id}-${category}-panel`}
           aria-labelledby={`${id}-${category}-tab`}
@@ -92,7 +94,7 @@ export function SettingsPanel({
             <>
               <AppearanceSettings {...appearance} />
               {appearance.storageError && (
-                <div className="settings-inline-error" role="status">
+                <div className={sharedStyles.settingsInlineError} role="status">
                   <span>Appearance is session-only.</span>
                   <button onClick={appearance.retryStorage}>Retry storage</button>
                 </div>

@@ -1,0 +1,502 @@
+@value icon-button, icon-control, tool-chevron from "./shared.module.css";
+
+.tool-call {
+  margin: 0;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+}
+
+.tool-details {
+  min-width: 0;
+}
+
+.tool-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 4px 6px;
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 0;
+  border-radius: 6px;
+}
+
+.tool-header:hover {
+  color: var(--text);
+  background: var(--panel);
+}
+
+.tool-header strong {
+  font-weight: 550;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.tool-details[open] > .tool-header .tool-path {
+  display: none;
+}
+
+.tool-details[open] > .tool-header .tool-chevron {
+  transform: rotate(90deg);
+}
+
+.tool-path {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.tool-header .tool-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  font-size: 11px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.tool-status[data-state="approval"],
+.tool-status[data-state="running"] {
+  color: var(--accent);
+}
+
+.tool-status[data-state="approval"] {
+  background: var(--accent-bg);
+  padding: 3px 7px;
+  border-radius: 6px;
+}
+
+.tool-failed .tool-status {
+  color: var(--danger);
+}
+
+.tool-body {
+  padding: 4px 0 12px 28px;
+}
+
+.tool-surface {
+  background: var(--code);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tool-surface-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px 12px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--panel) 60%, var(--code));
+}
+
+.tool-surface-heading code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+.tool-surface-heading .icon-control {
+  margin-left: auto;
+}
+
+.tool-surface-heading .icon-button {
+  width: 28px;
+  height: 28px;
+}
+
+.shell-command {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.shell-command code {
+  color: var(--text);
+}
+
+.shell-command > span {
+  color: var(--accent);
+  user-select: none;
+}
+
+.shell-command code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  line-height: 1.8;
+  flex: 1;
+  min-width: 0;
+}
+
+.shell-command .icon-control {
+  align-self: flex-start;
+}
+
+.tool-call summary:not(.tool-header) {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 9px 2px;
+}
+
+.tool-call summary:not(.tool-header) svg {
+  transition: transform 120ms ease;
+}
+
+.tool-call details[open] > summary:not(.tool-header) svg {
+  transform: rotate(90deg);
+}
+
+.tool-call .tool-result summary {
+  padding: 8px 14px;
+}
+
+.tool-call summary:not(.tool-header):hover {
+  color: var(--text);
+}
+
+.tool-surface > .tool-result {
+  background: color-mix(in srgb, var(--bg) 36%, var(--code));
+}
+
+.tool-result[open] > summary {
+  color: var(--text);
+}
+
+.tool-arguments {
+  margin-top: 4px;
+}
+
+.tool-call pre {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.8;
+  background: transparent;
+}
+
+.tool-result pre,
+.tool-arguments pre {
+  max-height: 280px;
+  overflow: auto;
+}
+
+.tool-arguments pre {
+  background: var(--panel);
+  border-radius: 6px;
+}
+
+.tool-call .patch-preview,
+.tool-call .file-tool-preview {
+  padding: 4px 0 12px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.diff-line,
+.code-line {
+  display: block;
+  padding: 0 14px;
+  min-width: max-content;
+}
+
+.diff-line.added {
+  color: #285e36;
+  background: #e2ecdf;
+}
+
+.diff-line.removed {
+  color: #943f48;
+  background: #f1e2e1;
+}
+
+.diff-line.heading {
+  color: var(--muted);
+  font-size: 11px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.diff-count {
+  display: inline-flex;
+  gap: 7px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.diff-count > :first-child {
+  color: #285e36;
+}
+
+.diff-count > :last-child {
+  color: #943f48;
+}
+
+.syntax-keyword {
+  color: #715a8d;
+}
+
+.syntax-string {
+  color: #42704a;
+}
+
+[data-theme="dark"] .diff-line.added {
+  color: #b1d4a4;
+  background: #2d3e2b;
+}
+
+[data-theme="dark"] .diff-line.removed {
+  color: #efb2b4;
+  background: #452e30;
+}
+
+[data-theme="dark"] .diff-count > :first-child,
+[data-theme="dark"] .syntax-string {
+  color: #b1d4a4;
+}
+
+[data-theme="dark"] .diff-count > :last-child {
+  color: #efb2b4;
+}
+
+[data-theme="dark"] .syntax-keyword {
+  color: #c6b3df;
+}
+
+.tool-copy-error {
+  color: var(--danger);
+  font-size: 11px;
+  padding: 4px 12px;
+}
+
+@media (max-width: 600px) {
+  .tool-header {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tool-header .tool-path {
+    max-width: 42%;
+  }
+  .tool-header .tool-status {
+    font-size: 11px;
+  }
+}
+
+.permission {
+  border: 0;
+  margin: 16px 0;
+  padding: 0;
+  background: transparent;
+}
+
+.permission .tool-call {
+  margin: 2px 0;
+}
+
+.permission .tool-status {
+  color: var(--accent);
+}
+
+.permission footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 4px 0 10px 28px;
+}
+
+.permission footer button {
+  min-height: 34px;
+  transition:
+    background-color 140ms ease,
+    opacity 140ms ease;
+}
+
+.approval-scope {
+  margin-right: auto;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.permission > [role="alert"] {
+  margin: 10px 0;
+}
+
+.permission,
+dialog[open] {
+  animation: var(--motion-surface-enter) 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (max-width: 600px) {
+  .tool-body {
+    padding-left: 6px;
+  }
+  .permission footer {
+    padding-left: 6px;
+  }
+}
+
+.typescript-surface .tool-surface-heading {
+  font-size: 11px;
+}
+
+.tool-call .typescript-source {
+  padding: 16px;
+  max-height: 280px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 2;
+}
+
+.typescript-output {
+  background: color-mix(in srgb, var(--bg) 36%, var(--code));
+}
+
+.typescript-output .tool-surface-heading {
+  background: transparent;
+}
+
+.typescript-empty {
+  margin: 0;
+  padding: 8px 14px 14px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.typescript-surface .tool-surface-heading {
+  flex-wrap: wrap;
+}
+
+.typescript-surface .tool-copy-error {
+  flex-basis: 100%;
+}
+
+.typescript-surface .tool-surface-heading {
+  padding: 8px 16px;
+}
+
+.typescript-output {
+  padding: 16px;
+}
+
+.typescript-outcome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.typescript-outcome strong {
+  font-weight: 600;
+}
+
+.typescript-error,
+.typescript-error-meta,
+.console-error {
+  color: var(--danger);
+}
+
+.typescript-error-detail {
+  margin-top: 12px;
+}
+
+.typescript-error-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.typescript-error-message {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 180px;
+  overflow: auto;
+}
+
+.typescript-section-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  min-height: 28px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.typescript-section-heading > strong {
+  font-size: 12px;
+  color: var(--text);
+}
+
+.typescript-section-heading .icon-control {
+  margin-left: auto;
+}
+
+.typescript-section-heading .icon-button {
+  width: 28px;
+  height: 28px;
+}
+
+.tool-call .typescript-output pre {
+  padding: 8px 0 0;
+  max-height: 280px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.typescript-note,
+.typescript-output > .typescript-empty {
+  padding: 0;
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.typescript-output > .typescript-empty {
+  margin: 0;
+}
+
+.typescript-output > .typescript-section-heading:first-child {
+  margin-top: 0;
+}
+
+.typescript-raw {
+  margin-top: 12px;
+}
+
+.tool-call .typescript-diagnostic > summary {
+  padding: 8px 0;
+}
+
+.json-key {
+  color: var(--muted);
+}
+
+.json-number {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.console-empty {
+  color: var(--muted);
+  font-style: italic;
+}

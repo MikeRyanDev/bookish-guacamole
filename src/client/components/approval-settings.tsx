@@ -1,3 +1,6 @@
+import permissionsStyles from "../styles/permissions.module.css";
+import settingsStyles from "../styles/settings.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useEffect, useId, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ListChecks, LoaderCircle, RefreshCw, Trash2 } from "lucide-react";
@@ -39,7 +42,7 @@ export function ApprovalControls({
   return (
     <>
       <button
-        className="composer-control"
+        className={sharedStyles.composerControl}
         type="button"
         aria-label="Plan mode"
         aria-pressed={planOnly}
@@ -55,10 +58,14 @@ export function ApprovalControls({
         title="Permissions"
         label={loading ? "Loading…" : modeChoices.find((choice) => choice.value === mode)!.label}
       >
-        <fieldset className="approval-mode-list" disabled={loading || busy}>
-          <legend className="sr-only">Permissions</legend>
+        <fieldset className={permissionsStyles.approvalModeList} disabled={loading || busy}>
+          <legend className={sharedStyles.srOnly}>Permissions</legend>
           {modeChoices.map((choice) => (
-            <label key={choice.value} className="approval-mode-choice" title={choice.description}>
+            <label
+              key={choice.value}
+              className={permissionsStyles.approvalModeChoice}
+              title={choice.description}
+            >
               <input
                 type="radio"
                 name={id}
@@ -114,32 +121,36 @@ export function SavedPermissions({
     wasRemoving.current = !!removing;
   }, [removing]);
   return (
-    <section className="workspace-permissions" aria-label="Workspace permissions">
-      <div className="saved-rules-heading">
+    <section className={permissionsStyles.workspacePermissions} aria-label="Workspace permissions">
+      <div className={settingsStyles.savedRulesHeading}>
         <h3>Saved rules</h3>
         <button
           ref={refresh}
           type="button"
-          className="settings-icon-action"
+          className={settingsStyles.settingsIconAction}
           aria-label="Refresh permissions"
           title="Refresh permissions"
           disabled={loading || refreshing || removing}
           onClick={onRefresh}
         >
           {refreshing ? (
-            <LoaderCircle size={15} className="settings-spinner" />
+            <LoaderCircle size={15} className={sharedStyles.settingsSpinner} />
           ) : (
             <RefreshCw size={15} />
           )}
         </button>
       </div>
       {loading ? (
-        <div className="settings-rule-skeleton" role="status" aria-label="Loading saved rules">
+        <div
+          className={settingsStyles.settingsRuleSkeleton}
+          role="status"
+          aria-label="Loading saved rules"
+        >
           <span />
           <span />
         </div>
       ) : rules.length ? (
-        <ul className="saved-permissions">
+        <ul className={permissionsStyles.savedPermissions}>
           {rules.map((rule) => (
             <li key={JSON.stringify(rule)}>
               <span>
@@ -148,7 +159,7 @@ export function SavedPermissions({
               </span>
               <button
                 type="button"
-                className="settings-icon-action"
+                className={settingsStyles.settingsIconAction}
                 disabled={removing || refreshing}
                 title="Remove rule"
                 aria-label={`Remove permission for ${rule.tool} ${rule.resource ?? "all calls"}`}
@@ -163,15 +174,15 @@ export function SavedPermissions({
           ))}
         </ul>
       ) : (
-        !error && <p className="settings-empty">No saved rules.</p>
+        !error && <p className={settingsStyles.settingsEmpty}>No saved rules.</p>
       )}
       {removing && (
-        <p className="settings-pending" role="status">
-          <LoaderCircle size={14} className="settings-spinner" /> Removing…
+        <p className={settingsStyles.settingsPending} role="status">
+          <LoaderCircle size={14} className={sharedStyles.settingsSpinner} /> Removing…
         </p>
       )}
       {error && (
-        <div className="settings-inline-error" role="alert">
+        <div className={sharedStyles.settingsInlineError} role="alert">
           <span>{rules.length ? "Couldn’t update rules." : "Couldn’t load rules."}</span>
           <button disabled={loading || refreshing || removing} onClick={onRetry ?? onRefresh}>
             Retry

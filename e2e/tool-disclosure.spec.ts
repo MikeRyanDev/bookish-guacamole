@@ -11,14 +11,14 @@ test("tool activity can collapse without hiding status and copy preserves the co
   await expect(tool.getByText("Exit 1", { exact: true })).toBeVisible();
   await tool.getByRole("button", { name: "Copy command", exact: true }).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("npm test -- --runInBand");
-  await tool.locator("summary.tool-header").click();
-  await expect(tool.locator(".shell-command")).toBeHidden();
+  await tool.locator("summary.starter-tools-tool-header").click();
+  await expect(tool.locator(".starter-tools-shell-command")).toBeHidden();
   await expect(tool.getByText("Exit 1", { exact: true })).toBeVisible();
-  await tool.locator("summary.tool-header").focus();
+  await tool.locator("summary.starter-tools-tool-header").focus();
   await page.keyboard.press("Enter");
-  await expect(tool.locator(".shell-command")).toBeVisible();
+  await expect(tool.locator(".starter-tools-shell-command")).toBeVisible();
   await tool.getByText("Raw details", { exact: true }).click();
-  await expect(tool.locator(".tool-arguments pre")).toContainText(
+  await expect(tool.locator(".starter-tools-tool-arguments pre")).toContainText(
     '"command":"npm test -- --runInBand"',
   );
 });
@@ -27,7 +27,7 @@ test("streaming, missing results, and unknown-tool failures stay honest", async 
   await page.goto(`${fixtureUrl}/?states`);
   const running = page.getByRole("region", { name: "bash tool call" });
   await expect(running.getByText("Running", { exact: true })).toBeVisible();
-  await expect(running.locator(".tool-arguments pre")).toHaveText('{"command":"npm');
+  await expect(running.locator(".starter-tools-tool-arguments pre")).toHaveText('{"command":"npm');
   await expect(
     page
       .getByRole("region", { name: "read_file tool call" })

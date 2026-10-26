@@ -1,3 +1,6 @@
+import permissionsStyles from "../styles/permissions.module.css";
+import sharedStyles from "../styles/shared.module.css";
+import toolsStyles from "../styles/tools.module.css";
 import { z } from "zod";
 import { useLayoutEffect, useRef, useState } from "react";
 import type { Message, InterruptRenderProps } from "@copilotkit/react-core/v2";
@@ -78,7 +81,11 @@ export function Permission({
     }
   }
   return (
-    <section className="permission" aria-label="Permission request" aria-busy={busy || undefined}>
+    <section
+      className={toolsStyles.permission}
+      aria-label="Permission request"
+      aria-busy={busy || undefined}
+    >
       {call ? (
         <ToolCall
           name={call.function.name}
@@ -91,7 +98,7 @@ export function Permission({
       )}
       {error && <p role="alert">{error}</p>}
       {remember && preview && (
-        <div className="permission-scope">
+        <div className={permissionsStyles.permissionScope}>
           <p>Allow in all workspace conversations:</p>
           <ul>
             {preview.rules.map((rule) => (
@@ -104,7 +111,7 @@ export function Permission({
           {preview.partial && <p>Other parts will still require approval.</p>}
           <button
             ref={saveButton}
-            className="primary"
+            className={sharedStyles.primary}
             disabled={busy}
             onClick={() => {
               void decide("always");
@@ -128,7 +135,7 @@ export function Permission({
             Reject
           </button>
           <button
-            className="primary"
+            className={sharedStyles.primary}
             disabled={busy}
             onClick={() => {
               decide("once");
@@ -139,7 +146,7 @@ export function Permission({
           {preview && preview.rules.length > 0 && (
             <button
               ref={rememberButton}
-              className="primary"
+              className={sharedStyles.primary}
               disabled={busy}
               onClick={() => setRemember(true)}
             >

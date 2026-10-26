@@ -1,0 +1,134 @@
+@value composer-control from "./shared.module.css";
+
+.approval-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 8px 4px;
+}
+
+.approval-controls .composer-control {
+  padding-inline: 8px;
+}
+
+.approval-mode-list {
+  border: 0;
+  margin: 12px 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.approval-mode-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px;
+  border-radius: var(--radius-control, 6px);
+  cursor: pointer;
+}
+
+.approval-mode-choice:hover,
+.approval-mode-choice:has(input:checked) {
+  background: var(--hover);
+}
+
+.approval-mode-choice input {
+  margin-top: 4px;
+  accent-color: var(--accent);
+}
+
+.approval-mode-choice span span {
+  display: block;
+  margin-top: 4px;
+}
+
+.saved-permissions {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+
+.saved-permissions li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.saved-permissions li > span {
+  min-width: 0;
+  flex: 1;
+}
+
+.saved-permissions code {
+  display: block;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.permission-scope {
+  padding: 12px 0;
+}
+
+.permission-scope p,
+.permission-scope ul {
+  margin: 0 0 8px;
+}
+
+.permission-scope code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.permission-scope button + button {
+  margin-left: 8px;
+}
+
+@media (max-width: 600px) {
+  .approval-controls {
+    gap: 4px;
+  }
+  .approval-controls .composer-control {
+    min-height: 40px;
+  }
+}
+
+.permission-prototype {
+  max-width: 960px;
+  height: 100dvh;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.permission-prototype > header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+}
+
+.permission-prototype h1 {
+  font-size: 14px;
+  margin: 0;
+}
+
+.permission-scope {
+  margin-left: 28px;
+}
+
+@media (max-width: 600px) {
+  .permission-scope {
+    margin-left: 8px;
+  }
+}
+
+.workspace-permissions {
+  margin-top: 24px;
+}
+
+.workspace-permissions h3 {
+  font-size: 14px;
+}

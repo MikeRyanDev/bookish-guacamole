@@ -299,7 +299,6 @@ The development-only file-entry test passed with the development Inspector prese
 The initial development navigation test reported a WebSocket error while the HMR port was occupied.
 Production navigation passed without that error.
 
-
 ## Installed timestamp regression and corrected candidate
 
 A second fresh public clone completed normal setup and connection with candidate `cdbc41f`.

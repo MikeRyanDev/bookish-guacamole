@@ -14,7 +14,7 @@ test("two configured models execute tools in the same persisted conversation", a
   for (const [index, model] of config.models.slice(0, 2).entries()) {
     await page
       .locator("button")
-      .filter({ has: page.locator(".model-selector-label") })
+      .filter({ has: page.locator(".starter-composer-model-selector-label") })
       .click();
     await page.getByRole("radio", { name: new RegExp(model.label) }).click();
     await expect(page.getByRole("radio", { name: new RegExp(model.label) })).toBeChecked();
@@ -29,12 +29,14 @@ test("two configured models execute tools in the same persisted conversation", a
     await page.getByRole("button", { name: "Send message", exact: true }).click();
     const approval = page.getByRole("region", { name: "Permission request" });
     await expect(approval).toBeVisible({ timeout: 60000 });
-    await expect(approval.locator(".shell-command code")).toHaveText("npm test");
+    await expect(approval.locator(".starter-tools-shell-command code")).toHaveText("npm test");
     await expect(page.getByRole("button", { name: `${model.label}` })).toBeDisabled();
     await approval.getByRole("button", { name: "Approve Once" }).click();
     await expect(approval).toBeHidden({ timeout: 60000 });
     await expect(page.getByRole("button", { name: "Stop run" })).toBeHidden({ timeout: 60000 });
-    await expect(page.locator(".message.assistant .markdown").last()).toContainText(/pass/i);
+    await expect(
+      page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+    ).toContainText(/pass/i);
     await page.reload();
     await expect(page.getByRole("button", { name: `${model.label}` })).toBeEnabled();
   }

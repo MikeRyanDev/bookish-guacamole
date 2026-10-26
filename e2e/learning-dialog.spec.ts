@@ -6,13 +6,15 @@ test("Learning opens a workspace modal and returns focus without changing the co
 }) => {
   await page.goto(`${fixture}/learning.html`);
   const entry = page
-    .locator(".workspace-header")
+    .locator(".starter-workspace-workspace-header")
     .getByRole("button", { name: "Learning", exact: true });
   await entry.click();
   const dialog = page.getByRole("dialog", { name: "Learning · Demo project", exact: true });
   await expect(dialog).toBeVisible();
   await expect(page.getByRole("heading", { name: "Learning · Demo project" })).toBeFocused();
-  await expect(page.locator(".inspector").getByRole("button", { name: "Learning" })).toHaveCount(0);
+  await expect(
+    page.locator(".starter-files-inspector").getByRole("button", { name: "Learning" }),
+  ).toHaveCount(0);
   const box = await dialog.boundingBox();
   expect(box!.width).toBeGreaterThan(1000);
   expect(box!.height).toBeGreaterThan(700);
@@ -40,7 +42,7 @@ for (const theme of ["light", "dark"]) {
         await document.fonts.load('15px "Manrope Variable"');
         await document.fonts.load('13px "IBM Plex Mono"');
       });
-      const reader = page.locator(".learning-document");
+      const reader = page.locator(".starter-learning-learning-document");
       await expect(page.getByRole("heading", { name: "Test before editing" })).toBeFocused();
       const box = await reader.boundingBox();
       expect(box!.width).toBeGreaterThan(width === 1440 ? 800 : 350);

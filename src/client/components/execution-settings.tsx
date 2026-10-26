@@ -1,3 +1,5 @@
+import capabilitiesStyles from "../styles/capabilities.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useId, useRef, useState } from "react";
 import { useIsMutating, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { changeWorkspace, request, type AppConfig } from "../api";
@@ -40,14 +42,18 @@ export function ExecutionSettings({ config, active }: { config: AppConfig; activ
   });
   if (!query.data)
     return query.error ? (
-      <div className="settings-inline-error" role="alert">
+      <div className={sharedStyles.settingsInlineError} role="alert">
         <span>Could not load execution settings.</span>
         <button disabled={query.isFetching} onClick={() => void query.refetch()}>
           Retry
         </button>
       </div>
     ) : (
-      <div className="settings-skeleton" role="status" aria-label="Loading execution settings">
+      <div
+        className={sharedStyles.settingsSkeleton}
+        role="status"
+        aria-label="Loading execution settings"
+      >
         <span />
       </div>
     );
@@ -102,7 +108,7 @@ function ExecutionForm({
   return (
     <form
       ref={form}
-      className="execution-form capability-form"
+      className={["execution-form", capabilitiesStyles.capabilityForm].join(" ")}
       onChange={() => setDirty(true)}
       onSubmit={(event) => {
         event.preventDefault();
@@ -138,12 +144,14 @@ function ExecutionForm({
     >
       <fieldset disabled={busy}>
         <legend>Context</legend>
-        <label className="capability-check">
+        <label className={capabilitiesStyles.capabilityCheck}>
           <input type="checkbox" name="autoCompact" defaultChecked={settings.autoCompact} />{" "}
           <span>Summarize long conversations</span>
         </label>
-        <p className="muted">Keep the full transcript while shortening model context.</p>
-        <label className="capability-field" htmlFor={`${id}-threshold`}>
+        <p className={sharedStyles.muted}>
+          Keep the full transcript while shortening model context.
+        </p>
+        <label className={capabilitiesStyles.capabilityField} htmlFor={`${id}-threshold`}>
           <span>Summarize at (%)</span>
           <input
             id={`${id}-threshold`}
@@ -159,12 +167,12 @@ function ExecutionForm({
       </fieldset>
       <fieldset disabled={busy}>
         <legend>Conversation limits</legend>
-        <p className="muted">
+        <p className={sharedStyles.muted}>
           Stop further model calls at the limit, including Goal work. A call already in progress can
           exceed it.
         </p>
-        <div className="capability-fields">
-          <label className="capability-field" htmlFor={`${id}-tokens`}>
+        <div className={capabilitiesStyles.capabilityFields}>
+          <label className={capabilitiesStyles.capabilityField} htmlFor={`${id}-tokens`}>
             <span>Token limit</span>
             <input
               id={`${id}-tokens`}
@@ -177,7 +185,7 @@ function ExecutionForm({
               defaultValue={settings.tokenLimit ?? ""}
             />
           </label>
-          <label className="capability-field" htmlFor={`${id}-cost`}>
+          <label className={capabilitiesStyles.capabilityField} htmlFor={`${id}-cost`}>
             <span>Cost limit (USD)</span>
             <input
               id={`${id}-cost`}
@@ -191,13 +199,13 @@ function ExecutionForm({
             />
           </label>
         </div>
-        <p className="muted">
+        <p className={sharedStyles.muted}>
           Cost limits need model prices below. Missing usage stops work when a limit is set.
         </p>
       </fieldset>
       <fieldset disabled={busy}>
         <legend>Recovery</legend>
-        <label className="capability-field" htmlFor={`${id}-retries`}>
+        <label className={capabilitiesStyles.capabilityField} htmlFor={`${id}-retries`}>
           <span>Temporary failure retries</span>
           <select id={`${id}-retries`} name="maxRetries" defaultValue={settings.maxRetries}>
             {[0, 1, 2, 3, 4, 5].map((count) => (
@@ -207,22 +215,22 @@ function ExecutionForm({
             ))}
           </select>
         </label>
-        <p className="muted">Stop also cancels a pending retry.</p>
+        <p className={sharedStyles.muted}>Stop also cancels a pending retry.</p>
       </fieldset>
       <fieldset disabled={busy}>
         <legend>Code mode</legend>
-        <label className="capability-check">
+        <label className={capabilitiesStyles.capabilityCheck}>
           <input type="checkbox" name="codeMode" defaultChecked={settings.codeMode} />
           <span>Enable code mode</span>
         </label>
-        <p className="muted">
+        <p className={sharedStyles.muted}>
           Batch read-only tools in an isolated TypeScript program. Writes keep their approval
           controls. Applies to the next turn.
         </p>
       </fieldset>
-      <details className="capability-details">
+      <details className={capabilitiesStyles.capabilityDetails}>
         <summary>Model limits and prices</summary>
-        <p className="muted">
+        <p className={sharedStyles.muted}>
           Set each model’s context window. The starter uses 32,768 tokens until you change it.
           Prices are USD per million tokens.
         </p>
@@ -232,7 +240,7 @@ function ExecutionForm({
           return (
             <fieldset disabled={busy} key={model.id}>
               <legend>{model.label}</legend>
-              <label className="capability-field">
+              <label className={capabilitiesStyles.capabilityField}>
                 <span>Context window for {model.label}</span>
                 <input
                   name={`${model.id}.contextWindow`}
@@ -244,7 +252,7 @@ function ExecutionForm({
                   defaultValue={policy.contextWindow}
                 />
               </label>
-              <label className="capability-check">
+              <label className={capabilitiesStyles.capabilityCheck}>
                 <input
                   type="checkbox"
                   checked={priceModels[model.id] ?? false}
@@ -258,7 +266,7 @@ function ExecutionForm({
                 <span>Set prices for {model.label}</span>
               </label>
               <div hidden={!priceModels[model.id]}>
-                <div className="capability-fields">
+                <div className={capabilitiesStyles.capabilityFields}>
                   {(
                     [
                       ["input", "Input"],
@@ -267,7 +275,7 @@ function ExecutionForm({
                       ["cacheWrite", "Cache write"],
                     ] satisfies [keyof ModelPrices, string][]
                   ).map(([name, label]) => (
-                    <label className="capability-field" key={name}>
+                    <label className={capabilitiesStyles.capabilityField} key={name}>
                       <span>
                         {label} price for {model.label}
                       </span>
@@ -290,9 +298,9 @@ function ExecutionForm({
         })}
       </details>
       {(dirty || error || busy) && (
-        <div className="capability-save">
+        <div className={capabilitiesStyles.capabilitySave}>
           {error && (
-            <div className="settings-inline-error" role="alert">
+            <div className={sharedStyles.settingsInlineError} role="alert">
               <span>{error} Your draft is unchanged.</span>
               {/another window/.test(error) && (
                 <button type="button" onClick={reload}>
@@ -301,7 +309,7 @@ function ExecutionForm({
               )}
             </div>
           )}
-          <div className="capability-actions">
+          <div className={capabilitiesStyles.capabilityActions}>
             <button
               type="button"
               disabled={busy}
@@ -318,7 +326,7 @@ function ExecutionForm({
             >
               Cancel changes
             </button>
-            <button className="primary-action" type="submit" disabled={busy}>
+            <button className={capabilitiesStyles.primaryAction} type="submit" disabled={busy}>
               {busy ? "Saving…" : error ? "Retry save" : "Save changes"}
             </button>
             {busy && <PendingStatus>Saving execution settings</PendingStatus>}

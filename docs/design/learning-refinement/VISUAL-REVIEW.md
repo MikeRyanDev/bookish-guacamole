@@ -11,21 +11,21 @@ DESIGN.md still described the old 260px rail, 28px inset, separate Refresh statu
 
 ## Fidelity
 
-| Element | Verdict | Evidence |
-| --- | --- | --- |
-| Type | Match | Compact Manrope hierarchy; long titles wrap without horizontal clipping. |
-| Material | Match | Flat application surfaces, restrained selection, functional icons. |
-| Ground | Match | Neutral dark charcoal; configured accent stays in selection and focus. |
-| Header | Match | Compact title and assignment rows; guidance remains in the editor. |
-| Learning controls | Match | Learn and status share a group; one refresh accompanies list navigation. |
-| Library | Match | Full titles and two-line previews replace dense descriptions. |
-| Reader alignment | Match | Title, description, and Markdown share one left edge, including real content. |
-| Description | Match | Exact repeated generated prefixes disappear from presentation. |
-| Desktop navigation | Match | No redundant Back beside the visible library. |
-| Mobile and short windows | Adaptation | Single pane and explicit Back follow the approved contract. |
-| Decisions | Match | Destination and actions stay visible at narrow widths and zoom. Published Skills omit decisions. |
-| Focus | Adaptation | Visible heading focus is a functional accessibility state. |
-| Empty, loading, error | Match | Local explanations and recovery remain legible. |
+| Element                  | Verdict    | Evidence                                                                                         |
+| ------------------------ | ---------- | ------------------------------------------------------------------------------------------------ |
+| Type                     | Match      | Compact Manrope hierarchy; long titles wrap without horizontal clipping.                         |
+| Material                 | Match      | Flat application surfaces, restrained selection, functional icons.                               |
+| Ground                   | Match      | Neutral dark charcoal; configured accent stays in selection and focus.                           |
+| Header                   | Match      | Compact title and assignment rows; guidance remains in the editor.                               |
+| Learning controls        | Match      | Learn and status share a group; one refresh accompanies list navigation.                         |
+| Library                  | Match      | Full titles and two-line previews replace dense descriptions.                                    |
+| Reader alignment         | Match      | Title, description, and Markdown share one left edge, including real content.                    |
+| Description              | Match      | Exact repeated generated prefixes disappear from presentation.                                   |
+| Desktop navigation       | Match      | No redundant Back beside the visible library.                                                    |
+| Mobile and short windows | Adaptation | Single pane and explicit Back follow the approved contract.                                      |
+| Decisions                | Match      | Destination and actions stay visible at narrow widths and zoom. Published Skills omit decisions. |
+| Focus                    | Adaptation | Visible heading focus is a functional accessibility state.                                       |
+| Empty, loading, error    | Match      | Local explanations and recovery remain legible.                                                  |
 
 ## Ceiling
 

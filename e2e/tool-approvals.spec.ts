@@ -12,10 +12,12 @@ for (const kind of ["bash", "patch"] as const) {
         document.documentElement.dataset.theme = theme;
       }, theme);
       const permission = page.getByRole("region", { name: "Permission request" });
-      await expect(permission.locator(".tool-call")).toBeVisible();
+      await expect(permission.locator(".starter-tools-tool-call")).toBeVisible();
       await expect(permission).toContainText("Approval required");
       if (kind === "bash")
-        await expect(permission.locator(".shell-command")).toContainText("npm test -- --runInBand");
+        await expect(permission.locator(".starter-tools-shell-command")).toContainText(
+          "npm test -- --runInBand",
+        );
       else {
         await expect(permission.getByLabel("Proposed patch")).toContainText("+return name.trim();");
         await expect(permission.getByLabel("1 lines added, 1 lines removed")).toBeVisible();

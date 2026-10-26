@@ -1,3 +1,4 @@
+import appearanceStyles from "../styles/appearance.module.css";
 import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { CustomColors } from "./custom-colors";
 import { ACCENTS, type Accent, type Theme } from "../appearance";
@@ -14,10 +15,10 @@ export function AppearanceSettings({
   setAccent: (accent: Accent) => void;
 }) {
   return (
-    <section className="appearance-settings" aria-label="Appearance">
+    <section className={appearanceStyles.appearanceSettings} aria-label="Appearance">
       <fieldset className="appearance-mode">
         <legend>Theme</legend>
-        <div className="mode-options">
+        <div className={appearanceStyles.modeOptions}>
           {(["light", "dark", "system"] as const).map((mode) => (
             <label key={mode}>
               <input
@@ -49,7 +50,7 @@ export function AppearanceSettings({
               (accent.startsWith("#") ? accent.toUpperCase() : "")}
           </span>
         </legend>
-        <div className="accent-options">
+        <div className={appearanceStyles.accentOptions}>
           {ACCENTS.map((entry) => (
             <label key={entry.id} title={entry.name}>
               <input
@@ -60,7 +61,10 @@ export function AppearanceSettings({
                 onChange={() => setAccent(entry.id)}
                 aria-label={entry.name}
               />
-              <span className="accent-swatch" style={{ backgroundColor: entry.swatch }}>
+              <span
+                className={appearanceStyles.accentSwatch}
+                style={{ backgroundColor: entry.swatch }}
+              >
                 {accent === entry.id && <Check size={17} strokeWidth={2.5} aria-hidden="true" />}
               </span>
             </label>

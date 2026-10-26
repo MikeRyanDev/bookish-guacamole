@@ -2,6 +2,7 @@
   "name": "tanstack-intelligence-starter",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "tsx --env-file=.env src/server/main.ts",
@@ -11,7 +12,7 @@
     "intelligence": "copilotkit",
     "workspace:create": "node scripts/create-workspace.mjs",
     "lint": "oxlint --deny-warnings src tests scripts",
-    "check": "pnpm lint && pnpm design:check && pnpm typecheck && pnpm test && pnpm test:worktree && pnpm build",
+    "check": "pnpm lint && pnpm design:check && pnpm styles:check && pnpm typecheck && pnpm test && pnpm test:worktree && pnpm build",
     "start": "NODE_ENV=production node --env-file=.env dist/server/main.mjs",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
@@ -24,7 +25,11 @@
     "intelligence:image:status": "node scripts/temporary-intelligence-image.mjs status",
     "design:check": "node scripts/impeccable-ui.mjs detect",
     "design:browser": "playwright test e2e/design.spec.ts",
-    "test:worktree": "node --test scripts/worktree/*.test.mjs"
+    "test:worktree": "node --test scripts/worktree/*.test.mjs",
+    "test:fixtures": "playwright test --config playwright.fixtures.config.ts",
+    "styles:types": "node scripts/css-module-types.mjs",
+    "styles:check": "node scripts/css-module-types.mjs --check",
+    "analyze:bundle": "node scripts/analyze-bundle.mjs"
   },
   "dependencies": {
     "@ag-ui/client": "1.0.2",
@@ -86,7 +91,7 @@
     "vitest": "4.1.10"
   },
   "engines": {
-    "node": ">=22.13"
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
   },
   "packageManager": "pnpm@10.9.0",
   "intent": {

@@ -1,3 +1,4 @@
+import transcriptStyles from "../styles/transcript.module.css";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { observeElementRect, useVirtualizer } from "@tanstack/react-virtual";
 import { ArrowDown } from "lucide-react";
@@ -64,10 +65,10 @@ export function VirtualTranscript<T extends { id: string }>({
     }
   }, [items.length, virtualizer]);
   return (
-    <div className="transcript-shell">
+    <div className={transcriptStyles.transcriptShell}>
       <div
         ref={scroll}
-        className="transcript"
+        className={transcriptStyles.transcript}
         role="region"
         aria-label="Conversation transcript"
         aria-busy={busy}
@@ -78,11 +79,17 @@ export function VirtualTranscript<T extends { id: string }>({
             setDisclosing(false);
         }}
         onClickCapture={(event) => {
-          if (event.target instanceof Element && event.target.closest("summary, .activity-summary"))
+          if (
+            event.target instanceof Element &&
+            event.target.closest(`summary, .${transcriptStyles.activitySummary}`)
+          )
             setDisclosing(true);
         }}
       >
-        <div className="virtual-items" style={{ height: virtualizer.getTotalSize() }}>
+        <div
+          className={transcriptStyles.virtualItems}
+          style={{ height: virtualizer.getTotalSize() }}
+        >
           {virtualizer.getVirtualItems().map((row) => {
             const item = items[row.index];
             return (
@@ -91,7 +98,7 @@ export function VirtualTranscript<T extends { id: string }>({
                 data-index={row.index}
                 data-message-id={item?.id}
                 ref={virtualizer.measureElement}
-                className="virtual-row"
+                className={transcriptStyles.virtualRow}
                 style={{ transform: `translateY(${row.start}px)` }}
               >
                 {item ? (
@@ -108,7 +115,7 @@ export function VirtualTranscript<T extends { id: string }>({
         </div>
       </div>
       {items.length > 0 && !virtualizer.isAtEnd() && (
-        <div className="jump-latest">
+        <div className={transcriptStyles.jumpLatest}>
           <IconButton
             label="Jump to latest"
             onClick={() => {

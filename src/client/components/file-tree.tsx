@@ -1,3 +1,5 @@
+import filesStyles from "../styles/files.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useId, useMemo, useRef, useState } from "react";
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronRight, FileCode2, Folder, FolderOpen } from "lucide-react";
@@ -85,7 +87,7 @@ export function FileTree({
   return (
     <div
       ref={scroll}
-      className="file-tree"
+      className={filesStyles.fileTree}
       role="tree"
       aria-label="Workspace files"
       aria-busy={rows.some((row) => row.node.action === "loading") || undefined}
@@ -139,7 +141,11 @@ export function FileTree({
         event.preventDefault();
       }}
     >
-      <div role="none" className="file-tree-rows" style={{ height: virtual.getTotalSize() }}>
+      <div
+        role="none"
+        className={filesStyles.fileTreeRows}
+        style={{ height: virtual.getTotalSize() }}
+      >
         {virtual.getVirtualItems().map((item) => {
           const row = rows[item.index]!;
           const node = row.node;
@@ -164,7 +170,7 @@ export function FileTree({
               aria-disabled={disabled || undefined}
               data-path={node.path}
               data-git-status={change}
-              className={`file-tree-item ${selected === node.path ? "selected" : ""} ${active === item.index ? "tree-active" : ""}`}
+              className={`${filesStyles.fileTreeItem} ${selected === node.path ? sharedStyles.selected : ""} ${active === item.index ? filesStyles.treeActive : ""}`}
               style={{
                 transform: `translateY(${item.start}px)`,
                 paddingInlineStart: 6 + (row.depth - 1) * 16,
@@ -196,17 +202,17 @@ export function FileTree({
                 {node.folder ? (
                   <ChevronRight
                     size={12}
-                    className={row.expanded ? "tree-chevron-open" : ""}
+                    className={row.expanded ? filesStyles.treeChevronOpen : ""}
                     aria-hidden="true"
                   />
                 ) : (
-                  <span className="tree-icon-spacer" />
+                  <span className={filesStyles.treeIconSpacer} />
                 )}
                 {!node.action && <Icon size={14} aria-hidden="true" />}
-                <span className="tree-name">{node.name}</span>
+                <span className={filesStyles.treeName}>{node.name}</span>
               </button>
               {change && (
-                <span className="git-badge" aria-hidden="true">
+                <span className={filesStyles.gitBadge} aria-hidden="true">
                   {gitBadges[change]}
                 </span>
               )}

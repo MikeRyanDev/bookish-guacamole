@@ -1,3 +1,5 @@
+import sharedStyles from "../styles/shared.module.css";
+import workspaceStyles from "../styles/workspace.module.css";
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -88,7 +90,7 @@ export function WorkspaceSwitcher({
   return (
     <>
       <button
-        className="workspace-picker"
+        className={workspaceStyles.workspacePicker}
         aria-label="Change workspace"
         aria-haspopup="dialog"
         disabled={disabled}
@@ -103,14 +105,14 @@ export function WorkspaceSwitcher({
       </button>
       <dialog
         ref={dialog}
-        className="workspace-dialog"
+        className={workspaceStyles.workspaceDialog}
         aria-labelledby="workspace-dialog-title"
         onCancel={(event) => {
           if (mutation.isPending) event.preventDefault();
         }}
       >
         <header>
-          <div className="dialog-heading">
+          <div className={workspaceStyles.dialogHeading}>
             {editor.kind !== "list" && (
               <IconButton
                 label="Back to workspaces"
@@ -140,12 +142,12 @@ export function WorkspaceSwitcher({
         </header>
         {editor.kind === "list" ? (
           <>
-            <label className="sr-only" htmlFor="workspace-search">
+            <label className={sharedStyles.srOnly} htmlFor="workspace-search">
               Search workspaces
             </label>
             <input
               id="workspace-search"
-              className="workspace-filter"
+              className={workspaceStyles.workspaceFilter}
               placeholder="Search workspaces…"
               value={filter}
               onChange={(event) => setFilter(event.target.value)}
@@ -157,7 +159,7 @@ export function WorkspaceSwitcher({
                 <button onClick={() => workspaces.refetch()}>Retry</button>
               </p>
             )}
-            <div className="workspace-list">
+            <div className={workspaceStyles.workspaceList}>
               {workspaces.data
                 ?.filter((item) =>
                   `${item.name} ${item.path}`.toLowerCase().includes(filter.toLowerCase()),
@@ -165,10 +167,10 @@ export function WorkspaceSwitcher({
                 .map((item) => (
                   <div
                     key={item.id}
-                    className={`workspace-entry ${item.id === config.workspaceId ? "selected" : ""}`}
+                    className={`${workspaceStyles.workspaceEntry} ${item.id === config.workspaceId ? sharedStyles.selected : ""}`}
                   >
                     <button
-                      className="workspace-open"
+                      className={workspaceStyles.workspaceOpen}
                       aria-label={`Open ${item.name}`}
                       onClick={() => {
                         dialog.current?.close();
@@ -199,7 +201,10 @@ export function WorkspaceSwitcher({
                 ))}
             </div>
             <footer>
-              <button className="workspace-create" onClick={() => edit({ kind: "create" })}>
+              <button
+                className={workspaceStyles.workspaceCreate}
+                onClick={() => edit({ kind: "create" })}
+              >
                 <Plus size={16} />
                 Create workspace
               </button>
@@ -213,7 +218,7 @@ export function WorkspaceSwitcher({
             }}
           >
             {editor.kind === "remove" ? (
-              <div className="workspace-removal">
+              <div className={workspaceStyles.workspaceRemoval}>
                 <strong>{editor.workspace.name}</strong>
                 <p>
                   Files and saved conversations stay on disk. This only removes the workspace from
@@ -234,7 +239,7 @@ export function WorkspaceSwitcher({
                 />
                 {editor.kind === "create" && (
                   <>
-                    <fieldset className="workspace-mode">
+                    <fieldset className={workspaceStyles.workspaceMode}>
                       <legend>Folder</legend>
                       <label>
                         <input
@@ -266,7 +271,7 @@ export function WorkspaceSwitcher({
                       onChange={(event) => setPath(event.target.value)}
                       disabled={mutation.isPending}
                     />
-                    <p className="muted">
+                    <p className={sharedStyles.muted}>
                       {mode === "create"
                         ? "Leave the path empty to create a managed folder. Existing folders are never replaced."
                         : "Opens files in this folder for the coding agent. Shell commands still need approval."}
@@ -276,7 +281,7 @@ export function WorkspaceSwitcher({
               </>
             )}
             {mutation.error && (
-              <p role="alert" className="inline-error">
+              <p role="alert" className={sharedStyles.inlineError}>
                 {mutation.error.message}
               </p>
             )}
@@ -288,7 +293,7 @@ export function WorkspaceSwitcher({
               >
                 Cancel
               </button>
-              <button className="primary" disabled={mutation.isPending}>
+              <button className={sharedStyles.primary} disabled={mutation.isPending}>
                 {mutation.isPending
                   ? "Saving…"
                   : editor.kind === "create"

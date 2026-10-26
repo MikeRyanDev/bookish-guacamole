@@ -60,7 +60,7 @@ test("real workspace file reads preserve URL navigation, refresh, and asset isol
     await page.getByRole("button", { name: "Open image.svg", exact: true }).click();
     await expect(page.getByRole("img", { name: "image.svg" })).toBeVisible();
     await page.getByRole("button", { name: "Toggle files" }).click();
-    await expect(page.locator(".main-pane")).toBeVisible();
+    await expect(page.locator(".starter-workspace-main-pane")).toBeVisible();
     await page.getByRole("button", { name: "Toggle files" }).click();
     await expect(page.getByRole("img", { name: "image.svg" })).toBeVisible();
     const other = await request.get(
@@ -69,7 +69,7 @@ test("real workspace file reads preserve URL navigation, refresh, and asset isol
     );
     expect(other.ok()).toBe(false);
     await page.mouse.move(0, 0);
-    await expect(page.locator(".inspector")).toHaveCSS("opacity", "1");
+    await expect(page.locator(".starter-files-inspector")).toHaveCSS("opacity", "1");
     await page.screenshot({ path: "docs/proof/file-viewer-workspace.png", animations: "disabled" });
   } finally {
     if (id) await request.delete(`${origin}/api/workspaces/${id}`, { headers });

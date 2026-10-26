@@ -62,7 +62,7 @@ test("real Git changes refresh the tree while original HTML runs in the sandbox"
     for (const theme of ["light", "dark"]) {
       if (theme === "dark") await page.getByRole("button", { name: "Use dark theme" }).click();
       await page.mouse.move(0, 0);
-      await expect(page.locator(".inspector")).toHaveCSS("opacity", "1");
+      await expect(page.locator(".starter-files-inspector")).toHaveCSS("opacity", "1");
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       await page.evaluate(async () => {
         await document.fonts.ready;
@@ -75,8 +75,12 @@ test("real Git changes refresh the tree while original HTML runs in the sandbox"
       });
       // The original document is cross-origin by design; axe examines the host UI only.
       expect(
-        (await new AxeBuilder({ page }).include(".inspector").exclude("iframe").analyze())
-          .violations,
+        (
+          await new AxeBuilder({ page })
+            .include(".starter-files-inspector")
+            .exclude("iframe")
+            .analyze()
+        ).violations,
       ).toEqual([]);
       await page.screenshot({
         path: `docs/proof/html-tree-workspace-${theme}.png`,

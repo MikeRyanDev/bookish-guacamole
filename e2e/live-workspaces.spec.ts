@@ -47,10 +47,9 @@ test("named workspaces isolate real files and conversations and retain identity 
         `Read ${project.label}.txt using the file tool. Reply with its exact contents. Do not run shell commands or edit files.`,
       );
     await page.getByRole("button", { name: "Send message", exact: true }).click();
-    await expect(page.locator(".message.assistant .markdown").last()).toContainText(
-      `${project.label.toUpperCase()}_WORKSPACE_ONLY`,
-      { timeout: 60000 },
-    );
+    await expect(
+      page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+    ).toContainText(`${project.label.toUpperCase()}_WORKSPACE_ONLY`, { timeout: 60000 });
     await expect(page.getByRole("button", { name: "Stop run" })).toHaveCount(0);
     const url = page.url();
     records.push({ ...project, url, id: new URL(url).searchParams.get("workspace")! });
@@ -63,7 +62,9 @@ test("named workspaces isolate real files and conversations and retain identity 
     records[1]!.name,
   );
   await expect(page.getByText(/Thread is owned by a different agent/).first()).toBeVisible();
-  await expect(page.locator(".message.assistant .markdown")).toHaveCount(0);
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown"),
+  ).toHaveCount(0);
   await page.getByRole("button", { name: "Change workspace" }).click();
   await page.getByRole("button", { name: `Open ${first.name}`, exact: true }).click();
   await expect(page.getByRole("button", { name: "alpha.txt", exact: true })).toBeVisible();
@@ -71,12 +72,12 @@ test("named workspaces isolate real files and conversations and retain identity 
     page.getByRole("navigation", { name: "Conversation history" }).getByRole("link"),
   ).toHaveCount(1);
   await page.goto(first.url);
-  await expect(page.locator(".message.assistant .markdown").last()).toContainText(
-    "ALPHA_WORKSPACE_ONLY",
-  );
-  await expect(page.locator(".message.assistant .markdown")).not.toContainText([
-    "BETA_WORKSPACE_ONLY",
-  ]);
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).toContainText("ALPHA_WORKSPACE_ONLY");
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown"),
+  ).not.toContainText(["BETA_WORKSPACE_ONLY"]);
   await page.getByRole("button", { name: "Change workspace" }).click();
   await page.getByRole("button", { name: `Remove ${first.name}`, exact: true }).click();
   await page.getByRole("button", { name: "Remove from list", exact: true }).click();
@@ -91,9 +92,9 @@ test("named workspaces isolate real files and conversations and retain identity 
   await page.getByRole("button", { name: "Create", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`workspace=${first.id}`));
   await page.goto(first.url);
-  await expect(page.locator(".message.assistant .markdown").last()).toContainText(
-    "ALPHA_WORKSPACE_ONLY",
-  );
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).toContainText("ALPHA_WORKSPACE_ONLY");
   await page.screenshot({
     path: "docs/proof/workspace-isolation.png",
     fullPage: true,

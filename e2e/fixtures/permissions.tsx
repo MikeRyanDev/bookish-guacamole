@@ -1,3 +1,5 @@
+import permissionsStyles from "../../src/client/styles/permissions.module.css";
+import transcriptStyles from "../../src/client/styles/transcript.module.css";
 import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { ApprovalControls, SavedPermissions } from "../../src/client/components/approval-settings";
@@ -46,7 +48,7 @@ function Prototype() {
     text: `Project note ${i + 1}. Inspect the command or patch before you decide.\n`.repeat(2),
   }));
   return (
-    <main className="permission-prototype">
+    <main className={permissionsStyles.permissionPrototype}>
       <header>
         <h1>Approval prototype</h1>
         <button onClick={() => settingsDialog.current?.showModal()}>Settings</button>
@@ -65,7 +67,7 @@ function Prototype() {
         </label>
         <button onClick={() => setDecision("")}>Reset approval</button>
       </header>
-      <section className="conversation" aria-label="Coding conversation">
+      <section className={transcriptStyles.conversation} aria-label="Coding conversation">
         <VirtualTranscript
           items={items}
           renderItem={(item) => <p>{item.text}</p>}

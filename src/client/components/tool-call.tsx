@@ -1,3 +1,5 @@
+import sharedStyles from "../styles/shared.module.css";
+import toolsStyles from "../styles/tools.module.css";
 import { toolOutcome } from "./tool-outcome";
 import { revealToolContent, useToolDisclosure } from "./tool-disclosure";
 import { CopyToolText } from "./tool-copy";
@@ -40,11 +42,11 @@ function SourceText({ text }: { text: string }) {
             key={index}
             className={
               /^["'`]/.test(token)
-                ? "syntax-string"
+                ? toolsStyles.syntaxString
                 : /^(const|let|function|return|export|import|from|async|await|if|throw|new|true|false|null)$/.test(
                       token,
                     )
-                  ? "syntax-keyword"
+                  ? toolsStyles.syntaxKeyword
                   : undefined
             }
           >
@@ -58,7 +60,7 @@ function SourceText({ text }: { text: string }) {
 function Patch({ patch }: { patch: string }) {
   const fileCount = [...patch.matchAll(/^\*\*\* (?:Update|Add|Delete) File:/gm)].length;
   return (
-    <pre className="patch-preview" aria-label="Proposed patch">
+    <pre className={toolsStyles.patchPreview} aria-label="Proposed patch">
       <code>
         {patch.split("\n").map((line, index) => {
           if (/^\*\*\* (?:Begin|End) Patch$/.test(line) || line === "@@") return null;
@@ -72,7 +74,10 @@ function Patch({ patch }: { patch: string }) {
                   ? "heading"
                   : "";
           return (
-            <span key={index} className={`diff-line ${kind}`}>
+            <span
+              key={index}
+              className={`${toolsStyles.diffLine} ${kind ? toolsStyles[kind] : ""}`}
+            >
               {line || " "}
               {"\n"}
             </span>
@@ -85,15 +90,15 @@ function Patch({ patch }: { patch: string }) {
 /** Preserves provider-supplied line numbers and leaves non-text results readable. */
 function FileContents({ content }: { content: string }) {
   return (
-    <pre className="file-tool-preview" aria-label="File contents">
+    <pre className={toolsStyles.fileToolPreview} aria-label="File contents">
       <code>
         {content.split("\n").map((line, index) => {
           const numbered = /^\s*(\d+)(?:\t|\s*[|:] ?)(.*)$/.exec(line);
           return (
-            <span key={index} className="code-line">
+            <span key={index} className={toolsStyles.codeLine}>
               {numbered ? (
                 <>
-                  <span className="line-number">{numbered[1]}</span>
+                  <span className={sharedStyles.lineNumber}>{numbered[1]}</span>
                   <SourceText text={numbered[2] ?? ""} />
                 </>
               ) : (
@@ -193,33 +198,34 @@ export function ToolCall({
     0;
   return (
     <section
-      className={`tool-call ${failed ? "tool-failed" : ""}`}
+      className={`${toolsStyles.toolCall} ${failed ? toolsStyles.toolFailed : ""}`}
       aria-label={`${name} tool call`}
     >
       <details
-        className="tool-details"
+        className={toolsStyles.toolDetails}
         open={open}
         onToggle={(event) => {
           if (event.currentTarget.open !== open) setOpen(event.currentTarget.open);
         }}
       >
         <summary
-          className="tool-header"
+          className={toolsStyles.toolHeader}
           onClick={(event) => {
-            if (!open) revealToolContent(event.currentTarget.parentElement, ".tool-body");
+            if (!open)
+              revealToolContent(event.currentTarget.parentElement, `.${toolsStyles.toolBody}`);
           }}
         >
-          <ChevronRight size={14} className="tool-chevron" />
+          <ChevronRight size={14} className={sharedStyles.toolChevron} />
           <Icon size={14} aria-hidden="true" />
           <strong>{title}</strong>
           {(filePath || command) && (
-            <code className="tool-path" title={filePath || command}>
+            <code className={toolsStyles.toolPath} title={filePath || command}>
               {filePath || command}
             </code>
           )}
           {patch && (
             <span
-              className="diff-count"
+              className={toolsStyles.diffCount}
               aria-label={`${additions} lines added, ${removals} lines removed`}
             >
               <span>+{additions}</span>
@@ -227,7 +233,7 @@ export function ToolCall({
             </span>
           )}
           <span
-            className="tool-status"
+            className={toolsStyles.toolStatus}
             data-state={
               awaitingApproval
                 ? "approval"
@@ -244,30 +250,36 @@ export function ToolCall({
             ) : failed ? (
               <CircleAlert size={14} />
             ) : running && output === undefined ? (
-              <span className="spinner" />
+              <span className={sharedStyles.spinner} />
             ) : output !== undefined ? (
               <Check size={14} />
             ) : (
               <ChevronRight size={14} />
             )}
-            <span className={status === "Result received" ? "sr-only" : undefined}>{status}</span>
+            <span className={status === "Result received" ? sharedStyles.srOnly : undefined}>
+              {status}
+            </span>
           </span>
         </summary>
-        <div className="tool-body">
+        <div className={toolsStyles.toolBody}>
           {isTypeScript && (
-            <div className="tool-surface typescript-surface">
-              <div className="tool-surface-heading">
+            <div className={[toolsStyles.toolSurface, toolsStyles.typescriptSurface].join(" ")}>
+              <div className={toolsStyles.toolSurfaceHeading}>
                 <span>TypeScript</span>
                 {program !== undefined && <CopyToolText text={program} label="Copy TypeScript" />}
               </div>
               {program ? (
-                <pre className="typescript-source" aria-label="TypeScript source" tabIndex={0}>
+                <pre
+                  className={toolsStyles.typescriptSource}
+                  aria-label="TypeScript source"
+                  tabIndex={0}
+                >
                   <code>
                     <SourceText text={program} />
                   </code>
                 </pre>
               ) : (
-                <p className="typescript-empty">
+                <p className={toolsStyles.typescriptEmpty}>
                   {program === ""
                     ? "Empty TypeScript source"
                     : running
@@ -285,14 +297,14 @@ export function ToolCall({
             </div>
           )}
           {!isTypeScript && command && (
-            <div className="tool-surface">
-              <div className="shell-command">
+            <div className={toolsStyles.toolSurface}>
+              <div className={toolsStyles.shellCommand}>
                 <span aria-hidden="true">$</span>
                 <code>{command}</code>
                 <CopyToolText text={command} label="Copy command" />
               </div>
               {output !== undefined && (
-                <details className="tool-result" open={failed || undefined}>
+                <details className={toolsStyles.toolResult} open={failed || undefined}>
                   <summary>
                     <ChevronRight size={12} />
                     {failed ? "Error output" : "Output"}
@@ -303,8 +315,8 @@ export function ToolCall({
             </div>
           )}
           {patch && (
-            <div className="tool-surface">
-              <div className="tool-surface-heading">
+            <div className={toolsStyles.toolSurface}>
+              <div className={toolsStyles.toolSurfaceHeading}>
                 <FileDiff size={14} />
                 <code>{filePath ?? "Proposed changes"}</code>
                 <CopyToolText text={patch} label="Copy patch" />
@@ -313,8 +325,8 @@ export function ToolCall({
             </div>
           )}
           {name === "read_file" && output !== undefined && (
-            <div className="tool-surface">
-              <div className="tool-surface-heading">
+            <div className={toolsStyles.toolSurface}>
+              <div className={toolsStyles.toolSurfaceHeading}>
                 <FileCode size={14} />
                 <code>{filePath ?? "File contents"}</code>
                 <CopyToolText text={output} label="Copy file output" />
@@ -323,8 +335,8 @@ export function ToolCall({
             </div>
           )}
           {name === "write_file" && typeof parameters.content === "string" && (
-            <div className="tool-surface">
-              <div className="tool-surface-heading">
+            <div className={toolsStyles.toolSurface}>
+              <div className={toolsStyles.toolSurfaceHeading}>
                 <FileCode size={14} />
                 <code>{filePath ?? "File contents"}</code>
                 <CopyToolText text={parameters.content} label="Copy file content" />
@@ -333,7 +345,7 @@ export function ToolCall({
             </div>
           )}
           {!isTypeScript && !command && name !== "read_file" && output !== undefined && (
-            <details className="tool-result" open={failed || undefined}>
+            <details className={toolsStyles.toolResult} open={failed || undefined}>
               <summary>
                 <ChevronRight size={12} />
                 {failed ? "Error output" : "Output"}
@@ -342,7 +354,7 @@ export function ToolCall({
             </details>
           )}
           <details
-            className="tool-arguments"
+            className={toolsStyles.toolArguments}
             open={
               (!hasPreview && output === undefined) ||
               (isTypeScript && program === undefined) ||

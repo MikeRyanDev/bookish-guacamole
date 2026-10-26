@@ -1,6 +1,8 @@
+import { cssModules } from "./css-modules.config.ts";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 export default defineConfig({
+  css: { modules: cssModules },
   root: "src/client",
   plugins: [react()],
   optimizeDeps: {

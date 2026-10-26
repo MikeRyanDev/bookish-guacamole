@@ -48,8 +48,8 @@ test("Impeccable scans rendered tools and approvals in both themes and sizes", a
         }
         if (target === "activity") await page.getByRole("button", { name: /8 tool calls/ }).click();
         if (target !== "permission-list")
-          await expect(page.locator(".tool-call").first()).toBeVisible();
-        for (const summary of await page.locator(".tool-details > summary").all()) {
+          await expect(page.locator(".starter-tools-tool-call").first()).toBeVisible();
+        for (const summary of await page.locator(".starter-tools-tool-details > summary").all()) {
           if (!(await summary.evaluate((element) => element.parentElement?.hasAttribute("open"))))
             await summary.click();
         }

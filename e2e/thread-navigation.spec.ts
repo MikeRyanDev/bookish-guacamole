@@ -22,14 +22,16 @@ test("thread selection keeps saved session nodes and positions stable", async ({
   }
   await page.goto("/");
   const history = page.getByRole("navigation", { name: "Conversation history" });
-  const rows = history.locator(".session-row").filter({ hasNotText: "New session" });
+  const rows = history
+    .locator(".starter-workspace-session-row")
+    .filter({ hasNotText: "New session" });
   await expect.poll(() => rows.count()).toBeGreaterThan(1);
   await page.waitForTimeout(300);
   await history.evaluate((element) => {
     const state = {
       removed: 0,
       disabledTransitions: 0,
-      nodes: [...element.querySelectorAll(".session-row")].filter(
+      nodes: [...element.querySelectorAll(".starter-workspace-session-row")].filter(
         (row) => row.textContent !== "New session",
       ),
     };
@@ -72,7 +74,10 @@ test("thread selection keeps saved session nodes and positions stable", async ({
   await expect(rows.nth(1)).toHaveAttribute("aria-current", "page");
   await page.goBack();
   await expect(rows.nth(0)).toHaveAttribute("aria-current", "page");
-  await expect(page.locator(".transcript")).toHaveAttribute("aria-busy", "false");
+  await expect(page.locator(".starter-transcript-transcript")).toHaveAttribute(
+    "aria-busy",
+    "false",
+  );
   await expect(page.getByText("Restoring session…", { exact: true })).toHaveCount(0);
   await page.waitForTimeout(300);
   expect(

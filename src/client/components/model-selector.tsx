@@ -1,3 +1,6 @@
+import composerStyles from "../styles/composer.module.css";
+import permissionsStyles from "../styles/permissions.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useId } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { changeWorkspace, request, type AppConfig } from "../api";
@@ -31,12 +34,21 @@ export function ModelSelector({
       <ComposerPopover
         title="Choose model"
         disabled={disabled}
-        label={<span className="model-selector-label">{choice?.label ?? "Choose model"}</span>}
+        label={
+          <span className={composerStyles.modelSelectorLabel}>
+            {choice?.label ?? "Choose model"}
+          </span>
+        }
       >
-        <fieldset className="approval-mode-list" disabled={disabled}>
-          <legend className="sr-only">Model for this conversation</legend>
+        <fieldset className={permissionsStyles.approvalModeList} disabled={disabled}>
+          <legend className={sharedStyles.srOnly}>Model for this conversation</legend>
           {models.map((model) => (
-            <label key={model.id} className="approval-mode-choice model-choice">
+            <label
+              key={model.id}
+              className={[permissionsStyles.approvalModeChoice, composerStyles.modelChoice].join(
+                " ",
+              )}
+            >
               <input
                 type="radio"
                 name={group}
@@ -44,7 +56,8 @@ export function ModelSelector({
                 onChange={() => onSelect(model.id)}
               />
               <span>
-                <strong>{model.label}</strong> <span className="muted">({model.provider})</span>
+                <strong>{model.label}</strong>{" "}
+                <span className={sharedStyles.muted}>({model.provider})</span>
               </span>
             </label>
           ))}

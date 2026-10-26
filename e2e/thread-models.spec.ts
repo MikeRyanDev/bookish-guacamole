@@ -29,7 +29,9 @@ test("model choices persist per thread and failed saves retain the previous choi
     await page.getByRole("link", { name: names[index]!, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`thread=${ids[index]}`));
     await expect(
-      page.locator("button").filter({ has: page.locator(".model-selector-label") }),
+      page
+        .locator("button")
+        .filter({ has: page.locator(".starter-composer-model-selector-label") }),
     ).toBeEnabled();
   };
   await select(0);

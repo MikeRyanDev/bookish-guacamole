@@ -37,11 +37,15 @@ test("nested tree sorts folders first, starts collapsed, and supports keyboard a
   await expect(page.getByRole("button", { name: "Open gone.ts", exact: true })).toBeDisabled();
   for (const theme of ["light", "dark"]) {
     await page.evaluate((theme) => (document.documentElement.dataset.theme = theme), theme);
-    expect((await new AxeBuilder({ page }).include(".inspector").analyze()).violations).toEqual([]);
+    expect(
+      (await new AxeBuilder({ page }).include(".starter-files-inspector").analyze()).violations,
+    ).toEqual([]);
     await page.getByRole("tree").focus();
     await page.screenshot({ path: `docs/proof/html-tree-${theme}.png`, animations: "disabled" });
     await page.setViewportSize({ width: 390, height: 844 });
-    expect((await new AxeBuilder({ page }).include(".inspector").analyze()).violations).toEqual([]);
+    expect(
+      (await new AxeBuilder({ page }).include(".starter-files-inspector").analyze()).violations,
+    ).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );

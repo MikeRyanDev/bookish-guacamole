@@ -13,14 +13,14 @@ test("desktop reader has one alignment edge and compact navigation", async ({ pa
   await expect(page.getByRole("button", { name: "Refresh Learning" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Refresh status" })).toHaveCount(0);
   await page.getByRole("button", { name: "Published skills" }).click();
-  const row = page.locator(".learning-skill-row");
+  const row = page.locator(".starter-learning-learning-skill-row");
   await row.click();
   await expect(page.getByRole("button", { name: "Back to skills" })).not.toBeVisible();
-  const title = await page.locator(".learning-reader-heading h2").boundingBox();
+  const title = await page.locator(".starter-learning-learning-reader-heading h2").boundingBox();
   for (const selector of [
-    ".learning-document > p",
-    ".learning-document .markdown h3",
-    ".learning-document .markdown > p",
+    ".starter-learning-learning-document > p",
+    ".starter-learning-learning-document .starter-shared-markdown h3",
+    ".starter-learning-learning-document .starter-shared-markdown > p",
   ]) {
     const box = await page.locator(selector).first().boundingBox();
     expect(box!.x).toBeCloseTo(title!.x, 0);
@@ -30,8 +30,12 @@ test("desktop reader has one alignment edge and compact navigation", async ({ pa
     line: parseFloat(getComputedStyle(el).lineHeight),
   }));
   expect(preview.height).toBeLessThanOrEqual(preview.line * 2 + 1);
-  await expect(page.locator(".learning-document > p")).not.toContainText("Use when When");
-  await expect(page.locator(".learning-document > p")).not.toContainText("for Do not use for");
+  await expect(page.locator(".starter-learning-learning-document > p")).not.toContainText(
+    "Use when When",
+  );
+  await expect(page.locator(".starter-learning-learning-document > p")).not.toContainText(
+    "for Do not use for",
+  );
 });
 
 test("refresh errors preserve the selected published document", async ({ page }) => {
@@ -52,9 +56,13 @@ test("refresh errors preserve the selected published document", async ({ page })
   await page.getByRole("button", { name: "Refresh skills", exact: true }).click();
   await expect(page.getByRole("alert")).toBeVisible();
   await expect(
-    page.locator(".learning-document").getByRole("heading", { name: "Test first", exact: true }),
+    page
+      .locator(".starter-learning-learning-document")
+      .getByRole("heading", { name: "Test first", exact: true }),
   ).toBeVisible();
-  await expect(page.locator('.learning-skill-row[aria-pressed="true"]')).toBeVisible();
+  await expect(
+    page.locator('.starter-learning-learning-skill-row[aria-pressed="true"]'),
+  ).toBeVisible();
 });
 
 for (const theme of ["light", "dark"]) {
@@ -69,7 +77,7 @@ for (const theme of ["light", "dark"]) {
       );
       await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
       await page.getByRole("button", { name: "Learning", exact: true }).click();
-      const row = page.locator(".learning-skill-row");
+      const row = page.locator(".starter-learning-learning-skill-row");
       await expect(row).toBeVisible();
       await row.hover();
       await row.focus();
@@ -77,13 +85,17 @@ for (const theme of ["light", "dark"]) {
       await page.evaluate(async () => {
         await document.fonts.ready;
       });
-      await expect(page.locator(".learning-reader-heading h2")).toBeFocused();
-      const doc = page.locator(".learning-document");
-      const heading = await page.locator(".learning-reader-heading h2").boundingBox();
-      const markdown = await doc.locator(".markdown > h3").boundingBox();
+      await expect(page.locator(".starter-learning-learning-reader-heading h2")).toBeFocused();
+      const doc = page.locator(".starter-learning-learning-document");
+      const heading = await page
+        .locator(".starter-learning-learning-reader-heading h2")
+        .boundingBox();
+      const markdown = await doc.locator(".starter-shared-markdown > h3").boundingBox();
       expect(markdown!.x).toBeCloseTo(heading!.x, 0);
       expect(
-        await page.locator(".learning-review").evaluate((el) => el.scrollWidth <= el.clientWidth),
+        await page
+          .locator(".starter-learning-learning-review")
+          .evaluate((el) => el.scrollWidth <= el.clientWidth),
       ).toBe(true);
       expect((await doc.boundingBox())!.height).toBeGreaterThan(250);
       await expect(page.getByRole("button", { name: "Approve skill" })).toBeInViewport();
@@ -93,13 +105,16 @@ for (const theme of ["light", "dark"]) {
       await page.screenshot({ path: `.impeccable/refinement/reader-${theme}-${width}.png` });
       const { default: AxeBuilder } = await import("@axe-core/playwright");
       expect(
-        (await new AxeBuilder({ page }).include(".learning-dialog").analyze()).violations,
+        (await new AxeBuilder({ page }).include(".starter-learning-learning-dialog").analyze())
+          .violations,
       ).toEqual([]);
       await doc.focus();
       await page.keyboard.press("End");
       await expect(page.getByText("Skill metadata", { exact: true })).toBeInViewport();
       await page.getByText("Skill metadata", { exact: true }).click();
-      await expect(page.locator(".learning-metadata pre")).toContainText("name: test-first");
+      await expect(page.locator(".starter-learning-learning-metadata pre")).toContainText(
+        "name: test-first",
+      );
       await page.keyboard.press("Escape");
       await expect(page.getByRole("button", { name: "Learning", exact: true })).toBeFocused();
     });
@@ -111,11 +126,15 @@ test("refresh preserves review content and explains disabled decisions", async (
   await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
   await page.getByRole("button", { name: "Learning", exact: true }).click();
   await page.getByRole("button", { name: "Test before editing" }).click();
-  await expect(page.locator(".learning-document .markdown")).toBeVisible();
+  await expect(
+    page.locator(".starter-learning-learning-document .starter-shared-markdown"),
+  ).toBeVisible();
   const before = await page.getByRole("button", { name: "Approve skill" }).boundingBox();
   await page.getByRole("button", { name: "Refresh skills", exact: true }).click();
   await expect(page.getByText("Refreshing review state…")).toBeVisible();
-  await expect(page.locator(".learning-document .markdown")).toBeVisible();
+  await expect(
+    page.locator(".starter-learning-learning-document .starter-shared-markdown"),
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "Approve skill" })).toBeDisabled();
   const during = await page.getByRole("button", { name: "Approve skill" }).boundingBox();
   expect(during!.x).toBeCloseTo(before!.x, 0);
@@ -140,11 +159,13 @@ test("short viewport equivalent to 200 percent zoom keeps decisions visible", as
   await page.goto(`${fixture}/learning.html?ready=1&long=1&longtitle=1`);
   await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
   await page.getByRole("button", { name: "Learning", exact: true }).click();
-  await page.locator(".learning-skill-row").click();
+  await page.locator(".starter-learning-learning-skill-row").click();
   const modal = await page.getByRole("dialog").boundingBox();
   const action = await page.getByRole("button", { name: "Approve skill" }).boundingBox();
   expect(action!.y + action!.height).toBeLessThanOrEqual(modal!.y + modal!.height);
-  expect((await page.locator(".learning-document").boundingBox())!.height).toBeGreaterThan(50);
+  expect(
+    (await page.locator(".starter-learning-learning-document").boundingBox())!.height,
+  ).toBeGreaterThan(50);
   await page.getByRole("button", { name: "Supporting evidence" }).click();
   await expect(
     page.getByText("Please run the tests first so we know which behavior is broken."),
@@ -158,7 +179,7 @@ test("list, loading, and empty layouts expose accurate next actions", async ({ p
     await page.goto(`${fixture}/learning.html?ready=1&duplicate=1&theme=${theme}`);
     await page.evaluate(() => localStorage.setItem("learning-fixture-default", "coding"));
     await page.getByRole("button", { name: "Learning", exact: true }).click();
-    await expect(page.locator(".learning-skill-row")).toBeVisible();
+    await expect(page.locator(".starter-learning-learning-skill-row")).toBeVisible();
     await page.screenshot({ path: `.impeccable/refinement/list-${theme}.png` });
     await page.getByRole("button", { name: "Published skills" }).click();
     await expect(page.getByText(/No published Skills yet/)).toBeVisible();

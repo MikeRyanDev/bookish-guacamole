@@ -1,3 +1,5 @@
+import appearanceStyles from "../styles/appearance.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useEffect, useId, useRef, useState } from "react";
 import { Check, Plus, X } from "lucide-react";
 import { type Accent } from "../appearance";
@@ -44,13 +46,13 @@ export function CustomColors({
     }
   }
   return (
-    <div className="custom-colors" ref={group}>
+    <div className={appearanceStyles.customColors} ref={group}>
       {colors.length > 0 && (
-        <div className="custom-swatch-list" aria-label="Custom colors">
+        <div className={appearanceStyles.customSwatchList} aria-label="Custom colors">
           {colors.map((color, index) => (
-            <div className="custom-swatch-item" key={color}>
+            <div className={appearanceStyles.customSwatchItem} key={color}>
               <button
-                className="custom-swatch checkerboard"
+                className={[appearanceStyles.customSwatch, appearanceStyles.checkerboard].join(" ")}
                 aria-label={`Use ${color}`}
                 aria-pressed={accent === color}
                 onClick={() => onSelect(color as Accent)}
@@ -64,13 +66,14 @@ export function CustomColors({
                   if (accent === color) onSelect("moss");
                   requestAnimationFrame(() => {
                     if (group.current?.closest("[hidden]")) return;
-                    const swatches =
-                      group.current?.querySelectorAll<HTMLButtonElement>(".custom-swatch");
+                    const swatches = group.current?.querySelectorAll<HTMLButtonElement>(
+                      `.${appearanceStyles.customSwatch}`,
+                    );
                     const next = swatches?.[Math.min(index, swatches.length - 1)];
                     (
                       next ??
                       group.current?.querySelector<HTMLButtonElement>(
-                        ".add-color, .color-actions button",
+                        `.${appearanceStyles.addColor}, .${appearanceStyles.colorActions} button`,
                       )
                     )?.focus();
                   });
@@ -85,7 +88,7 @@ export function CustomColors({
       {!editing ? (
         <button
           ref={addButton}
-          className="add-color"
+          className={appearanceStyles.addColor}
           disabled={colors.length >= 24}
           onClick={() => setEditing(true)}
         >
@@ -103,9 +106,11 @@ export function CustomColors({
           }}
         />
       )}
-      {colors.length >= 24 && <p className="muted">24 colors saved. Remove one to add another.</p>}
+      {colors.length >= 24 && (
+        <p className={sharedStyles.muted}>24 colors saved. Remove one to add another.</p>
+      )}
       {storageError && (
-        <div className="settings-inline-error" role="status">
+        <div className={sharedStyles.settingsInlineError} role="status">
           <span>Colors are session-only.</span>
           <button onClick={() => save(colors)}>Retry colors</button>
         </div>
@@ -196,10 +201,10 @@ function ColorEditor({
   }
   const [, s, v] = toHsv(color);
   return (
-    <section className="color-editor" aria-label="Add custom color">
+    <section className={appearanceStyles.colorEditor} aria-label="Add custom color">
       <div className="color-picker-area">
         <div
-          className="color-plane"
+          className={appearanceStyles.colorPlane}
           style={{ backgroundColor: toHex(fromHsv(hue, 100, 100)) }}
           onPointerDown={(event) => {
             event.currentTarget.setPointerCapture(event.pointerId);
@@ -226,9 +231,12 @@ function ColorEditor({
             );
           }}
         >
-          <span className="color-cursor" style={{ left: `${s}%`, top: `${100 - v}%` }} />
+          <span
+            className={appearanceStyles.colorCursor}
+            style={{ left: `${s}%`, top: `${100 - v}%` }}
+          />
         </div>
-        <label className="color-slider">
+        <label className={appearanceStyles.colorSlider}>
           Hue
           <input
             aria-label="Hue"
@@ -242,7 +250,7 @@ function ColorEditor({
             }}
           />
         </label>
-        <div className="color-sv-sliders">
+        <div className={appearanceStyles.colorSvSliders}>
           <label>
             Saturation
             <input
@@ -267,18 +275,20 @@ function ColorEditor({
           </label>
         </div>
       </div>
-      <div className="color-entry">
+      <div className={appearanceStyles.colorEntry}>
         <div
-          className="color-preview-row"
+          className={appearanceStyles.colorPreviewRow}
           title="Saved color. Interface shades adapt for readable contrast."
         >
-          <span className="color-preview checkerboard">
+          <span
+            className={[appearanceStyles.colorPreview, appearanceStyles.checkerboard].join(" ")}
+          >
             <span style={{ background: toHex(color) }} />
           </span>
-          <span className="color-value">{toHex(color).toUpperCase()}</span>
+          <span className={appearanceStyles.colorValue}>{toHex(color).toUpperCase()}</span>
         </div>
-        <label className="color-format">
-          <span className="sr-only">Color format</span>
+        <label className={appearanceStyles.colorFormat}>
+          <span className={sharedStyles.srOnly}>Color format</span>
           <select
             aria-label="Color format"
             value={format}
@@ -293,7 +303,7 @@ function ColorEditor({
             ))}
           </select>
         </label>
-        <div className="color-fields">
+        <div className={appearanceStyles.colorFields}>
           {labels.map((label, i) => (
             <label key={`${format}-${label}`} htmlFor={`${id}-${i}`}>
               {label}
@@ -316,7 +326,7 @@ function ColorEditor({
               : `Use ${format === "RGBA" ? "RGB 0–255 and alpha 0–1" : format === "HSV" ? "hue 0–360 and S/V 0–100" : "CMYK values 0–100"}.`}
           </p>
         )}
-        <label className="opacity-label">
+        <label className={appearanceStyles.opacityLabel}>
           Opacity <span>{Math.round(color.a * 100)}%</span>
           <input
             aria-label="Opacity"
@@ -327,11 +337,11 @@ function ColorEditor({
             onChange={(e) => update({ ...color, a: Number(e.target.value) / 100 })}
           />
         </label>
-        {format === "CMYK" && <p className="muted">Screen approximation.</p>}
+        {format === "CMYK" && <p className={sharedStyles.muted}>Screen approximation.</p>}
       </div>
-      <div className="color-actions">
+      <div className={appearanceStyles.colorActions}>
         <button onClick={onCancel}>Cancel</button>
-        <button className="primary" disabled={!valid} onClick={() => onAdd(color)}>
+        <button className={sharedStyles.primary} disabled={!valid} onClick={() => onAdd(color)}>
           Add color
         </button>
       </div>

@@ -21,13 +21,13 @@ The supplied visual review matched the implemented controls and layout. Its rema
 
 Existing captures are recorded below as review artifacts; this documentation pass did not recapture or independently inspect their pixels:
 
-| Capture | Recorded context |
-| --- | --- |
-| `.impeccable/refinement/reader-dark-1512.png` | Dark desktop reader |
-| `.impeccable/refinement/reader-light-1440.png` | Light desktop reader |
-| `.impeccable/refinement/reader-dark-390.png` | Dark narrow reader |
-| `.impeccable/refinement/reader-light-320.png` | Light narrow reader |
+| Capture                                           | Recorded context                            |
+| ------------------------------------------------- | ------------------------------------------- |
+| `.impeccable/refinement/reader-dark-1512.png`     | Dark desktop reader                         |
+| `.impeccable/refinement/reader-light-1440.png`    | Light desktop reader                        |
+| `.impeccable/refinement/reader-dark-390.png`      | Dark narrow reader                          |
+| `.impeccable/refinement/reader-light-320.png`     | Light narrow reader                         |
 | `.impeccable/refinement/real-published-light.jpg` | Existing published Skill in the running app |
-| `.impeccable/refinement/browser-zoom-200.jpg` | Browser zoom at 200 percent |
+| `.impeccable/refinement/browser-zoom-200.jpg`     | Browser zoom at 200 percent                 |
 
 Fixture captures and usability writes are synthetic. The published-Skill capture records an existing document; it does not establish a fresh Learning run or model validation. The generated state study remains illustrative, with no authority to introduce global tokens or controls. No application code, detector, or sidecar was changed in this documentation pass.

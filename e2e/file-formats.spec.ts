@@ -27,7 +27,9 @@ async function captureFormat(page: Page, name: string) {
           .map((animation) => animation.finished.catch(() => {})),
       );
     });
-    expect((await new AxeBuilder({ page }).include(".inspector").analyze()).violations).toEqual([]);
+    expect(
+      (await new AxeBuilder({ page }).include(".starter-files-inspector").analyze()).violations,
+    ).toEqual([]);
     if (name === "pdf")
       await expect(page.getByText("Rendering page…", { exact: true })).toHaveCount(0);
     await page.screenshot({
@@ -38,7 +40,9 @@ async function captureFormat(page: Page, name: string) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
-    expect((await new AxeBuilder({ page }).include(".inspector").analyze()).violations).toEqual([]);
+    expect(
+      (await new AxeBuilder({ page }).include(".starter-files-inspector").analyze()).violations,
+    ).toEqual([]);
     if (name === "pdf")
       await expect(page.getByText("Rendering page…", { exact: true })).toHaveCount(0);
     await page.screenshot({
@@ -102,7 +106,7 @@ test.beforeEach(async ({ page }) => {
 });
 test("lazy syntax worker highlights Python without changing its source", async ({ page }) => {
   await page.getByRole("button", { name: "Open script.py", exact: true }).click();
-  await expect(page.locator(".source-token").first()).toBeVisible({ timeout: 15000 });
+  await expect(page.locator(".starter-files-source-token").first()).toBeVisible({ timeout: 15000 });
   await expect(page.getByRole("region", { name: "File contents" })).toContainText(
     "def greet(name):",
   );
@@ -179,7 +183,7 @@ for (const kind of ["image", "pdf"]) {
     const visual =
       kind === "image"
         ? page.getByRole("img", { name: "image.svg" })
-        : page.locator(".pdf-canvas canvas");
+        : page.locator(".starter-files-pdf-canvas canvas");
     if (kind === "image") await expect(page.getByText("4000 × 2400")).toBeVisible();
     else await expect(page.getByText("Page text", { exact: true })).toBeVisible();
     const before = (await visual.boundingBox())!.width;

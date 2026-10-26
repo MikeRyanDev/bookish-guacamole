@@ -1,3 +1,5 @@
+import filesStyles from "../styles/files.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { lazy, Suspense, useRef, useState } from "react";
 import { useQuery, useQueryClient, useIsFetching } from "@tanstack/react-query";
 import { RefreshCw, ArrowLeft, Maximize2, Minimize2, Copy, Search, X } from "lucide-react";
@@ -49,14 +51,14 @@ function WorkspaceInspector({
   }
   return (
     <aside
-      className={`inspector ${expanded ? "inspector-expanded" : ""}`}
+      className={`${filesStyles.inspector} ${expanded ? filesStyles.inspectorExpanded : ""}`}
       aria-label="Workspace inspector"
     >
-      <header className="pane-header">
+      <header className={sharedStyles.paneHeader}>
         <span>Files</span>
-        <div className="inspector-utilities">
+        <div className={filesStyles.inspectorUtilities}>
           <IconButton
-            className="viewer-expansion"
+            className={filesStyles.viewerExpansion}
             label={expanded ? "Collapse file viewer" : "Expand file viewer"}
             aria-pressed={expanded}
             onClick={() => setExpanded(!expanded)}
@@ -81,10 +83,12 @@ function WorkspaceInspector({
           </IconButton>
         </div>
       </header>
-      <div className={`inspector-body file-browser ${file ? "has-file" : ""}`}>
+      <div
+        className={`${filesStyles.inspectorBody} ${filesStyles.fileBrowser} ${file ? filesStyles.hasFile : ""}`}
+      >
         <>
-          <nav className="file-navigation" aria-label="Workspace files">
-            <div className="file-filter">
+          <nav className={filesStyles.fileNavigation} aria-label="Workspace files">
+            <div className={filesStyles.fileFilter}>
               <Search size={14} />
               <input
                 ref={searchInput}
@@ -105,7 +109,7 @@ function WorkspaceInspector({
                 </IconButton>
               )}
             </div>
-            <div className="file-list">
+            <div className={filesStyles.fileList}>
               <WorkspaceFileBrowser
                 config={config}
                 filter={filter}
@@ -115,8 +119,8 @@ function WorkspaceInspector({
             </div>
           </nav>
           {file ? (
-            <section className="file-preview" aria-label={file}>
-              <header className="file-heading">
+            <section className={filesStyles.filePreview} aria-label={file}>
+              <header className={filesStyles.fileHeading}>
                 <IconButton
                   label="Back to files"
                   onClick={() => {
@@ -126,7 +130,7 @@ function WorkspaceInspector({
                 >
                   <ArrowLeft size={15} />
                 </IconButton>
-                <span className="file-path" title={file}>
+                <span className={filesStyles.filePath} title={file}>
                   {file}
                 </span>
                 <IconButton label="Copy file path" onClick={() => void copyPath()}>
@@ -134,12 +138,12 @@ function WorkspaceInspector({
                 </IconButton>
               </header>
               {copyStatus?.path === file && (
-                <p role="status" className="reader-feedback">
+                <p role="status" className={filesStyles.readerFeedback}>
                   {copyStatus.text}
                 </p>
               )}
               {kind === "text" && preview.isFetching && (
-                <p role="status" className="reader-feedback">
+                <p role="status" className={filesStyles.readerFeedback}>
                   {preview.data ? "Refreshing file…" : "Loading file…"}
                 </p>
               )}
@@ -154,9 +158,9 @@ function WorkspaceInspector({
                   />
                 </Suspense>
               ) : preview.error ? (
-                <div className="reader-error" role="alert">
+                <div className={filesStyles.readerError} role="alert">
                   <p>Unable to open this file.</p>
-                  <p className="muted">
+                  <p className={sharedStyles.muted}>
                     It may have moved, or be private, binary, or larger than 256 KiB.
                   </p>
                   <button disabled={preview.isFetching} onClick={() => void preview.refetch()}>
@@ -169,7 +173,9 @@ function WorkspaceInspector({
               )}
             </section>
           ) : (
-            <div className="file-selection-hint muted">Choose a file to read its contents.</div>
+            <div className={[filesStyles.fileSelectionHint, sharedStyles.muted].join(" ")}>
+              Choose a file to read its contents.
+            </div>
           )}
         </>
       </div>

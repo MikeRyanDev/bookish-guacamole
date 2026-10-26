@@ -9,17 +9,17 @@ test("completed calls across messages share a compact expandable activity group"
   await page.evaluate(() => document.fonts.ready);
   const group = page.getByRole("button", { name: /8 tool calls/ });
   await expect(group).toBeVisible();
-  await expect(page.locator(".tool-call")).toHaveCount(0);
+  await expect(page.locator(".starter-tools-tool-call")).toHaveCount(0);
   await group.click();
-  await expect(page.locator(".tool-call")).toHaveCount(8);
-  const headers = await page.locator(".tool-header").all();
+  await expect(page.locator(".starter-tools-tool-call")).toHaveCount(8);
+  const headers = await page.locator(".starter-tools-tool-header").all();
   for (let i = 1; i < headers.length; i++) {
     const a = await headers[i - 1]!.boundingBox();
     const b = await headers[i]!.boundingBox();
     expect(b!.y - (a!.y + a!.height)).toBeLessThanOrEqual(4);
   }
   await group.press("Enter");
-  await expect(page.locator(".tool-call")).toHaveCount(0);
+  await expect(page.locator(".starter-tools-tool-call")).toHaveCount(0);
 });
 
 test("activity disclosure retains exact evidence and choices through remounts", async ({
@@ -42,10 +42,10 @@ test("activity disclosure retains exact evidence and choices through remounts", 
   await expect(group).toHaveCount(0);
   await transcript.evaluate((el) => (el.scrollTop = 0));
   await expect(group).toHaveAttribute("aria-expanded", "true");
-  await expect(bash.locator(".shell-command")).toBeVisible();
+  await expect(bash.locator(".starter-tools-shell-command")).toBeVisible();
   await group.click();
   await group.click();
-  await expect(bash.locator(".shell-command")).toBeVisible();
+  await expect(bash.locator(".starter-tools-shell-command")).toBeVisible();
 });
 
 test("failures, denial and active calls remain visible outside completed groups", async ({
@@ -62,7 +62,9 @@ test("failures, denial and active calls remain visible outside completed groups"
   await page.getByRole("button", { name: "Finish call" }).click();
   await expect(page.getByText("Running", { exact: true })).toHaveCount(0);
   await expect(
-    page.getByRole("region", { name: "custom_tool tool call" }).locator(".tool-status"),
+    page
+      .getByRole("region", { name: "custom_tool tool call" })
+      .locator(".starter-tools-tool-status"),
   ).toHaveAttribute("title", "Result received");
 });
 
@@ -80,7 +82,7 @@ test("grouped activity is accessible in both themes and at narrow widths", async
         path: `docs/design/tool-stack/after-${theme}-${width}-collapsed.png`,
       });
       await group.press("Enter");
-      await expect(page.locator(".tool-call")).toHaveCount(8);
+      await expect(page.locator(".starter-tools-tool-call")).toHaveCount(8);
       expect(
         (
           await new AxeBuilder({ page })
@@ -97,7 +99,7 @@ test("grouped activity is accessible in both themes and at narrow widths", async
       });
       await page
         .getByRole("region", { name: "patch tool call" })
-        .locator("summary.tool-header")
+        .locator("summary.starter-tools-tool-header")
         .click();
       await expect(page.getByLabel("Proposed patch")).toBeVisible();
       await expect
@@ -115,7 +117,7 @@ test("grouped activity is accessible in both themes and at narrow widths", async
       await page.screenshot({ path: `docs/design/tool-stack/after-${theme}-${width}-detail.png` });
       await page
         .getByRole("region", { name: "patch tool call" })
-        .locator("summary.tool-header")
+        .locator("summary.starter-tools-tool-header")
         .click();
       await group.click();
     }
@@ -130,7 +132,7 @@ test("expanding activity keeps its control in place in a short transcript viewpo
   const group = page.getByRole("button", { name: /8 tool calls/ });
   const before = await group.boundingBox();
   await group.click();
-  await expect(page.locator(".tool-call")).toHaveCount(8);
+  await expect(page.locator(".starter-tools-tool-call")).toHaveCount(8);
   await page.waitForTimeout(200);
   const after = await group.boundingBox();
   expect(Math.abs(after!.y - before!.y)).toBeLessThan(3);

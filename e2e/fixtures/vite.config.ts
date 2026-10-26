@@ -1,9 +1,11 @@
+import { cssModules } from "../../css-modules.config.ts";
 import { readWorktreeIdentity } from "../../src/server/worktree-identity.js";
 import { localAccessError } from "../../src/server/http/local-access.js";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 export default defineConfig({
+  css: { modules: cssModules },
   root: fileURLToPath(new URL(".", import.meta.url)),
   cacheDir: fileURLToPath(new URL("../../.data/vite-fixtures", import.meta.url)),
   plugins: [

@@ -1,3 +1,5 @@
+import filesStyles from "../styles/files.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ArrowDown, ArrowUp, Copy, Download, Hash, Search, WrapText, X } from "lucide-react";
@@ -63,7 +65,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
     let frame = requestAnimationFrame(() => {
       frame = requestAnimationFrame(() =>
         scroll.current
-          ?.querySelector(".current-match")
+          ?.querySelector(`.${filesStyles.currentMatch}`)
           ?.scrollIntoView({ block: "nearest", inline: "nearest" }),
       );
     });
@@ -99,7 +101,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
   }
   return (
     <div
-      className="file-reader"
+      className={filesStyles.fileReader}
       onKeyDown={(event) => {
         if ((event.metaKey || event.ctrlKey) && event.key === "f") {
           event.preventDefault();
@@ -114,9 +116,9 @@ export function FileViewer({ path, content }: { path: string; content: string })
         }
       }}
     >
-      <div className="reader-toolbar">
+      <div className={filesStyles.readerToolbar}>
         {(markdown || html) && (
-          <div className="reader-modes" aria-label="File view">
+          <div className={filesStyles.readerModes} aria-label="File view">
             <button aria-pressed={mode === "source"} onClick={() => setMode("source")}>
               Source
             </button>
@@ -132,7 +134,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
             </button>
           </div>
         )}
-        <div className="reader-actions">
+        <div className={filesStyles.readerActions}>
           <IconButton
             label="Find in file"
             aria-pressed={finding}
@@ -170,7 +172,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
         </div>
       </div>
       {finding && (
-        <div className="reader-find">
+        <div className={filesStyles.readerFind}>
           <input
             ref={findInput}
             aria-label="Find in file"
@@ -214,7 +216,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
       )}
       {going && (
         <form
-          className="reader-find"
+          className={filesStyles.readerFind}
           onSubmit={(event) => {
             event.preventDefault();
             const line = Number(lineInput);
@@ -243,7 +245,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
         </form>
       )}
       {feedback?.content === content && (
-        <p className="reader-feedback" role={feedback.error ? "alert" : "status"}>
+        <p className={filesStyles.readerFeedback} role={feedback.error ? "alert" : "status"}>
           {feedback.text}
         </p>
       )}
@@ -251,7 +253,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
         <HtmlViewer content={content} />
       ) : mode === "preview" ? (
         <div
-          className="file-markdown markdown"
+          className={[filesStyles.fileMarkdown, sharedStyles.markdown].join(" ")}
           role="region"
           aria-label="File contents"
           tabIndex={0}
@@ -260,7 +262,9 @@ export function FileViewer({ path, content }: { path: string; content: string })
             remarkPlugins={[remarkGfm]}
             skipHtml
             components={{
-              img: ({ alt }) => <span className="muted">[Image: {alt || "not loaded"}]</span>,
+              img: ({ alt }) => (
+                <span className={sharedStyles.muted}>[Image: {alt || "not loaded"}]</span>
+              ),
               a: ({ href, children }) =>
                 /^https?:\/\//i.test(href ?? "") ? (
                   <a href={href} target="_blank" rel="noreferrer">
@@ -277,15 +281,15 @@ export function FileViewer({ path, content }: { path: string; content: string })
       ) : (
         <div
           ref={scroll}
-          className={`file-source ${wrap ? "wrap-source" : ""}`}
+          className={`${filesStyles.fileSource} ${wrap ? filesStyles.wrapSource : ""}`}
           role="region"
           aria-label="File contents"
           tabIndex={0}
         >
           {!content ? (
-            <p className="reader-empty">This file is empty.</p>
+            <p className={filesStyles.readerEmpty}>This file is empty.</p>
           ) : (
-            <div className="source-lines" style={{ height: virtual.getTotalSize() }}>
+            <div className={filesStyles.sourceLines} style={{ height: virtual.getTotalSize() }}>
               {virtual.getVirtualItems().map((row) => {
                 const text = lines[row.index] ?? "";
                 const hits = finding ? (matchesByLine.get(row.index) ?? []) : [];
@@ -297,7 +301,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
                     previous,
                     <mark
                       key={match.start}
-                      className={match.index === current ? "current-match" : ""}
+                      className={match.index === current ? filesStyles.currentMatch : ""}
                     >
                       {text.slice(match.start, match.end)}
                     </mark>,
@@ -308,17 +312,17 @@ export function FileViewer({ path, content }: { path: string; content: string })
                     key={row.key}
                     data-index={row.index}
                     ref={virtual.measureElement}
-                    className="source-line"
+                    className={filesStyles.sourceLine}
                     style={{ transform: `translateY(${row.start}px)` }}
                   >
-                    <span className="line-number" aria-hidden="true">
+                    <span className={sharedStyles.lineNumber} aria-hidden="true">
                       {row.index + 1}
                     </span>
                     <code>
                       {!hits.length && syntax?.[row.index]?.length ? (
                         syntax[row.index]!.map((token, index) => (
                           <span
-                            className="source-token"
+                            className={filesStyles.sourceToken}
                             key={index}
                             style={
                               {
@@ -344,7 +348,7 @@ export function FileViewer({ path, content }: { path: string; content: string })
           )}
         </div>
       )}
-      <footer className="reader-footer">
+      <footer className={filesStyles.readerFooter}>
         <span>
           {lines.length} {lines.length === 1 ? "line" : "lines"}
         </span>

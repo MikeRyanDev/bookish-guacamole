@@ -16,3 +16,5 @@ For visual design work, also read `../impeccable/SKILL.md`, root `PRODUCT.md`, a
 Start without borders, dividers, or card wrappers. Use spacing and alignment first; add a rule only for a concrete usability need that cannot otherwise be met. Keep keyboard focus visible. Avoid persistent framework branding, model/container metadata, redundant status, and repeated headings. Dark neutral surfaces have only a trace of blue and no green cast; accent colors do not tint the neutral palette.
 
 For new or changed workflows, control meaning, or feature discovery, follow [interaction review](references/interaction-review.md) before implementation and delivery. It requires concrete labels and click outcomes, a fresh task-first usability review, and separate usability, visual, and technical evidence. Styling-only edits retain the existing visual checks.
+
+Use feature CSS Modules under `src/client/styles/`. Keep tokens and element defaults in `styles.css`. Read `docs/FRONTEND-MAINTENANCE.md` before changing style ownership. Run `pnpm styles:types` after changing module exports; commit the generated declarations.

@@ -71,57 +71,60 @@ test("settings support system theme, four color formats, persistence, defaults a
   await expect(page.getByRole("dialog")).not.toBeVisible();
 });
 
-test("workspace defaults reach new native conversations without changing existing ones", async ({
-  page,
-  request,
-}, testInfo) => {
-  const origin = process.env.SETTINGS_APP_URL;
-  test.skip(!origin, "Requires isolated settings runtime");
-  const config = await (await request.get(`${origin}/api/config`)).json();
-  const headers = { authorization: `Bearer ${config.token}` };
-  const existing = `settings-existing-${Date.now()}`,
-    fresh = `settings-new-${Date.now()}`;
-  await request.patch(`${origin}/api/defaults`, {
-    headers,
-    data: { modelId: "first", permissions: "acceptEdits" },
-  });
-  await request.get(`${origin}/api/model?thread=${existing}`, { headers });
-  await page.goto(origin!);
-  await page.getByRole("button", { name: "Settings", exact: true }).click();
-  await page.getByRole("tab", { name: "Permissions", exact: true }).click();
-  await page.getByLabel("Default permissions", { exact: true }).selectOption("bypass");
-  await page.getByRole("tab", { name: "Models", exact: true }).click();
-  await page.getByLabel("Default model", { exact: true }).selectOption("second");
-  await page.getByRole("tab", { name: "Permissions", exact: true }).click();
-  await expect(page.getByLabel("Default permissions", { exact: true })).toHaveValue("bypass");
-  await page.getByRole("tab", { name: "Models", exact: true }).click();
-  await expect(page.getByLabel("Default model", { exact: true })).toHaveValue("second");
-  await page.reload();
-  await page.getByRole("button", { name: "Settings", exact: true }).click();
-  await page.getByRole("tab", { name: "Permissions", exact: true }).click();
-  await expect(page.getByLabel("Default permissions", { exact: true })).toHaveValue("bypass");
-  expect(
-    await (await request.get(`${origin}/api/model?thread=${fresh}`, { headers })).json(),
-  ).toMatchObject({ modelId: "second" });
-  expect(
-    await (await request.get(`${origin}/api/approval-mode?thread=${fresh}`, { headers })).json(),
-  ).toMatchObject({ permissionMode: "bypass", planOnly: false });
-  expect(
-    await (await request.get(`${origin}/api/model?thread=${existing}`, { headers })).json(),
-  ).toMatchObject({ modelId: "first" });
-  expect(
-    await (await request.get(`${origin}/api/approval-mode?thread=${existing}`, { headers })).json(),
-  ).toMatchObject({ permissionMode: "acceptEdits" });
-  await page.getByRole("tab", { name: "Appearance", exact: true }).click();
-  for (const width of [1440, 390])
-    for (const theme of ["Light", "Dark"]) {
-      await page.setViewportSize({ width, height: 960 });
-      await page.getByRole("radio", { name: theme, exact: true }).check();
-      await page.getByRole("button", { name: "Add color", exact: true }).click();
-      await page.screenshot({
-        path: testInfo.outputPath(`actual-${theme}-${width}.png`),
-        fullPage: true,
-      });
-      await page.getByRole("button", { name: "Cancel", exact: true }).click();
-    }
-});
+test(
+  "workspace defaults reach new native conversations without changing existing ones",
+  { tag: "@connected" },
+  async ({ page, request }, testInfo) => {
+    const origin = process.env.SETTINGS_APP_URL;
+    test.skip(!origin, "Requires isolated settings runtime");
+    const config = await (await request.get(`${origin}/api/config`)).json();
+    const headers = { authorization: `Bearer ${config.token}` };
+    const existing = `settings-existing-${Date.now()}`,
+      fresh = `settings-new-${Date.now()}`;
+    await request.patch(`${origin}/api/defaults`, {
+      headers,
+      data: { modelId: "first", permissions: "acceptEdits" },
+    });
+    await request.get(`${origin}/api/model?thread=${existing}`, { headers });
+    await page.goto(origin!);
+    await page.getByRole("button", { name: "Settings", exact: true }).click();
+    await page.getByRole("tab", { name: "Permissions", exact: true }).click();
+    await page.getByLabel("Default permissions", { exact: true }).selectOption("bypass");
+    await page.getByRole("tab", { name: "Models", exact: true }).click();
+    await page.getByLabel("Default model", { exact: true }).selectOption("second");
+    await page.getByRole("tab", { name: "Permissions", exact: true }).click();
+    await expect(page.getByLabel("Default permissions", { exact: true })).toHaveValue("bypass");
+    await page.getByRole("tab", { name: "Models", exact: true }).click();
+    await expect(page.getByLabel("Default model", { exact: true })).toHaveValue("second");
+    await page.reload();
+    await page.getByRole("button", { name: "Settings", exact: true }).click();
+    await page.getByRole("tab", { name: "Permissions", exact: true }).click();
+    await expect(page.getByLabel("Default permissions", { exact: true })).toHaveValue("bypass");
+    expect(
+      await (await request.get(`${origin}/api/model?thread=${fresh}`, { headers })).json(),
+    ).toMatchObject({ modelId: "second" });
+    expect(
+      await (await request.get(`${origin}/api/approval-mode?thread=${fresh}`, { headers })).json(),
+    ).toMatchObject({ permissionMode: "bypass", planOnly: false });
+    expect(
+      await (await request.get(`${origin}/api/model?thread=${existing}`, { headers })).json(),
+    ).toMatchObject({ modelId: "first" });
+    expect(
+      await (
+        await request.get(`${origin}/api/approval-mode?thread=${existing}`, { headers })
+      ).json(),
+    ).toMatchObject({ permissionMode: "acceptEdits" });
+    await page.getByRole("tab", { name: "Appearance", exact: true }).click();
+    for (const width of [1440, 390])
+      for (const theme of ["Light", "Dark"]) {
+        await page.setViewportSize({ width, height: 960 });
+        await page.getByRole("radio", { name: theme, exact: true }).check();
+        await page.getByRole("button", { name: "Add color", exact: true }).click();
+        await page.screenshot({
+          path: testInfo.outputPath(`actual-${theme}-${width}.png`),
+          fullPage: true,
+        });
+        await page.getByRole("button", { name: "Cancel", exact: true }).click();
+      }
+  },
+);

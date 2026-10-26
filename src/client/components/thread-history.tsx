@@ -1,3 +1,4 @@
+import sharedStyles from "../styles/shared.module.css";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
 
@@ -86,24 +87,26 @@ export function ThreadHistory<T extends { id: string }>({
               ) : (
                 <>
                   {(loading || fetchingMore) && (
-                    <p className="muted" role="status">
+                    <p className={sharedStyles.muted} role="status">
                       Loading sessions…
                     </p>
                   )}
                   {error ? (
-                    <div className="inline-error">
+                    <div className={sharedStyles.inlineError}>
                       <p role="alert">Could not load sessions.</p>
                       <button onClick={retry}>Retry</button>
                     </div>
                   ) : fetchMoreError ? (
-                    <div className="inline-error">
+                    <div className={sharedStyles.inlineError}>
                       <p role="alert">Could not load more sessions.</p>
                       <button disabled={fetchingMore} onClick={fetchMore}>
                         Retry
                       </button>
                     </div>
                   ) : !loading && !hasMore && items.length === 0 ? (
-                    <p className="muted">{filter ? "No matching sessions." : "No sessions yet."}</p>
+                    <p className={sharedStyles.muted}>
+                      {filter ? "No matching sessions." : "No sessions yet."}
+                    </p>
                   ) : null}
                 </>
               )}

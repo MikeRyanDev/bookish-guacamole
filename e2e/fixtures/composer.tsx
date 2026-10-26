@@ -1,3 +1,5 @@
+import composerStyles from "../../src/client/styles/composer.module.css";
+import transcriptStyles from "../../src/client/styles/transcript.module.css";
 import { ApprovalControls } from "../../src/client/components/approval-settings";
 import { ModelSelector } from "../../src/client/components/model-selector";
 import { useRef, useState } from "react";
@@ -101,7 +103,7 @@ function Fixture() {
           </button>
         </header>
       )}
-      <section className="conversation" aria-label="Coding conversation">
+      <section className={transcriptStyles.conversation} aria-label="Coding conversation">
         <VirtualTranscript
           items={items}
           renderItem={(item) => (
@@ -132,7 +134,7 @@ function Fixture() {
             </>
           }
           empty={
-            <div className="empty">
+            <div className={composerStyles.empty}>
               <h1>What are we building?</h1>
             </div>
           }

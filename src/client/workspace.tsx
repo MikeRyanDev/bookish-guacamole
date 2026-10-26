@@ -1,3 +1,6 @@
+import settingsStyles from "./styles/settings.module.css";
+import sharedStyles from "./styles/shared.module.css";
+import workspaceStyles from "./styles/workspace.module.css";
 import { LearningDialog } from "./components/learning-dialog";
 import { ThreadHistory } from "./components/thread-history";
 import { Link } from "@tanstack/react-router";
@@ -23,7 +26,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { useAppearance } from "./appearance";
-import { SettingsPanel } from "./components/settings-panel";
+import { LazySettingsPanel } from "./components/lazy-settings-panel";
 import { workspaceRoute } from "./router";
 import { configQuery, type AppConfig } from "./api";
 import { IconButton } from "./components/icon-button";
@@ -41,13 +44,13 @@ export function Workspace() {
   );
   if (config.isPending)
     return (
-      <main className="boot" role="status">
+      <main className={workspaceStyles.boot} role="status">
         Opening workspace…
       </main>
     );
   if (config.error)
     return (
-      <main className="boot">
+      <main className={workspaceStyles.boot}>
         <h1>Runtime unavailable</h1>
         <p role="alert">{config.error.message}</p>
         <a href="/">Open default workspace</a>
@@ -143,13 +146,13 @@ function Shell({ config }: { config: AppConfig }) {
   }
   return (
     <div
-      className={`workspace ${!sidebar ? "hide-sidebar" : ""} ${!inspector ? "hide-inspector" : ""}`}
+      className={`${workspaceStyles.workspace} ${!sidebar ? workspaceStyles.hideSidebar : ""} ${!inspector ? workspaceStyles.hideInspector : ""}`}
     >
-      <a className="skip-link" href="#main">
+      <a className={workspaceStyles.skipLink} href="#main">
         Skip to conversation
       </a>
-      <header className="workspace-header">
-        <div className="header-left">
+      <header className={workspaceStyles.workspaceHeader}>
+        <div className={workspaceStyles.headerLeft}>
           <IconButton label="Toggle sessions" aria-pressed={sidebar} onClick={toggleSidebar}>
             <PanelLeft size={17} />
           </IconButton>
@@ -168,14 +171,14 @@ function Shell({ config }: { config: AppConfig }) {
             }
           />
           <button
-            className="workspace-learning-entry"
+            className={workspaceStyles.workspaceLearningEntry}
             aria-haspopup="dialog"
             onClick={() => setLearningOpen(true)}
           >
             Learning
           </button>
         </div>
-        <div className="header-actions">
+        <div className={workspaceStyles.headerActions}>
           <IconButton label="Command menu" onClick={() => showModal("commands")}>
             <Command size={16} />
           </IconButton>
@@ -193,16 +196,16 @@ function Shell({ config }: { config: AppConfig }) {
           </IconButton>
         </div>
       </header>
-      <aside className="sessions" aria-label="Sessions">
-        <header className="pane-header">
+      <aside className={workspaceStyles.sessions} aria-label="Sessions">
+        <header className={sharedStyles.paneHeader}>
           <span>Sessions</span>
           <IconButton label="New session" disabled={busy} onClick={newThread}>
             <Plus size={17} />
           </IconButton>
         </header>
-        <div className="session-search">
+        <div className={workspaceStyles.sessionSearch}>
           <Search size={14} />
-          <label className="sr-only" htmlFor="session-search">
+          <label className={sharedStyles.srOnly} htmlFor="session-search">
             Search sessions
           </label>
           <input
@@ -229,7 +232,7 @@ function Shell({ config }: { config: AppConfig }) {
               from="/"
               to="/"
               search={(previous) => ({ ...previous, thread: thread.id })}
-              className={`session-row ${thread.id === threadId ? "selected" : ""}`}
+              className={`${workspaceStyles.sessionRow} ${thread.id === threadId ? sharedStyles.selected : ""}`}
               aria-disabled={busy && thread.id !== threadId}
               aria-current={thread.id === threadId ? "page" : undefined}
               onClick={(event) => {
@@ -246,8 +249,8 @@ function Shell({ config }: { config: AppConfig }) {
           )}
         />
       </aside>
-      <main id="main" className="main-pane">
-        <header className="conversation-header">
+      <main id="main" className={workspaceStyles.mainPane}>
+        <header className={workspaceStyles.conversationHeader}>
           <h1>{current?.name ?? "New session"}</h1>
         </header>
         <CopilotChatConfigurationProvider
@@ -281,7 +284,7 @@ function Shell({ config }: { config: AppConfig }) {
       {learningOpen && <LearningDialog config={config} onClose={() => setLearningOpen(false)} />}
       <dialog
         ref={dialog}
-        className={`command-dialog${modal === "settings" ? " settings-dialog" : ""}`}
+        className={`${sharedStyles.commandDialog} ${modal === "settings" ? settingsStyles.settingsDialog : ""}`}
         aria-labelledby="command-title"
         onClose={() => setModal("commands")}
       >
@@ -292,7 +295,7 @@ function Shell({ config }: { config: AppConfig }) {
           </IconButton>
         </header>
         {modal === "commands" ? (
-          <div className="command-list">
+          <div className={workspaceStyles.commandList}>
             <a
               href="https://tanstack.com/ai/latest/docs/harness/overview"
               target="_blank"
@@ -334,7 +337,7 @@ function Shell({ config }: { config: AppConfig }) {
             </button>
           </div>
         ) : (
-          <SettingsPanel
+          <LazySettingsPanel
             initialCategory={settingsCategory}
             config={config}
             theme={theme}

@@ -1,3 +1,4 @@
+import toolsStyles from "../styles/tools.module.css";
 import { useState } from "react";
 import { IconButton } from "./icon-button";
 import { Check, Copy } from "lucide-react";
@@ -22,7 +23,7 @@ export function CopyToolText({ text, label }: { text: string; label: string }) {
         {status === "copied" ? <Check size={14} /> : <Copy size={14} />}
       </IconButton>
       {status === "error" && (
-        <span className="tool-copy-error" role="status">
+        <span className={toolsStyles.toolCopyError} role="status">
           Copy failed. Select the text to copy it.
         </span>
       )}

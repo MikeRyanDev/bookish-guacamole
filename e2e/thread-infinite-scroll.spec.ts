@@ -51,7 +51,7 @@ test("session history loads on scroll, bounds rows, and retries a failed page", 
     });
     await expect(history.getByText("Scroll session 119", { exact: true })).toBeVisible();
   }).toPass();
-  expect(await history.locator(".session-row").count()).toBeLessThan(40);
+  expect(await history.locator(".starter-workspace-session-row").count()).toBeLessThan(40);
   await page.waitForTimeout(300);
   expect(cursors.filter((cursor) => cursor !== "0")).toEqual(["30", "30", "60", "90"]);
   await page.getByRole("textbox", { name: "Search sessions" }).fill("Scroll session 1");

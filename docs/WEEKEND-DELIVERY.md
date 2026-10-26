@@ -2,7 +2,7 @@
 
 This workflow applies to starter fixes and their Intelligence or CopilotKit dependencies during the weekend alpha period.
 Read the [candidate ledger](../MONDAY_CUTOVER_CHECKLIST.md) before each delivery.
-Use [the implementation plan](../LEARNING_KNOB_PLAN.md) for detailed acceptance requirements.
+Use [the cutover acceptance gates](../MONDAY_CUTOVER_CHECKLIST.md#end-to-end-acceptance-with-production-artifacts) for release requirements.
 Remove this runbook and its agent entry point before the final stable starter publication.
 
 ## Select the current stack

@@ -1,3 +1,4 @@
+import filesStyles from "../styles/files.module.css";
 import { useEffect, useRef, useState } from "react";
 import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from "pdfjs-dist";
 import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
@@ -101,7 +102,7 @@ export default function PdfViewer({ blob }: { blob: Blob }) {
   }, [document, page, zoom, availableWidth]);
   return (
     <>
-      <div className="reader-toolbar">
+      <div className={filesStyles.readerToolbar}>
         <IconButton
           label="Previous page"
           disabled={!document || page === 1}
@@ -109,7 +110,7 @@ export default function PdfViewer({ blob }: { blob: Blob }) {
         >
           <ChevronLeft size={15} />
         </IconButton>
-        <label className="page-picker">
+        <label className={filesStyles.pagePicker}>
           Page{" "}
           <input
             aria-label="PDF page"
@@ -151,20 +152,26 @@ export default function PdfViewer({ blob }: { blob: Blob }) {
         </IconButton>
       </div>
       {busy && (
-        <p role="status" className="reader-feedback">
+        <p role="status" className={filesStyles.readerFeedback}>
           Rendering page…
         </p>
       )}
       {error && (
-        <p role="alert" className="reader-error">
+        <p role="alert" className={filesStyles.readerError}>
           {error}
         </p>
       )}
-      <div ref={area} className="pdf-canvas" role="region" aria-label="PDF page" tabIndex={0}>
+      <div
+        ref={area}
+        className={filesStyles.pdfCanvas}
+        role="region"
+        aria-label="PDF page"
+        tabIndex={0}
+      >
         <canvas ref={canvas} aria-label={`PDF page ${page}`} />
       </div>
       {text && (
-        <details className="pdf-text">
+        <details className={filesStyles.pdfText}>
           <summary>Page text</summary>
           <p>{text}</p>
         </details>

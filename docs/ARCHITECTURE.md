@@ -210,3 +210,10 @@ The development identity endpoint reads its actual checkout and commit at startu
 `STARTER_WORKTREE_OWNER` and `STARTER_WORKTREE_PURPOSE` supply optional task metadata.
 `STARTER_WORKTREE_FINISH_PID` is internal coordinator state, checked against the live lock owner.
 These variables do not change product model, approval, or Learning behavior.
+
+## Frontend maintenance boundaries
+
+Feature CSS Modules own component styles. The global stylesheet contains tokens,
+element defaults, and shared motion. Settings and Learning load on demand within
+their existing dialogs. See [frontend maintenance](FRONTEND-MAINTENANCE.md) for
+style composition, generated types, component ownership, bundle analysis, and CI.

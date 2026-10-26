@@ -1,3 +1,5 @@
+import composerStyles from "../styles/composer.module.css";
+import transcriptStyles from "../styles/transcript.module.css";
 import { ModelSelector, useConversationModel } from "./model-selector";
 import type { AppConfig } from "../api";
 import { ConversationApprovals } from "./approval-settings";
@@ -179,7 +181,7 @@ function ActiveConversation({
   }
   const pendingCallIds = new Set(agent.pendingInterrupts.map(approvalToolCallId));
   return (
-    <section className="conversation" aria-label="Coding conversation">
+    <section className={transcriptStyles.conversation} aria-label="Coding conversation">
       <TranscriptMessages
         messages={agent.messages}
         pendingIds={pendingCallIds}
@@ -188,10 +190,10 @@ function ActiveConversation({
         busy={connecting}
         empty={
           !connecting && (
-            <div className="empty">
+            <div className={composerStyles.empty}>
               <h1>What are we building?</h1>
               <button
-                className="suggestion"
+                className={composerStyles.suggestion}
                 onClick={() => {
                   setDraft("Read the project instructions and explain the current code and tests.");
                   input.current?.focus();
@@ -207,7 +209,7 @@ function ActiveConversation({
             {connecting && <PendingStatus>Restoring session…</PendingStatus>}
             {permission}
             {error && (
-              <div role="alert" className="error-banner">
+              <div role="alert" className={composerStyles.errorBanner}>
                 {error}
               </div>
             )}

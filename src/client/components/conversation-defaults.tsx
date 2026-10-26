@@ -1,3 +1,5 @@
+import settingsStyles from "../styles/settings.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useIsMutating, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId } from "react";
 import { LoaderCircle } from "lucide-react";
@@ -34,7 +36,7 @@ export function ConversationDefaults({
   const fields = field ? [field] : (["modelId", "permissions"] as const);
   return (
     <section
-      className="conversation-defaults"
+      className={settingsStyles.conversationDefaults}
       aria-label={
         field === "modelId"
           ? "Model defaults"
@@ -43,19 +45,19 @@ export function ConversationDefaults({
             : "Conversation defaults"
       }
     >
-      <div className="defaults-fields">
+      <div className={settingsStyles.defaultsFields}>
         {fields.map((name) => (
           <div className="settings-field" key={name}>
-            <div className="settings-field-heading">
+            <div className={settingsStyles.settingsFieldHeading}>
               <label htmlFor={`${id}-${name}`}>
                 {name === "modelId" ? "Default model" : "Default permissions"}
               </label>
-              <span className="muted">New conversations</span>
+              <span className={sharedStyles.muted}>New conversations</span>
             </div>
-            <div className="settings-select-row" aria-busy={query.isPending || busy}>
+            <div className={settingsStyles.settingsSelectRow} aria-busy={query.isPending || busy}>
               {query.isPending ? (
                 <div
-                  className="settings-skeleton"
+                  className={sharedStyles.settingsSkeleton}
                   role="status"
                   aria-label={name === "modelId" ? "Loading models" : "Loading permissions"}
                 >
@@ -106,11 +108,11 @@ export function ConversationDefaults({
               )}
               {busy && (
                 <span
-                  className="settings-save-state"
+                  className={sharedStyles.settingsSaveState}
                   role="status"
                   aria-label={mutation.isPending ? "Saving" : "Saving settings"}
                 >
-                  <LoaderCircle size={15} className="settings-spinner" />
+                  <LoaderCircle size={15} className={sharedStyles.settingsSpinner} />
                 </span>
               )}
             </div>
@@ -118,7 +120,7 @@ export function ConversationDefaults({
         ))}
       </div>
       {(query.error || mutation.error) && (
-        <div className="settings-inline-error" role="alert">
+        <div className={sharedStyles.settingsInlineError} role="alert">
           <span>{mutation.error ? "Couldn’t save." : "Couldn’t load defaults."}</span>
           <button
             disabled={busy || query.isFetching}

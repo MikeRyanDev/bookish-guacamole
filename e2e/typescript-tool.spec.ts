@@ -12,7 +12,7 @@ test("one disclosure reveals exact TypeScript and output, with independent copy 
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto(`${fixtureUrl}/?typescript`);
   await expect(page.getByLabel("TypeScript source", { exact: true })).toBeHidden();
-  await page.locator("summary.tool-header").click();
+  await page.locator("summary.starter-tools-tool-header").click();
   expect(await page.getByLabel("TypeScript source", { exact: true }).textContent()).toBe(source);
   await expect(page.getByLabel("Execution output", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Copy TypeScript", exact: true }).click();
@@ -27,7 +27,7 @@ test("one disclosure reveals exact TypeScript and output, with independent copy 
     JSON.stringify({ success: true, result: { greeting: "Hello, Ada" }, logs: ["Hello, Ada"] }),
   );
   await page.getByText("Raw details", { exact: true }).click();
-  await expect(page.locator(".tool-arguments pre")).toHaveText(
+  await expect(page.locator(".starter-tools-tool-arguments pre")).toHaveText(
     JSON.stringify({ typescriptCode: source }),
   );
 });
@@ -53,15 +53,15 @@ test("execution states distinguish pending, missing, empty, denied, and structur
     ["malformed", "TypeScript source unavailable. Inspect Raw details."],
   ]) {
     await page.getByLabel("Fixture state").selectOption(state!);
-    await page.locator("summary.tool-header").click();
+    await page.locator("summary.starter-tools-tool-header").click();
     await expect(page.getByText(text!, { exact: true })).toBeVisible();
   }
   await page.getByLabel("Fixture state").selectOption("unsafe");
-  await page.locator("summary.tool-header").click();
+  await page.locator("summary.starter-tools-tool-header").click();
   await expect(page.getByLabel("Original output", { exact: true })).toHaveText(
     '<script>alert("hello")</script>',
   );
-  await expect(page.locator(".typescript-surface script")).toHaveCount(0);
+  await expect(page.locator(".starter-tools-typescript-surface script")).toHaveCount(0);
 });
 
 test("large evidence, keyboard access, copy failure, and both themes at desktop and mobile", async ({
@@ -69,7 +69,7 @@ test("large evidence, keyboard access, copy failure, and both themes at desktop 
 }, testInfo) => {
   await page.goto(`${fixtureUrl}/?typescript`);
   await page.getByLabel("Fixture state").selectOption("long");
-  await page.locator("summary.tool-header").focus();
+  await page.locator("summary.starter-tools-tool-header").focus();
   await page.keyboard.press("Enter");
   await page.evaluate(() => {
     Object.defineProperty(navigator.clipboard, "writeText", {
@@ -109,16 +109,19 @@ test("streamed props preserve a reader's disclosure choice and source identity",
   await page
     .getByLabel("TypeScript source", { exact: true })
     .evaluate((el) => el.setAttribute("data-retained", "yes"));
-  await page.locator("summary.tool-header").click();
+  await page.locator("summary.starter-tools-tool-header").click();
   await page.getByRole("button", { name: "Finish execution" }).click();
-  await expect(page.locator(".tool-details")).not.toHaveAttribute("open");
-  await page.locator("summary.tool-header").click();
+  await expect(page.locator(".starter-tools-tool-details")).not.toHaveAttribute("open");
+  await page.locator("summary.starter-tools-tool-header").click();
   await expect(page.getByLabel("TypeScript source", { exact: true })).toHaveAttribute(
     "data-retained",
     "yes",
   );
   await expect(page.getByLabel("Execution output", { exact: true })).toBeVisible();
-  await expect(page.locator(".tool-status")).toHaveAttribute("title", "Result received");
+  await expect(page.locator(".starter-tools-tool-status")).toHaveAttribute(
+    "title",
+    "Result received",
+  );
 });
 
 test("structured output keeps numeric literals and escaped text intact", async ({
@@ -128,7 +131,7 @@ test("structured output keeps numeric literals and escaped text intact", async (
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto(`${fixtureUrl}/?typescript`);
   await page.getByLabel("Fixture state").selectOption("precision");
-  await page.locator("summary.tool-header").click();
+  await page.locator("summary.starter-tools-tool-header").click();
   const output = await page.getByLabel("Return value", { exact: true }).textContent();
   expect(output).toContain('"id": 9007199254740993');
   expect(output).toContain('"literal": "{ [ , : \\"quoted\\" ] }"');

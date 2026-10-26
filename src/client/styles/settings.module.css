@@ -1,0 +1,338 @@
+@value accent-options, appearance-settings, color-actions, color-editor, color-fields, color-format, color-plane, color-preview-row, color-slider, color-value, custom-colors, custom-swatch-list, mode-options from "./appearance.module.css";
+@value command-dialog from "./shared.module.css";
+@value saved-permissions from "./permissions.module.css";
+.settings-tab-panel select,
+.color-fields input {
+  background: var(--panel);
+  color: var(--text);
+  border: 0;
+  border-radius: 6px;
+  padding: 9px;
+  font: inherit;
+  min-width: 0;
+}
+.conversation-defaults {
+  margin-bottom: 28px;
+}
+.conversation-defaults h3 {
+  font-size: 12px;
+  margin: 0 0 8px;
+}
+.conversation-defaults p {
+  font-size: 11px;
+  margin: 8px 0 12px;
+}
+.defaults-fields {
+  display: grid;
+  gap: 14px;
+}
+.defaults-fields label {
+  display: grid;
+  gap: 7px;
+  font-size: 12px;
+}
+.defaults-fields select {
+  width: 100%;
+}
+.command-dialog.settings-dialog {
+  width: min(740px, calc(100vw - 32px));
+  height: min(580px, calc(100dvh - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+}
+.command-dialog.settings-dialog > header {
+  height: 52px;
+  padding: 10px 18px;
+}
+.settings-layout {
+  display: grid;
+  grid-template-columns: 154px minmax(0, 1fr);
+  height: calc(100% - 52px);
+}
+.settings-tabs {
+  padding: 12px 10px;
+  background: var(--panel);
+}
+.settings-tabs [role="tab"] {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 4px;
+  text-align: left;
+  color: var(--muted);
+  font-size: 12px;
+  border-radius: 6px;
+}
+.settings-tabs [role="tab"]:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+.settings-tabs [role="tab"][aria-selected="true"] {
+  background: var(--accent-bg);
+  color: var(--text);
+  font-weight: 600;
+}
+.settings-tab-panel {
+  padding: 26px 28px;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+.settings-tab-panel[hidden] {
+  display: none;
+}
+.settings-tab-panel:focus-visible {
+  outline-offset: -4px;
+}
+.settings-tab-panel .appearance-settings legend {
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.settings-tab-panel .appearance-settings fieldset {
+  margin-bottom: 24px;
+}
+.settings-tab-panel .mode-options label > span {
+  padding: 9px 10px;
+}
+.settings-tab-panel .accent-options {
+  gap: 8px;
+}
+.settings-tab-panel .custom-colors {
+  margin: -8px 0 0;
+}
+.settings-tab-panel .color-editor {
+  gap: 16px;
+  padding-top: 0;
+}
+.settings-tab-panel .color-plane {
+  height: 132px;
+}
+.settings-tab-panel .color-format select {
+  width: 100%;
+}
+.settings-tab-panel .color-preview-row {
+  margin-bottom: 10px;
+}
+.settings-tab-panel .color-actions {
+  margin-top: 0;
+}
+.settings-tab-panel .color-value {
+  overflow-wrap: anywhere;
+}
+.settings-field-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.settings-field-heading label {
+  font-size: 12px;
+  font-weight: 600;
+}
+.settings-field-heading > span {
+  font-size: 11px;
+}
+.settings-select-row {
+  position: relative;
+  min-height: 40px;
+}
+.settings-select-row select {
+  width: 100%;
+  height: 40px;
+  padding: 0 50px 0 12px;
+  font-size: 12px;
+  text-overflow: ellipsis;
+}
+.settings-select-row select:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.settings-select-row select:disabled:has(option:only-child) {
+  cursor: default;
+}
+.settings-tab-panel .conversation-defaults {
+  margin-bottom: 30px;
+}
+.saved-rules-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.saved-rules-heading h3 {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+}
+.settings-icon-action {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--muted);
+  border-radius: 6px;
+}
+.settings-icon-action:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--hover);
+}
+.settings-icon-action:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.settings-tab-panel .saved-permissions {
+  padding: 0;
+  margin: 0;
+}
+.settings-tab-panel .saved-permissions li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+.settings-tab-panel .saved-permissions li > span {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.settings-tab-panel .saved-permissions strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.settings-tab-panel .saved-permissions code {
+  font-size: 11px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.settings-empty {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 12px 0;
+}
+.settings-pending {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  margin: 12px 0 0;
+}
+.settings-rule-skeleton {
+  display: grid;
+  gap: 10px;
+  padding: 12px 0;
+}
+.settings-rule-skeleton span {
+  height: 10px;
+  width: 65%;
+  background: var(--panel);
+  border-radius: 4px;
+}
+.settings-rule-skeleton span:last-child {
+  width: 40%;
+}
+.settings-tab-panel .color-slider input {
+  appearance: none;
+  height: 7px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+}
+.settings-tab-panel .color-slider input::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow: 0 1px 3px #0005;
+}
+.settings-tab-panel .color-slider input::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  background: var(--text);
+}
+@media (max-width: 600px) {
+  .command-dialog.settings-dialog {
+    width: calc(100vw - 16px);
+    height: min(640px, calc(100dvh - 16px));
+    max-height: calc(100dvh - 16px);
+  }
+  .settings-layout {
+    grid-template-columns: 104px minmax(0, 1fr);
+  }
+  .settings-tabs {
+    padding: 12px 5px;
+  }
+  .settings-tabs [role="tab"] {
+    padding: 10px 6px;
+    gap: 6px;
+    font-size: 11px;
+  }
+  .settings-tabs [role="tab"] svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+  .settings-tab-panel {
+    padding: 20px 14px;
+    scrollbar-gutter: auto;
+  }
+  .settings-tab-panel .mode-options {
+    gap: 2px;
+  }
+  .settings-tab-panel .mode-options label > span {
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 3px;
+    font-size: 11px;
+  }
+  .settings-tab-panel .accent-options {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .settings-tab-panel .color-editor {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .settings-tab-panel .color-plane {
+    height: 120px;
+  }
+  .settings-field-heading {
+    flex-direction: column;
+    gap: 5px;
+  }
+  .settings-tab-panel .color-fields {
+    gap: 4px;
+  }
+  .settings-tab-panel .color-fields input {
+    padding: 8px 5px;
+    font-size: 11px;
+  }
+  .settings-tab-panel .custom-swatch-list {
+    gap: 6px;
+  }
+}
+.settings-dialog button {
+  transition: transform 120ms ease;
+}
+.settings-tabs [role="tab"] {
+  background: transparent;
+  transition: none;
+}
+.settings-tabs [role="tab"][aria-selected="true"] {
+  background: var(--accent-bg);
+}
+.settings-tab-panel select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}

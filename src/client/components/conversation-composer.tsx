@@ -1,3 +1,5 @@
+import composerStyles from "../styles/composer.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { useId, useLayoutEffect, type ReactNode, type RefObject } from "react";
 import type { Goal } from "@tanstack/ai-harness/plugins";
 import { ArrowUp, Square, Target } from "lucide-react";
@@ -65,7 +67,7 @@ export function ConversationComposer({
   }
   return (
     <form
-      className="composer"
+      className={composerStyles.composer}
       onSubmit={(event) => {
         event.preventDefault();
         onSend();
@@ -73,14 +75,14 @@ export function ConversationComposer({
       }}
     >
       {goalMode && (
-        <div className="goal-create-heading">
+        <div className={composerStyles.goalCreateHeading}>
           <span>New goal</span>
           <button type="button" onClick={() => changeMode(false)}>
             Cancel
           </button>
         </div>
       )}
-      <label className="sr-only" htmlFor={id}>
+      <label className={sharedStyles.srOnly} htmlFor={id}>
         {goalMode ? "Goal objective" : "Message your coding agent"}
       </label>
       <textarea
@@ -105,12 +107,15 @@ export function ConversationComposer({
         }}
       />
       {goalMode && (
-        <p className="goal-create-help muted" id={`${id}-help`}>
+        <p
+          className={[composerStyles.goalCreateHelp, sharedStyles.muted].join(" ")}
+          id={`${id}-help`}
+        >
           Continues automatically for up to 20 turns.
         </p>
       )}
-      <div className="composer-toolbar">
-        <div className="composer-tools">
+      <div className={composerStyles.composerToolbar}>
+        <div className={composerStyles.composerTools}>
           {goal && !goalMode ? (
             <GoalStatus
               goal={goal}
@@ -123,7 +128,7 @@ export function ConversationComposer({
             />
           ) : !goalMode ? (
             <button
-              className="composer-control"
+              className={sharedStyles.composerControl}
               type="button"
               disabled={unfinished || running || connecting || !ready || pendingApproval}
               onClick={() => changeMode(true)}
@@ -135,7 +140,7 @@ export function ConversationComposer({
           {approvals}
         </div>
         <span
-          className={`composer-state muted ${!pendingApproval && !connecting && !running && ready ? "composer-shortcut" : ""}`}
+          className={`${composerStyles.composerState} ${sharedStyles.muted} ${!pendingApproval && !connecting && !running && ready ? composerStyles.composerShortcut : ""}`}
         >
           {pendingApproval
             ? goal && !goalMode
@@ -158,7 +163,7 @@ export function ConversationComposer({
         ) : goalMode ? (
           <button
             type="submit"
-            className="primary goal-start"
+            className={[sharedStyles.primary, composerStyles.goalStart].join(" ")}
             disabled={!draft.trim() || !ready || connecting || pendingApproval}
           >
             Start goal
@@ -166,7 +171,7 @@ export function ConversationComposer({
         ) : (
           <IconButton
             label="Send message"
-            className="primary"
+            className={sharedStyles.primary}
             disabled={!draft.trim() || !ready || connecting || pendingApproval}
             onClick={onSend}
           >

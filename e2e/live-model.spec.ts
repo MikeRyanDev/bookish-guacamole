@@ -23,7 +23,7 @@ test("the selected model loads a learned Skill, executes approved tests, and res
   for (let attempt = 0; attempt < 150; attempt++) {
     const permission = page.getByRole("region", { name: "Permission request" });
     if (await permission.isVisible()) {
-      await expect(permission.locator(".shell-command code")).toHaveText("npm test");
+      await expect(permission.locator(".starter-tools-shell-command code")).toHaveText("npm test");
       if (approvals === 0)
         await page.screenshot({
           path: "docs/proof/live-bash-approval.png",
@@ -34,14 +34,19 @@ test("the selected model loads a learned Skill, executes approved tests, and res
     }
     if (
       approvals >= 2 &&
-      (await page.locator(".message.assistant .markdown").last().isVisible()) &&
+      (await page
+        .locator(".starter-transcript-message.assistant .starter-shared-markdown")
+        .last()
+        .isVisible()) &&
       !(await page.getByRole("button", { name: "Stop run" }).isVisible())
     )
       break;
     await page.waitForTimeout(500);
   }
   expect(approvals).toBe(2);
-  await expect(page.locator(".message.assistant .markdown").last()).toContainText(/pass/i);
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).toContainText(/pass/i);
   const url = page.url();
   const threadId = new URL(url).searchParams.get("thread");
   expect(threadId).toBeTruthy();
@@ -60,9 +65,14 @@ test("the selected model loads a learned Skill, executes approved tests, and res
   expect(new Set(calls.map((event) => event.toolCallId)).size).toBe(calls.length);
   expect(saved.events.some((event) => event.type === "MESSAGES_SNAPSHOT")).toBe(false);
   const toolCount = calls.length;
-  const finalText = await page.locator(".message.assistant .markdown").last().innerText();
+  const finalText = await page
+    .locator(".starter-transcript-message.assistant .starter-shared-markdown")
+    .last()
+    .innerText();
   await page.reload();
-  await expect(page.locator(".message.assistant .markdown").last()).toHaveText(finalText);
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).toHaveText(finalText);
   const reloaded = await intelligence.getThreadEvents({ threadId: threadId! });
   expect(reloaded.events.filter((event) => event.type === "TOOL_CALL_START")).toHaveLength(
     toolCount,

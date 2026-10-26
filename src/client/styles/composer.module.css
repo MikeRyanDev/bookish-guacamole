@@ -1,0 +1,241 @@
+@value approval-mode-choice from "./permissions.module.css";
+@value composer-control, icon-control, inline-error, muted from "./shared.module.css";
+
+.composer {
+  margin: 0 24px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.composer:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.composer textarea:focus-visible {
+  /* The composer supplies one shared focus ring; avoid a second inner frame. */
+  outline: none;
+}
+
+.composer textarea {
+  display: block;
+  resize: vertical;
+  max-height: 220px;
+  min-height: 80px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  width: 100%;
+  padding: 13px 14px;
+  line-height: 1.7;
+  outline-offset: -3px;
+}
+
+.composer-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 9px 8px;
+  font-size: 11px;
+}
+
+.empty {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 45vh;
+  max-width: 450px;
+  margin: 0 auto;
+  gap: 12px;
+}
+
+.empty h1 {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+}
+
+.suggestion {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.error-banner,
+.inline-error {
+  padding: 12px;
+  color: var(--danger);
+  border: 0;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 1100px) {
+  .composer {
+    margin: 0 16px 16px;
+  }
+}
+
+@media (max-width: 850px) {
+  .composer {
+    margin: 0 12px 12px;
+  }
+  .empty {
+    min-height: 38vh;
+  }
+}
+
+.composer {
+  transition: border-color 140ms ease;
+}
+
+.composer {
+  flex-shrink: 0;
+}
+
+.composer textarea {
+  resize: none;
+  min-height: 72px;
+  max-height: min(180px, 24dvh);
+  overflow-y: auto;
+}
+
+.composer-toolbar {
+  gap: 8px;
+  min-height: 40px;
+}
+
+.composer-tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.composer-state {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.composer-popover {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  width: min(360px, calc(100vw - 24px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 0;
+  border-radius: 8px;
+  padding: 14px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 16px 50px #0003;
+  font-size: 13px;
+}
+
+.composer-popover-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.composer-popover h2 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.composer-popover p {
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+
+.goal-objective {
+  font-weight: 600;
+}
+
+.goal-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.goal-actions .muted {
+  flex-basis: 100%;
+}
+
+.goal-actions button {
+  padding: 6px 8px;
+  font: inherit;
+}
+
+@media (max-width: 600px) {
+  .composer-shortcut {
+    display: none;
+  }
+  .composer-toolbar > .icon-control {
+    margin-left: auto;
+  }
+}
+
+.goal-create-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.goal-create-heading button {
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.goal-create-help {
+  margin: 0;
+  padding: 0 14px 10px;
+  font-size: 12px;
+  line-height: 1.6;
+  max-width: 68ch;
+}
+
+.goal-start {
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.composer textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.composer-tools {
+  flex-wrap: wrap;
+}
+
+.composer-tools .composer-control {
+  padding-inline: 8px;
+}
+
+.model-selector-label {
+  max-width: 180px;
+}
+
+.model-choice > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.approval-mode-choice.model-choice strong,
+.approval-mode-choice.model-choice span span {
+  display: inline;
+  margin-top: 0;
+}

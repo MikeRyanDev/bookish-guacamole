@@ -20,7 +20,7 @@ test("native approvals, remembered scope, reload, and YOLO cross the real Intell
   await page.getByRole("button", { name: "Send message", exact: true }).click();
   const permission = page.getByRole("region", { name: "Permission request" });
   await expect(permission).toBeVisible({ timeout: 60000 });
-  await expect(permission.locator(".shell-command code")).toHaveText("npm test");
+  await expect(permission.locator(".starter-tools-shell-command code")).toHaveText("npm test");
   await permission.getByRole("button", { name: "Always Approve" }).click();
   await expect(permission.getByText("Allow in all workspace conversations:")).toBeVisible();
   await permission.getByRole("button", { name: "Approve and Save" }).click();

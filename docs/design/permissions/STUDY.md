@@ -11,15 +11,15 @@ The current screenshots and interactive prototype establish implementation truth
 
 ## Behavior contract
 
-| Control | Result | Scope |
-| --- | --- | --- |
-| Require permissions | Ordinary edits run. Commands and sensitive paths ask unless a saved rule allows them. | Conversation |
-| YOLO | The native permissions plugin allows calls, including its explicit denials. Separate tool restrictions remain. | Conversation |
-| Plan mode | Permitted reads run. Edits and shell commands cannot run. The permission preference remains selected. | Conversation |
-| Reject | Refuses the current call. | Current call |
-| Approve Once | Approves the current call. | Current call |
-| Always Approve | Shows exact saved scope before Approve and Save. | Workspace |
-| Settings → Workspace permissions | Shows saved rules and Remove. | Workspace |
+| Control                          | Result                                                                                                         | Scope        |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------ |
+| Require permissions              | Ordinary edits run. Commands and sensitive paths ask unless a saved rule allows them.                          | Conversation |
+| YOLO                             | The native permissions plugin allows calls, including its explicit denials. Separate tool restrictions remain. | Conversation |
+| Plan mode                        | Permitted reads run. Edits and shell commands cannot run. The permission preference remains selected.          | Conversation |
+| Reject                           | Refuses the current call.                                                                                      | Current call |
+| Approve Once                     | Approves the current call.                                                                                     | Current call |
+| Always Approve                   | Shows exact saved scope before Approve and Save.                                                               | Workspace    |
+| Settings → Workspace permissions | Shows saved rules and Remove.                                                                                  | Workspace    |
 
 Plan mode is a separate pressed-state control beside Create goal. It takes precedence over either permission preference.
 Turning Plan mode off restores the selected permission preference. That preference survives restart and changes during planning.

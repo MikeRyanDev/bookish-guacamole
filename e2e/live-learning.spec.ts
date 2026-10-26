@@ -22,7 +22,9 @@ test("a newly published Learning Skill reaches the next browser turn without res
     );
   await page.getByRole("button", { name: "Send message", exact: true }).click();
   await expect(page).toHaveURL(/thread=/);
-  await expect(page.locator(".message.assistant .markdown").last()).toContainText(/baseline/i, {
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).toContainText(/baseline/i, {
     timeout: 90_000,
   });
   await expect(page.getByRole("button", { name: "Stop run" })).not.toBeVisible({ timeout: 90_000 });
@@ -55,9 +57,14 @@ test("a newly published Learning Skill reaches the next browser turn without res
         ["bash", "apply_patch"].includes(event.toolCallName),
     ),
   ).toBe(false);
-  const answer = await page.locator(".message.assistant .markdown").last().innerText();
+  const answer = await page
+    .locator(".starter-transcript-message.assistant .starter-shared-markdown")
+    .last()
+    .innerText();
   await page.reload();
-  await expect(page.locator(".message.assistant .markdown").last()).toHaveText(answer);
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).toHaveText(answer);
   await page.screenshot({
     path: "docs/proof/learned-skill-refresh.png",
     fullPage: true,

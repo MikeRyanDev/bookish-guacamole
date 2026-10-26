@@ -32,10 +32,9 @@ test("rejecting a browser permission prevents a real model write and survives re
   await expect(permission).toContainText(filename);
   await permission.getByRole("button", { name: "Reject", exact: true }).click();
   await expect(permission).toHaveCount(0);
-  await expect(page.locator(".message.assistant .markdown").last()).toContainText(
-    /denied|refus|not.*creat/i,
-    { timeout: 45000 },
-  );
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).toContainText(/denied|refus|not.*creat/i, { timeout: 45000 });
   await expect(page.getByRole("button", { name: "Stop run" })).toHaveCount(0);
   await expect(access(resolve(config.workspace, filename))).rejects.toThrow();
   const threadId = new URL(page.url()).searchParams.get("thread")!;
@@ -44,9 +43,9 @@ test("rejecting a browser permission prevents a real model write and survives re
   expect(saved.truncated).toBe(false);
   expect(JSON.stringify(saved.events)).toContain("The user denied this tool call");
   await page.reload();
-  await expect(page.locator(".message.assistant .markdown").last()).toContainText(
-    /denied|refus|not.*creat/i,
-  );
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).toContainText(/denied|refus|not.*creat/i);
   await writeFile(
     ".data/browser-rejection-proof.json",
     JSON.stringify({ threadId, filename, events: saved.events }),
@@ -63,14 +62,18 @@ test("stopping a streaming model run records cancellation in Intelligence", asyn
       "Write a detailed 5000-word guide to TypeScript type inference. Start the answer now, do not use tools or inspect files.",
     );
   await page.getByRole("button", { name: "Send message", exact: true }).click();
-  await expect(page.locator(".message.assistant .markdown").last()).not.toBeEmpty({
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).not.toBeEmpty({
     timeout: 45000,
   });
   await expect(page.getByRole("button", { name: "Change workspace" })).toBeDisabled();
-  await expect(page.locator('.session-row[aria-disabled="true"]').first()).toBeVisible();
+  await expect(
+    page.locator('.starter-workspace-session-row[aria-disabled="true"]').first(),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Stop run" }).click();
   await expect(page.getByRole("button", { name: "Change workspace" })).toBeEnabled();
-  await expect(page.locator('.session-row[aria-disabled="true"]')).toHaveCount(0);
+  await expect(page.locator('.starter-workspace-session-row[aria-disabled="true"]')).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Stop run" })).toHaveCount(0);
   const threadId = new URL(page.url()).searchParams.get("thread")!;
   const intelligence = backend();
@@ -97,6 +100,8 @@ test("stopping a streaming model run records cancellation in Intelligence", asyn
     JSON.stringify({ threadId, events: saved.events }),
   );
   await page.reload();
-  await expect(page.locator(".message.assistant .markdown").last()).not.toBeEmpty();
+  await expect(
+    page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+  ).not.toBeEmpty();
   await expect(page.getByRole("button", { name: "Stop run" })).toHaveCount(0);
 });

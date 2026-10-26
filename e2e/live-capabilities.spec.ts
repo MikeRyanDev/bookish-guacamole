@@ -83,7 +83,10 @@ test("real Intelligence keeps file Undo/Redo, usage, compaction, and read progra
     expect(await readFile(path, "utf8")).toBe("after recovery proof\n");
     const url = page.url();
     const thread = new URL(url).searchParams.get("thread")!;
-    const content = await page.locator(".message.assistant .markdown").last().innerText();
+    const content = await page
+      .locator(".starter-transcript-message.assistant .starter-shared-markdown")
+      .last()
+      .innerText();
     await page.getByRole("button", { name: "Undo last turn", exact: true }).click();
     const undo = page.getByRole("dialog", { name: "Undo last turn?", exact: true });
     await expect(undo).toContainText("capabilities-proof.txt");
@@ -99,14 +102,18 @@ test("real Intelligence keeps file Undo/Redo, usage, compaction, and read progra
     await expect(undo).toBeHidden({ timeout: 15_000 });
     expect(await readFile(path, "utf8")).toBe("before recovery proof\n");
     await page.reload();
-    await expect(page.locator(".message.assistant .markdown")).toHaveCount(0);
+    await expect(
+      page.locator(".starter-transcript-message.assistant .starter-shared-markdown"),
+    ).toHaveCount(0);
     await page.getByRole("button", { name: "Redo turn", exact: true }).click();
     const redo = page.getByRole("dialog", { name: "Redo last turn?", exact: true });
     await redo.getByRole("button", { name: "Redo turn", exact: true }).click();
     await expect(redo).toBeHidden({ timeout: 15_000 });
     expect(await readFile(path, "utf8")).toBe("after recovery proof\n");
     await page.reload();
-    await expect(page.locator(".message.assistant .markdown").last()).toHaveText(content);
+    await expect(
+      page.locator(".starter-transcript-message.assistant .starter-shared-markdown").last(),
+    ).toHaveText(content);
     await send(
       "Keep the recovery-proof objective. Reply only acknowledged. Reference data: " +
         "context evidence retained. ".repeat(1600),

@@ -13,8 +13,14 @@ for (const theme of ["light", "dark"]) {
       await expect(
         page.getByRole("radio", { name: "Local coder (ollama)", exact: true }),
       ).toBeVisible();
-      const name = await page.locator(".model-choice strong").first().boundingBox();
-      const provider = await page.locator(".model-choice .muted").first().boundingBox();
+      const name = await page
+        .locator(".starter-composer-model-choice strong")
+        .first()
+        .boundingBox();
+      const provider = await page
+        .locator(".starter-composer-model-choice .starter-shared-muted")
+        .first()
+        .boundingBox();
       expect(provider!.y).toBeCloseTo(name!.y, 0);
       await page.getByRole("radio", { name: /Remote coder/ }).check();
       await expect(page.getByRole("radio", { name: /Remote coder/ })).toBeChecked();

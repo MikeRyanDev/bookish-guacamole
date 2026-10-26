@@ -1,3 +1,5 @@
+import filesStyles from "../styles/files.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import { lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Download } from "lucide-react";
@@ -48,16 +50,16 @@ export function AssetViewer({
   });
   const url = useBlobUrl(query.data);
   return (
-    <div className="file-reader">
-      <div className="reader-toolbar">
-        <span className="muted">
+    <div className={filesStyles.fileReader}>
+      <div className={filesStyles.readerToolbar}>
+        <span className={sharedStyles.muted}>
           {query.data
             ? `${(query.data.size / 1024).toLocaleString(undefined, { maximumFractionDigits: 1 })} KiB`
             : ""}
         </span>
-        <div className="reader-actions">
+        <div className={filesStyles.readerActions}>
           {url && (
-            <a className="asset-download" href={url} download={path.split("/").pop()}>
+            <a className={filesStyles.assetDownload} href={url} download={path.split("/").pop()}>
               <Download size={15} />
               Download
             </a>
@@ -65,12 +67,12 @@ export function AssetViewer({
         </div>
       </div>
       {query.isFetching && (
-        <p role="status" className="reader-feedback">
+        <p role="status" className={filesStyles.readerFeedback}>
           Loading file…
         </p>
       )}
       {query.error ? (
-        <div role="alert" className="reader-error">
+        <div role="alert" className={filesStyles.readerError}>
           <p>{query.error.message}</p>
           <button onClick={() => void query.refetch()}>Retry file</button>
         </div>
@@ -78,7 +80,7 @@ export function AssetViewer({
         query.data && (
           <Suspense
             fallback={
-              <p role="status" className="reader-feedback">
+              <p role="status" className={filesStyles.readerFeedback}>
                 Loading viewer…
               </p>
             }
@@ -88,7 +90,7 @@ export function AssetViewer({
             ) : kind === "pdf" ? (
               <PdfViewer blob={query.data} />
             ) : kind === "unsupported" ? (
-              <p className="reader-empty">
+              <p className={filesStyles.readerEmpty}>
                 No preview for this format. Download the file to open it in its original app.
               </p>
             ) : (

@@ -5,7 +5,7 @@ test("source has comfortable inset on all sides and output exposes native semant
   page,
 }) => {
   await page.goto(`${fixtureUrl}/?typescript`);
-  await page.locator("summary.tool-header").click();
+  await page.locator("summary.starter-tools-tool-header").click();
   const padding = await page.getByLabel("TypeScript source", { exact: true }).evaluate((el) => {
     const css = getComputedStyle(el);
     return [css.paddingTop, css.paddingRight, css.paddingBottom, css.paddingLeft].map(parseFloat);
@@ -39,7 +39,7 @@ test("all native return types and missing evidence are explicit", async ({ page 
     ["empty-object", "{}"],
   ]) {
     await page.getByLabel("Fixture state").selectOption(state!);
-    await page.locator("summary.tool-header").click();
+    await page.locator("summary.starter-tools-tool-header").click();
     await expect(page.getByLabel("Return value", { exact: true })).toHaveText(value!);
     await expect(page.getByText("Completed", { exact: true })).toBeVisible();
     await expect(page.getByText("No value returned.", { exact: true })).toHaveCount(0);
@@ -53,8 +53,12 @@ test("all native return types and missing evidence are explicit", async ({ page 
     ["conflict", "Conflicting outcome"],
   ]) {
     await page.getByLabel("Fixture state").selectOption(state!);
-    if (!(await page.locator(".tool-details").evaluate((el) => (el as HTMLDetailsElement).open)))
-      await page.locator("summary.tool-header").click();
+    if (
+      !(await page
+        .locator(".starter-tools-tool-details")
+        .evaluate((el) => (el as HTMLDetailsElement).open))
+    )
+      await page.locator("summary.starter-tools-tool-header").click();
     await expect(page.getByText(text!, { exact: true })).toBeVisible();
   }
 });
@@ -82,14 +86,14 @@ test("diagnostics and copies retain full response and partial execution evidence
     result: { processed: 2 },
   });
   await page.getByLabel("Fixture state").selectOption("logs-only");
-  await page.locator("summary.tool-header").click();
+  await page.locator("summary.starter-tools-tool-header").click();
   await expect(page.getByText("Empty line", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Copy console output" }).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     "Reading files\nWARN: skipped empty file\n",
   );
   await page.getByLabel("Fixture state").selectOption("unknown-fields");
-  await page.locator("summary.tool-header").click();
+  await page.locator("summary.starter-tools-tool-header").click();
   await page.getByText("Raw response", { exact: true }).click();
   await expect(page.getByLabel("Raw response JSON", { exact: true })).toContainText(
     "provider evidence",
@@ -102,10 +106,16 @@ test("unrecognized and untrusted content is readable text without an invented su
   await page.goto(`${fixtureUrl}/?typescript`);
   for (const state of ["invalid-json", "invalid-envelope", "untrusted"]) {
     await page.getByLabel("Fixture state").selectOption(state);
-    if (!(await page.locator(".tool-details").evaluate((el) => (el as HTMLDetailsElement).open)))
-      await page.locator("summary.tool-header").click();
+    if (
+      !(await page
+        .locator(".starter-tools-tool-details")
+        .evaluate((el) => (el as HTMLDetailsElement).open))
+    )
+      await page.locator("summary.starter-tools-tool-header").click();
     await expect(page.getByText("Completed", { exact: true })).toHaveCount(0);
-    await expect(page.locator(".typescript-output img, .typescript-output script")).toHaveCount(0);
+    await expect(
+      page.locator(".starter-tools-typescript-output img, .starter-tools-typescript-output script"),
+    ).toHaveCount(0);
     if (state !== "untrusted")
       await expect(page.getByText("Unrecognized response", { exact: true })).toBeVisible();
     else
@@ -137,9 +147,11 @@ test("outcome states remain readable, padded, and accessible across themes and w
       ]) {
         await page.getByLabel("Fixture state").selectOption(state);
         if (
-          !(await page.locator(".tool-details").evaluate((el) => (el as HTMLDetailsElement).open))
+          !(await page
+            .locator(".starter-tools-tool-details")
+            .evaluate((el) => (el as HTMLDetailsElement).open))
         )
-          await page.locator("summary.tool-header").click();
+          await page.locator("summary.starter-tools-tool-header").click();
         await page.evaluate(() => document.fonts.ready);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
           true,

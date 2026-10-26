@@ -1,3 +1,5 @@
+import composerStyles from "../styles/composer.module.css";
+import sharedStyles from "../styles/shared.module.css";
 import type { Goal } from "@tanstack/ai-harness/plugins";
 import { Target } from "lucide-react";
 import { ComposerPopover } from "./composer-popover";
@@ -63,14 +65,16 @@ export function GoalStatus({
         <>
           <Target size={15} aria-hidden="true" />
           <span>View goal</span>
-          <span className="muted">{pendingApproval ? "Approval required" : status}</span>
+          <span className={sharedStyles.muted}>
+            {pendingApproval ? "Approval required" : status}
+          </span>
         </>
       }
     >
       <div className="goal-status">
-        <p className="goal-objective">{goal.text}</p>
+        <p className={composerStyles.goalObjective}>{goal.text}</p>
         {goal.reason && <p>{goal.reason}</p>}
-        <div className="goal-actions">
+        <div className={composerStyles.goalActions}>
           {!running && goal.status !== "met" && (
             <button type="button" disabled={disabled || pendingApproval} onClick={onResume}>
               Resume goal
