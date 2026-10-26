@@ -35,7 +35,7 @@ test("streaming, missing results, and unknown-tool failures stay honest", async 
   ).toBeVisible();
   const failed = page.getByRole("region", { name: "custom_tool tool call" });
   await expect(failed.getByText("Error", { exact: true })).toBeVisible();
-  await expect(failed.locator(".tool-output")).toHaveText("Error: <script>unexpected</script>");
+  await expect(failed.getByTestId("tool-output")).toHaveText("Error: <script>unexpected</script>");
   expect(await failed.locator("script, img").count()).toBe(0);
 });
 

@@ -71,7 +71,7 @@ export function GoalStatus({
         </>
       }
     >
-      <div className="goal-status">
+      <div>
         <p className={composerStyles.goalObjective}>{goal.text}</p>
         {goal.reason && <p>{goal.reason}</p>}
         <div className={composerStyles.goalActions}>

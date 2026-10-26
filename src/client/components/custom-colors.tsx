@@ -202,7 +202,7 @@ function ColorEditor({
   const [, s, v] = toHsv(color);
   return (
     <section className={appearanceStyles.colorEditor} aria-label="Add custom color">
-      <div className="color-picker-area">
+      <div>
         <div
           className={appearanceStyles.colorPlane}
           style={{ backgroundColor: toHex(fromHsv(hue, 100, 100)) }}

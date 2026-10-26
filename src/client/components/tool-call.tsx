@@ -309,7 +309,7 @@ export function ToolCall({
                     <ChevronRight size={12} />
                     {failed ? "Error output" : "Output"}
                   </summary>
-                  <pre className="tool-output">{output}</pre>
+                  <pre data-testid="tool-output">{output}</pre>
                 </details>
               )}
             </div>
@@ -350,7 +350,7 @@ export function ToolCall({
                 <ChevronRight size={12} />
                 {failed ? "Error output" : "Output"}
               </summary>
-              <pre className="tool-output">{output}</pre>
+              <pre data-testid="tool-output">{output}</pre>
             </details>
           )}
           <details

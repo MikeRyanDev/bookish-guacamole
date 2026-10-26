@@ -77,7 +77,7 @@ export function TypeScriptOutput({
             The response does not match the execution format. Original output is shown below.
           </p>
         )}
-        <pre className="typescript-result" tabIndex={0} aria-label="Original output">
+        <pre tabIndex={0} aria-label="Original output">
           {output}
         </pre>
       </section>
@@ -131,7 +131,7 @@ export function TypeScriptOutput({
             <span>{response.success ? "Return value" : "Partial return value"}</span>
             <CopyToolText text={response.resultJson} label="Copy return value JSON" />
           </div>
-          <pre className="typescript-result" tabIndex={0} aria-label="Return value">
+          <pre tabIndex={0} aria-label="Return value">
             <JsonEvidence json={response.resultJson} />
           </pre>
         </>
@@ -144,11 +144,7 @@ export function TypeScriptOutput({
             <span>Console output</span>
             <CopyToolText text={response.logs.join("\n")} label="Copy console output" />
           </div>
-          <pre
-            className="typescript-result typescript-console"
-            tabIndex={0}
-            aria-label="Console output"
-          >
+          <pre tabIndex={0} aria-label="Console output">
             {response.logs.map((log, index) => (
               <span
                 key={index}
@@ -172,7 +168,7 @@ export function TypeScriptOutput({
           <span>Response JSON</span>
           <CopyToolText text={output} label="Copy response JSON" />
         </div>
-        <pre className="typescript-result" tabIndex={0} aria-label="Raw response JSON">
+        <pre tabIndex={0} aria-label="Raw response JSON">
           <JsonEvidence json={output} />
         </pre>
       </details>

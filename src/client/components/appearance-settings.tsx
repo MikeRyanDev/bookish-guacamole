@@ -16,7 +16,7 @@ export function AppearanceSettings({
 }) {
   return (
     <section className={appearanceStyles.appearanceSettings} aria-label="Appearance">
-      <fieldset className="appearance-mode">
+      <fieldset>
         <legend>Theme</legend>
         <div className={appearanceStyles.modeOptions}>
           {(["light", "dark", "system"] as const).map((mode) => (
@@ -42,7 +42,7 @@ export function AppearanceSettings({
           ))}
         </div>
       </fieldset>
-      <fieldset className="appearance-accent">
+      <fieldset>
         <legend>
           Accent{" "}
           <span>

@@ -63,7 +63,7 @@ maps; those numbers are not minified package sizes or runtime measurements.
 The analysis build writes source maps to ignored `dist/`. Run `pnpm build` before
 serving production output to remove those diagnostic maps.
 
-The cleanup baseline had a entry chunk of about 2.56 MB, or 737 KB gzip.
+The cleanup baseline had an entry chunk of about 2.56 MB, or 737 KB gzip.
 Source-map analysis identified Zod, React DOM, KaTeX, and CopilotKit as the largest
 source contributors. Settings and Learning are optional application features, so
 they now load only when opened. The SDK still brings substantial shared code.

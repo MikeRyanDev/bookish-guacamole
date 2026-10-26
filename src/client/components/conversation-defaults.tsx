@@ -47,7 +47,7 @@ export function ConversationDefaults({
     >
       <div className={settingsStyles.defaultsFields}>
         {fields.map((name) => (
-          <div className="settings-field" key={name}>
+          <div key={name}>
             <div className={settingsStyles.settingsFieldHeading}>
               <label htmlFor={`${id}-${name}`}>
                 {name === "modelId" ? "Default model" : "Default permissions"}
