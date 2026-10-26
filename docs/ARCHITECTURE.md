@@ -195,3 +195,18 @@ The Learning reader keeps one left alignment across its title, description, and 
 The library shows two-line previews. Mobile and short viewports use a single pane with Back to skills.
 One library refresh updates the workspace reads. Failed refreshes retain cached documents and expose a local Retry.
 Display-only description cleanup removes exact repeated generated prefixes. Stored Markdown and frontmatter remain unchanged.
+
+## Contributor worktrees
+
+[Worktrunk](WORKTREES.md) owns contributor worktree lifecycle through `.config/wt.toml`.
+Repository scripts own port reservations, private-file validation, service identity, artifact
+archives, and a repository integration lock. Shared coordination lives under the Git common
+directory, not the application database. Each checkout keeps separate `.data` and workspace files.
+Fixture mode is the default. Connected mode shares the configured Intelligence backend.
+`STARTER_WORKTREE_MODE` selects setup mode (default `fixture`). The launcher supplies
+`STARTER_WORKTREE_ROOT`, `STARTER_WORKTREE_COMMIT`, `STARTER_WORKTREE_INSTANCE`, and
+`STARTER_WORKTREE_TOKEN` to managed child processes. The token remains private.
+The development identity endpoint reads its actual checkout and commit at startup.
+`STARTER_WORKTREE_OWNER` and `STARTER_WORKTREE_PURPOSE` supply optional task metadata.
+`STARTER_WORKTREE_FINISH_PID` is internal coordinator state, checked against the live lock owner.
+These variables do not change product model, approval, or Learning behavior.

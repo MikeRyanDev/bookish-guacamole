@@ -128,3 +128,14 @@ It does not scan workspace files or start a coding session.
 Approval publishes the proposal to that space. Rejection leaves it unpublished.
 Responses exclude internal job names and project credentials. Evidence remains private to authenticated local users.
 Published Skill reads reject stale snapshots. Disabled Learning returns an empty Skill list.
+
+## Managed development identity
+
+`GET /api/worktree-identity` returns `{ root, commit, instance, kind: "app" }` only
+when `STARTER_WORKTREE_INSTANCE` is set and `NODE_ENV` is not `production`.
+The response identifies the checkout and commit at server startup. It contains no credentials.
+The existing local Host/Origin checks and bearer authentication apply. Responses use `no-store`.
+Missing authentication returns 401, foreign Host/Origin returns 403, and a disabled endpoint returns 404.
+Worktrunk browser checks obtain the normal bootstrap token before this request.
+The fixture server exposes `/__worktree` with its own private bearer token and the same local boundary.
+Neither endpoint accepts input or mutates backend state.

@@ -11,7 +11,7 @@
     "intelligence": "copilotkit",
     "workspace:create": "node scripts/create-workspace.mjs",
     "lint": "oxlint --deny-warnings src tests scripts",
-    "check": "pnpm lint && pnpm design:check && pnpm typecheck && pnpm test && pnpm build",
+    "check": "pnpm lint && pnpm design:check && pnpm typecheck && pnpm test && pnpm test:worktree && pnpm build",
     "start": "NODE_ENV=production node --env-file=.env dist/server/main.mjs",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
@@ -23,7 +23,8 @@
     "intelligence:image:restore": "node scripts/temporary-intelligence-image.mjs restore",
     "intelligence:image:status": "node scripts/temporary-intelligence-image.mjs status",
     "design:check": "node scripts/impeccable-ui.mjs detect",
-    "design:browser": "playwright test e2e/design.spec.ts"
+    "design:browser": "playwright test e2e/design.spec.ts",
+    "test:worktree": "node --test scripts/worktree/*.test.mjs"
   },
   "dependencies": {
     "@ag-ui/client": "1.0.2",

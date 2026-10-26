@@ -1,3 +1,4 @@
+import { identityRoutes } from "./worktree-identity.js";
 import { WorkspaceError } from "../workspaces/registry.js";
 import { learningRoutes } from "./learning.js";
 import { localAccessError } from "./local-access.js";
@@ -45,6 +46,7 @@ export function createApi(dependencies: ApiDependencies) {
       containerId: learning.assignment(workspace.id),
     } satisfies AppConfig & { model: string });
   });
+  app.route("/api", identityRoutes(dependencies.worktreeIdentity));
   app.route("/api/learning", learningRoutes(dependencies));
   app.route("/api", settingsRoutes(dependencies));
   app.route("/api/workspaces", workspaceRoutes(dependencies));

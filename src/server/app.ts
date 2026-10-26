@@ -1,3 +1,4 @@
+import { readWorktreeIdentity } from "./worktree-identity.js";
 import { createWorkspaceLearning } from "./workspaces/learning.js";
 import { localUrl, required } from "./config.js";
 import { createWorkspaceRuntime } from "./agent/runtime.js";
@@ -75,6 +76,7 @@ export async function startApp(
     return workspaces.get(id);
   }
   const api = createApi({
+    worktreeIdentity: readWorktreeIdentity("app"),
     token,
     intelligence,
     learning,

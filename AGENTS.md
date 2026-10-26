@@ -137,6 +137,12 @@ Write a failing regression test before behavior fixes. Run `pnpm check`, `node -
 
 ### Before editing
 
+- Use Worktrunk for task worktrees. Read `docs/WORKTREES.md` before creation or integration.
+- Create with `wt switch --create <branch> --base <intended-base>`. Pass the worktree directory on every tool command.
+- Run `wt doctor` before browser checks. Run `wt check <affected-browser-tests>` for managed URLs and identity checks.
+- Commit reviewed changes, then use `wt finish <target>` for serialized integration and final-target checks.
+- Run `wt archive` before `wt remove <branch> --foreground`. Preserve other agents' work and processes.
+
 - Implement changes in a dedicated Git worktree from the current intended base. Preserve unrelated work in other worktrees. After delivery checks pass, merge the completed work into local `main`. Verify the merged tree. Never force-push or discard unrelated changes.
 - For HTTP APIs and server architecture, read `.agents/skills/starter-api/SKILL.md` and `docs/BACKEND-DESIGN.md`.
 

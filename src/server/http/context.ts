@@ -1,3 +1,4 @@
+import type { WorktreeIdentity } from "../worktree-identity.js";
 import type { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
 import type { createWorkspaceLearning } from "../workspaces/learning.js";
 import type { WorkspaceEntry, openWorkspaceRegistry } from "../workspaces/registry.js";
@@ -6,6 +7,7 @@ import type { createWorkspaceRuntime } from "../agent/runtime.js";
 
 /** Services owned by the application, borrowed by HTTP route factories. */
 export interface ApiDependencies {
+  worktreeIdentity?: WorktreeIdentity;
   token: string;
   intelligence: CopilotKitIntelligence;
   learning: ReturnType<typeof createWorkspaceLearning>;

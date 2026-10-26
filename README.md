@@ -246,3 +246,10 @@ Learn uses saved conversations across the shared space. It does not scan workspa
 The dialog names the current workspace. Skill instructions scroll separately from the review decisions.
 On mobile, **Back to skills** returns to the list. **Close Learning** or Escape returns to the conversation.
 **Change space** hides Learning actions until you save or cancel the draft.
+
+## Parallel contributor work
+
+Use [Worktrunk](docs/WORKTREES.md) for isolated contributor tasks. Creation prepares dependencies,
+private configuration, ports, and a fixture server. `wt doctor` checks the actual checkout.
+`wt check` tests that checkout, and `wt finish` integrates reviewed commits with final-target checks.
+This contributor workflow is separate from workspaces inside the browser application.

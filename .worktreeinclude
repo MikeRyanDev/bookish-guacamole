@@ -1,0 +1,4 @@
+# Only these ignored private files cross worktree boundaries.
+/.env
+/models.json
+/learning.json

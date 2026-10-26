@@ -1,6 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
+  globalSetup: "./e2e/worktree-global-setup.ts",
   testDir: "./e2e",
   outputDir: process.env.LIVE_MODEL === "1" ? ".data/playwright-live" : "test-results",
   fullyParallel: false,
@@ -14,6 +15,6 @@ export default defineConfig({
   webServer: {
     command: `pnpm exec vite --config e2e/fixtures/vite.config.ts --port ${new URL(process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174").port}`,
     url: process.env.FILE_VIEWER_FIXTURE_URL ?? "http://127.0.0.1:4174",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: Boolean(process.env.STARTER_WORKTREE_ROOT) || !process.env.CI,
   },
 });

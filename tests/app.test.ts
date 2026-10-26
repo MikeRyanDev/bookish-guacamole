@@ -9,6 +9,7 @@ import { startApp } from "../src/server/app.js";
 test("local browser bootstrap refuses cross-origin access and protects workspace APIs", async () => {
   const directory = await mkdtemp(join(tmpdir(), "starter-http-"));
   for (const [key, value] of Object.entries({
+    STARTER_WORKTREE_INSTANCE: "app-identity-test",
     OPENAI_API_KEY: "provider-private-test",
     CPK_INTELLIGENCE_API_KEY: "backend-private-test",
     INTELLIGENCE_API_URL: "http://localhost:9",
@@ -36,6 +37,21 @@ test("local browser bootstrap refuses cross-origin access and protects workspace
     const response = await fetch(origin + "/api/config");
     const config = await response.json();
     expect(response.headers.get("cache-control")).toBe("no-store");
+    expect((await fetch(origin + "/api/worktree-identity")).status).toBe(401);
+    const identityResponse = await fetch(origin + "/api/worktree-identity", {
+      headers: { authorization: `Bearer ${app.token}` },
+    });
+    const identity = await identityResponse.json();
+    expect(identity).toMatchObject({ kind: "app", instance: "app-identity-test" });
+    expect(identity.commit).toMatch(/^[a-f0-9]{40}$/);
+    expect(identityResponse.headers.get("cache-control")).toBe("no-store");
+    expect(
+      (
+        await fetch(origin + "/api/worktree-identity", {
+          headers: { authorization: `Bearer ${app.token}`, origin: "https://example.com" },
+        })
+      ).status,
+    ).toBe(403);
     expect(config.defaultModel).toBe("test");
     expect(config.model).toBe("test-model");
     expect(config.models).toEqual([

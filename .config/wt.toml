@@ -1,0 +1,33 @@
+# Tested with Worktrunk 0.81.0. Values are shell-escaped by Worktrunk.
+[pre-start]
+prepare = "node scripts/worktree.mjs setup {{ base | default('main') }}"
+
+[post-start]
+server = "node scripts/worktree.mjs dev"
+
+[[pre-merge]]
+coordinator = "node scripts/worktree.mjs guard-merge"
+
+[[pre-merge]]
+checks = "node scripts/worktree.mjs check"
+
+[pre-remove]
+private-artifacts = "node scripts/worktree.mjs pre-remove"
+
+[post-remove]
+ports = "node scripts/worktree.mjs release-ports {{ worktree_path }}"
+
+[list]
+url = "{{ vars.url | default('') }}"
+
+[aliases]
+setup = "node scripts/worktree.mjs setup {{ args }}"
+doctor = "node scripts/worktree.mjs doctor"
+dev = "node scripts/worktree.mjs dev {{ args }}"
+check = "node scripts/worktree.mjs check {{ args }}"
+finish = "node scripts/worktree.mjs finish {{ args }}"
+archive = "node scripts/worktree.mjs archive"
+task = "node scripts/worktree.mjs task {{ args }}"
+inventory = "node scripts/worktree.mjs inventory"
+ports-reset = "node scripts/worktree.mjs ports-reset"
+unlock = "node scripts/worktree.mjs unlock {{ args }}"
